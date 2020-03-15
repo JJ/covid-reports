@@ -2,7 +2,9 @@
 title: "Evolución casos COVID19 en España"
 author: "J. J. Merelo"
 date: "14 de marzo de 2020"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -10,7 +12,7 @@ library(dplyr)
 library(ggplot2)
 library(ggthemes)
 data <- read.csv("https://raw.githubusercontent.com/datadista/datasets/master/COVID%2019/nacional_covid19.csv")
-data$Fecha <- as.Date( data$X.Fecha, "%d/%m/%Y")
+data$Fecha <- as.Date( data$X..Fecha, "%d/%m/%Y")
 data$Casos.nuevos <- c( NA, diff(data$Casos))
 data$Altas.nuevas <- c( NA, diff(data$Altas))
 data$Fallecimientos.nuevos <- c( NA, diff(data$Fallecimientos))
@@ -45,6 +47,21 @@ Esta es la autocorrelación de casos, es decir, la relación que hay entre los c
 acf(data$Casos)
 ```
 
+Esta es la correlación entre casos y fallecimientos
+```{r ccffallecimientos}
+ccf(data$Casos,data$Fallecimientos,na.action = na.pass)
+```
+
+Parece que el el *lag* es uno o dos días.
+
+Y entre casos y curaciones
+
+```{r ccfaltas}
+ccf(data$Casos,data$Altas,na.action = na.pass)
+```
+
+En este caso hay también un lag de un día; los casos de cada día están correlacionados con las altas del siguiente.
+
 ## Reconocimientos
 
-Este fichero está generado a partir de los datos elaborados por [Datadista](https://github.com/datadista/datasets) y tiene una licencia libre. Se puede generar con nuevos datos usando el script en [este directorio](https://github.com/datadista/datasets/tree/master/COVID%2019/scripts).
+Este fichero está generado a partir de los datos elaborados por [Datadista](https://github.com/datadista/datasets) y tiene una licencia libre. Se puede generar con nuevos datos usando el script en [este repositorio](https://github.com/JJ/covid-reports).
