@@ -3,16 +3,17 @@ title: "Evolución casos COVID19 en España"
 author: "J. J. Merelo"
 date: "14 de marzo de 2020"
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
 library(dplyr)
 library(ggplot2)
 library(ggthemes)
+library(prophet)
 data <- read.csv("https://raw.githubusercontent.com/datadista/datasets/master/COVID%2019/nacional_covid19.csv")
-data$Fecha <- as.Date( data$Fecha, "%d/%m/%Y")
+data$Fecha <- as.Date( data$fecha, "%d/%m/%Y")
 data$Casos.nuevos <- c( NA, diff(data$Casos))
 data$Altas.nuevas <- c( NA, diff(data$Altas))
 data$Fallecimientos.nuevos <- c( NA, diff(data$Fallecimientos))
@@ -61,6 +62,9 @@ ccf(data$Casos,data$Altas,na.action = na.pass)
 ```
 
 En este caso hay también un lag de un día; los casos de cada día están correlacionados con las altas del siguiente.
+
+Prediciendo casos.
+
 
 ## Reconocimientos
 
