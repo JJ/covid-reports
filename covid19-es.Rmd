@@ -13,7 +13,9 @@ library(ggplot2)
 library(ggthemes)
 library(prophet)
 data <- read.csv("https://raw.githubusercontent.com/datadista/datasets/master/COVID%2019/nacional_covid19.csv")
-data$Fecha <- as.Date( data$fecha, "%d/%m/%Y")
+data$Fecha <- as.Date( data$fecha, "%Y-%m-%d")
+data$ds <- data$Fecha
+data$y <- data$casos
 data$Casos.nuevos <- c( NA, diff(data$casos))
 data$Altas.nuevas <- c( NA, diff(data$altas))
 data$Fallecimientos.nuevos <- c( NA, diff(data$fallecimientos))
