@@ -77,6 +77,22 @@ Y entre ingresos en la UCI y fallecimientos
 ccf(data$ingresos_uci,data$fallecimientos,na.action = na.pass)
 ```
 
+## Correlación entre diferencias
+
+Quizás sea más interesante establecer correlaciones entre diferencias, porque los datos acumulados tienen más información.
+
+```{r diffccf}
+ccf(data$Casos.nuevos,data$Fallecimientos.nuevos,na.action = na.pass)
+ccf(data$Casos.nuevos,data$Uci.nuevos,na.action = na.pass)
+ccf(data$Casos.nuevos,data$Altas.nuevas,na.action = na.pass)
+```
+
+O quizás el dato más revelador:
+
+```{r ucifallecimientos}
+ccf(data$Uci.nuevos,data$Fallecimientos.nuevos,na.action = na.pass)
+```
+
 ## Reconocimientos
 
 Este fichero está generado a partir de los datos elaborados por [Datadista](https://github.com/datadista/datasets) y tiene una licencia libre. Se puede generar con nuevos datos usando el script en [este repositorio](https://github.com/JJ/covid-reports).
