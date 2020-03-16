@@ -14,9 +14,10 @@ library(ggthemes)
 library(prophet)
 data <- read.csv("https://raw.githubusercontent.com/datadista/datasets/master/COVID%2019/nacional_covid19.csv")
 data$Fecha <- as.Date( data$fecha, "%d/%m/%Y")
-data$Casos.nuevos <- c( NA, diff(data$Casos))
-data$Altas.nuevas <- c( NA, diff(data$Altas))
-data$Fallecimientos.nuevos <- c( NA, diff(data$Fallecimientos))
+data$Casos.nuevos <- c( NA, diff(data$casos))
+data$Altas.nuevas <- c( NA, diff(data$altas))
+data$Fallecimientos.nuevos <- c( NA, diff(data$fallecimientos))
+data$Uci.nuevos <- c( NA, diff(data$ingresos_uci))
 save(data,file="covid-19-es.Rda")
 write.csv(data,'covid-19-es.csv')
 ```
@@ -45,12 +46,12 @@ ggplot(data,aes(x=Fecha,y=Fallecimientos.nuevos),na.rm = TRUE)+geom_line()+theme
 Esta es la autocorrelación de casos, es decir, la relación que hay entre los casos un día y el siguiente:
 
 ```{r acfcasos}
-acf(data$Casos)
+acf(data$casos)
 ```
 
 Esta es la correlación entre casos y fallecimientos
 ```{r ccffallecimientos}
-ccf(data$Casos,data$Fallecimientos,na.action = na.pass)
+ccf(data$casos,data$fallecimientos,na.action = na.pass)
 ```
 
 Parece que el el *lag* es uno o dos días.
@@ -58,13 +59,21 @@ Parece que el el *lag* es uno o dos días.
 Y entre casos y curaciones
 
 ```{r ccfaltas}
-ccf(data$Casos,data$Altas,na.action = na.pass)
+ccf(data$casos,data$altas,na.action = na.pass)
 ```
 
 En este caso hay también un lag de un día; los casos de cada día están correlacionados con las altas del siguiente.
 
-Prediciendo casos.
+Una veremos como se correlaciona los datos de ingresos en la UCI
+```{r ccuci}
+ccf(data$casos,data$ingresos_uci,na.action = na.pass)
+```
 
+Y entre ingresos en la UCI y fallecimientos
+
+```{r ccucif}
+ccf(data$ingresos_uci,data$fallecimientos,na.action = na.pass)
+```
 
 ## Reconocimientos
 
