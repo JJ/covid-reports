@@ -1,12 +1,14 @@
 ---
-title: "Filling the gaps: trying to predict cases in the weekend of March 7-8th in Spain"
+title: 'Filling the gaps: trying to predict cases in the weekend of March 7-8th in
+  Spain'
 author: "J. J. Merelo"
 date: "17 de marzo de 2020"
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
+bibliography: covid.bib
 abstract: |
-    The Spanish Government declared a national emergency on March 14th, 2020 due to the coronavirus outbreak. That weekend, daily updates of the Ministry of Health official Bulletins started to be produced on a daily basis. The previous week, during which a government-sponsored parade took place, there were no bulletins. In this report we will try to predict, on the basis of previously published data, the actual numbers of infected and deceased people that could have been published during that two-days blackout. We check the model by using it to predict the data when it was finally updated on March 9th.
+  The Spanish Government declared a national emergency on March 14th, 2020 due to the coronavirus outbreak. That weekend, daily updates of the Ministry of Health official Bulletins started to be produced on a daily basis. The previous week, during which a government-sponsored parade took place, there were no bulletins. In this report we will try to predict, on the basis of previously published data, the actual numbers of infected and deceased people that could have been published during that two-days blackout. We check the model by using it to predict the data when it was finally updated on March 9th.
 ---
 
 ```{r setup, include=FALSE}
@@ -19,9 +21,9 @@ data <- read.csv("https://raw.githubusercontent.com/datadista/datasets/master/CO
 
 ## Introduction
 
-One of the essential weapons to fight pandemics is transparency. Nothing hurts more than out-guessing your government, or simply finding that the government is hiding information \cite{nishiura2020rate}; uncertainty is the worst symptom for a regular citizen, but it might be even worse if you feel that information is trickled by political motivation.
+One of the essential weapons to fight pandemics is transparency. Nothing hurts more than out-guessing your government, or simply finding that the government is hiding information [@nishiura2020rate]; uncertainty is the worst symptom for a regular citizen, but it might be even worse if you feel that information is trickled by political motivation.
 
-That is one of the accusations that have been leveraged against the Spanish government. After a responsible person for the COVID-19 outbreak had been appointed, and even after the Italian government had taken harsh measures to stop the pandemia, from the power citizens were encouraged to attend one of the several political parades that had been organized on March 8th. No other public demonstrations were banned, either.
+That is one of the accusations that have been leveraged against the Spanish government. After a responsible person for the COVID-19 outbreak had been appointed, and even after the Italian government had taken harsh measures to stop the pandemic, from the power citizens were encouraged to attend one of the several political parades that had been organized on March 8th. No other public demonstrations were banned, either.
 
 Those messages were accompanied by lack of information from the Health Ministry. The Ministry started publishing daily bulletins in [its web page](https://www.mscbs.gob.es/profesionales/saludPublica/ccayes/alertasActual/nCov-China/situacionActual.htm). No bulletins were issued on weekends before that, and that was the main reason put forward by officials for not doing it this precise weekend. The very next day, two bulletins were published: [number 39 by 12:00](https://github.com/datadista/datasets/blob/master/COVID%2019/PDFs%20originales%20de%20resumen%20de%20situacio%CC%81n/Actualizacion_39_COVID-19.pdf) and [number 39b by 18:00](https://github.com/datadista/datasets/blob/master/COVID%2019/PDFs%20originales%20de%20resumen%20de%20situacio%CC%81n/Actualizacion_39B_COVID-19_18.00.pdf). There was a 300 cases difference between them, which couldn't possibly have happened in the 6 hours that separated then. The case tally exceeded 1000, and government officials started to take measures, starting not by the national government, but by the regional government in Madrid. This was followed by other measures.
 
@@ -65,7 +67,7 @@ This linear model already predicted between 350 and 400 infected on the Saturday
 
 Prophet offers two options of growth. Linear is the default used above. Let's try the other version, logistic.
 
-```{r logistic, echo=FALSE}
+```{r logistic, echo=FALSE, message=FALSE}
 data.3.6$cap <- 45000000
 data.3.6$floor <- 1
 model.logistic <- prophet(data.3.6, growth='logistic')
@@ -97,11 +99,11 @@ check <- data.frame( date = data.3.11$Fecha, actual = data.3.11$casos, predicted
 check
 ```
 
-This check comes with a small twist, too. While during March 6th and 7th the prediction yields higher values than those reported (although only to the press), the actual casses when the general public blackout ended are *higher* that the prediction, to the point that two days into the week of March 9th reported cases exceed predictions by more than 200.
+This check comes with a small twist, too. While during March 6th and 7th the prediction yields higher values than those reported (although only to the press), the actual cases when the general public blackout ended are *higher* that the prediction, to the point that two days into the week of March 9th reported cases exceed predictions by more than 200.
 
 Either taking into account the actual (430) number of cases on Saturday 7th or predicted (702) on Sunday 8th, authorities should probably have taken other kind of decisions, or at least not actively encouraged participation in mass parades. In either scenario, 1000 cases would have been reached any time during March 9th.
 
-The fact that there are more reported cases, by a factor of almost 15th, than those that could be predicted with a model computed with cases up to March 6th, remains to be explained. Several explanations are possible, including underreporting of cases before active measures started to be taken on Monday 9th. But this is left as future work.
+The fact that there are more reported cases, by a factor of almost 15th, than those that could be predicted with a model computed with cases up to March 6th, remains to be explained. Several explanations are possible, including under-reporting of cases before active measures started to be taken on Monday 9th. But this is left as future work.
 
 
 
@@ -111,8 +113,10 @@ Transparency is of the utmost importance when dealing with a pandemic, and repor
 
 While some people might claim that the direction of the outbreak couldn't be predicted, this report shows that a relatively simple script could, in fact, do that. The code is available in the source of this article at [this GitHub repository](https://github.com/JJ/covid-reports/blob/master/filling-the-gaps.Rmd), with sources of data embedded in them.
 
-
+For the time being, the fact that the model predicted less cases than the actual ones in the days following March 8th remains unexplained; reported cases are around 15% higher of what the model forecasted for those dates. One reason could be that, before the regional and national governments started to take measures, infections were undertested and thus underreported. Testing other hypotheses is left as future work.
 
 ## Acknowledgements
 
 This report has been generated from data extracted from the Ministry of Health database and published by [Datadista](https://github.com/datadista/datasets) in GitHub under a free License. This paper uses RMarkdown, includes all code needed to generate it, and can be downloaded from [this repository](https://github.com/JJ/covid-reports).
+
+## References
