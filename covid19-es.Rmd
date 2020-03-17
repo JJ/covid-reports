@@ -1,12 +1,10 @@
 ---
-title: "Filling the gaps: trying to predict cases in the weekend of March 7-8th in Spain"
+title: "Evolución casos COVID19 en España"
 author: "J. J. Merelo"
-date: "17 de marzo de 2020"
+date: "16 de marzo de 2020"
 output:
   html_document: default
   pdf_document: default
-abstract: |
-The Spanish Government declared a national emergency on March 14th, 2020 due to the coronavirus outbreak. That weekend, daily updates of the Ministry of Health official Bulletins started to be produced on a daily basis. The previous week, during which a government-sponsored parade took place, there were no bulletins. In this report we will try to predict, on the basis of previously published data, the actual numbers of infected and deceased people that could have been published during that two-days blackout. We check the model by using it to predict the data when it was finally updated on March 9th.
 ---
 
 ```{r setup, include=FALSE}
@@ -18,18 +16,83 @@ data <- read.csv("https://raw.githubusercontent.com/datadista/datasets/master/CO
 data$Fecha <- as.Date( data$fecha, "%Y-%m-%d")
 data$ds <- data$Fecha
 data$y <- data$casos
-data.3.6 <- data[1:9,]
-model <- prophet(data.3.6)
-future <- make_future_dataframe(model, periods=3)
-forecast <- predict(model,future)
+data$Casos.nuevos <- c( NA, diff(data$casos))
+data$Altas.nuevas <- c( NA, diff(data$altas))
+data$Fallecimientos.nuevos <- c( NA, diff(data$fallecimientos))
+data$Uci.nuevos <- c( NA, diff(data$ingresos_uci))
+save(data,file="covid-19-es.Rda")
+write.csv(data,'covid-19-es.csv')
 ```
 
-## Introduction
+## Análisis inicial
 
-One of the essential 
+Trazando los casos nuevos
+
+```{r casos}
+ggplot(data,aes(x=Fecha,y=Casos.nuevos),na.rm = TRUE)+geom_line()+theme_tufte()
+```
+
+Las nuevas altas por día
+
+```{r altas}
+ggplot(data,aes(x=Fecha,y=Altas.nuevas),na.rm = TRUE)+geom_line()+theme_tufte()
+```
 
 
+Los nuevos fallecimientos por día
+
+```{r fallecimientos}
+ggplot(data,aes(x=Fecha,y=Fallecimientos.nuevos),na.rm = TRUE)+geom_line()+theme_tufte()
+```
+
+Esta es la autocorrelación de casos, es decir, la relación que hay entre los casos un día y el siguiente:
+
+```{r acfcasos}
+acf(data$casos)
+```
+
+Esta es la correlación entre casos y fallecimientos
+```{r ccffallecimientos}
+ccf(data$casos,data$fallecimientos,na.action = na.pass)
+```
+
+Parece que el el *lag* es uno o dos días.
+
+Y entre casos y curaciones
+
+```{r ccfaltas}
+ccf(data$casos,data$altas,na.action = na.pass)
+```
+
+En este caso hay también un lag de un día; los casos de cada día están correlacionados con las altas del siguiente.
+
+Una veremos como se correlaciona los datos de ingresos en la UCI
+```{r ccuci}
+ccf(data$casos,data$ingresos_uci,na.action = na.pass)
+```
+
+Y entre ingresos en la UCI y fallecimientos
+
+```{r ccucif}
+ccf(data$ingresos_uci,data$fallecimientos,na.action = na.pass)
+```
+
+## Correlación entre diferencias
+
+Quizás sea más interesante establecer correlaciones entre diferencias, porque los datos acumulados tienen más información.
+
+```{r diffccf}
+ccf(data$Casos.nuevos,data$Fallecimientos.nuevos,na.action = na.pass)
+ccf(data$Casos.nuevos,data$Uci.nuevos,na.action = na.pass)
+ccf(data$Casos.nuevos,data$Altas.nuevas,na.action = na.pass)
+```
+
+O quizás el dato más revelador:
+
+```{r ucifallecimientos}
+ccf(data$Uci.nuevos,data$Fallecimientos.nuevos,na.action = na.pass)
+```
 
 ## Reconocimientos
 
-This file has been generated from data extracted from the Ministry of Health database and published by [Datadista](https://github.com/datadista/datasets) in GitHub under a free License. This paper uses RMarkdown, includes all code needed to generate it, and can be downloaded from [this repository](https://github.com/JJ/covid-reports).
+Este fichero está generado a partir de los datos elaborados por [Datadista](https://github.com/datadista/datasets) y tiene una licencia libre. Se puede generar con nuevos datos usando el script en [este repositorio](https://github.com/JJ/covid-reports).
