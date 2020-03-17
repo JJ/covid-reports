@@ -7,6 +7,7 @@ output:
   pdf_document: default
   html_document: default
 bibliography: covid.bib
+urlcolor: blue
 abstract: |
   The Spanish Government declared a national emergency on March 14th, 2020 due to the coronavirus outbreak. That weekend, daily updates of the Ministry of Health official Bulletins started to be produced on a daily basis. The previous week, during which a government-sponsored parade took place, there were no bulletins. In this report we will try to predict, on the basis of previously published data, the actual numbers of infected and deceased people that could have been published during that two-days blackout. We check the model by using it to predict the data when it was finally updated on March 9th.
 ---
