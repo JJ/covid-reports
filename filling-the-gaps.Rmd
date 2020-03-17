@@ -41,6 +41,17 @@ future <- make_future_dataframe(model, periods=3)
 forecast <- predict(model,future)
 ```
 
+As it can be seen, there is a gap on February 29th and March 1st, which was the previous weekend. This is the meaning of the columns of the data frame
+
+
+| Column          | Translation    |
+|-----------------|----------------|
+| fecha           | date           |
+| casos           | infected       |
+| ingresos_uci    | treated in ICU |
+| fallecimientos  | deceased       |
+| altas  | discharged |
+However, the rise in the previous days had been worrying, 
 
 
 
