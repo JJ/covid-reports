@@ -6,7 +6,7 @@ output:
   html_document: default
   pdf_document: default
 abstract: |
-The Spanish Government declared a national emergency on March 14th, 2020 due to the coronavirus outbreak. That weekend, daily updates of the Ministry of Health official Bulletins started to be produced on a daily basis. The previous week, during which a government-sponsored parade took place, there were no bulletins. In this report we will try to predict, on the basis of previously published data, the actual numbers of infected and deceased people that could have been published during that two-days blackout. We check the model by using it to predict the data when it was finally updated on March 9th.
+    The Spanish Government declared a national emergency on March 14th, 2020 due to the coronavirus outbreak. That weekend, daily updates of the Ministry of Health official Bulletins started to be produced on a daily basis. The previous week, during which a government-sponsored parade took place, there were no bulletins. In this report we will try to predict, on the basis of previously published data, the actual numbers of infected and deceased people that could have been published during that two-days blackout. We check the model by using it to predict the data when it was finally updated on March 9th.
 ---
 
 ```{r setup, include=FALSE}
@@ -15,18 +15,32 @@ library(ggplot2)
 library(ggthemes)
 library(prophet)
 data <- read.csv("https://raw.githubusercontent.com/datadista/datasets/master/COVID%2019/nacional_covid19.csv")
-data$Fecha <- as.Date( data$fecha, "%Y-%m-%d")
-data$ds <- data$Fecha
-data$y <- data$casos
+```
+
+## Introduction
+
+One of the essential weapons to fight pandemics is transparency. Nothing hurts more than out-guessing your government, or simply finding that the government is hiding information \cite{nishiura2020rate}; uncertainty is the worst symptom for a regular citizen, but it might be even worse if you feel that information is trickled by political motivation.
+
+That is one of the accusations that have been leveraged against the Spanish government. After a responsible person for the COVID-19 outbreak had been appointed, and even after the Italian government had taken harsh measures to stop the pandemia, from the power citizens were encouraged to attend one of the several political parades that had been organized on March 8th. No other public demonstrations were banned, either.
+
+Those messages were accompanied by lack of information from the Health Ministry. The Ministry started publishing daily bulletins in [its web page](https://www.mscbs.gob.es/profesionales/saludPublica/ccayes/alertasActual/nCov-China/situacionActual.htm). No bulletins were issued on weekends before that, and that was the main reason put forward by officials for not doing it this precise weekend. The very next day, two bulletins were published: [number 39 by 12:00](https://github.com/datadista/datasets/blob/master/COVID%2019/PDFs%20originales%20de%20resumen%20de%20situacio%CC%81n/Actualizacion_39_COVID-19.pdf) and [number 39b by 18:00](https://github.com/datadista/datasets/blob/master/COVID%2019/PDFs%20originales%20de%20resumen%20de%20situacio%CC%81n/Actualizacion_39B_COVID-19_18.00.pdf). There was a 300 cases difference between them, which couldn't possibly have happened in the 6 hours that separated then. The case tally exceeded 1000, and government officials started to take measures, starting not by the national government, but by the regional government in Madrid. This was followed by other measures.
+
+It's very likely the case that the number of cases exceeded 1000 during the weekend. In this report we are going to examine the published time series, and create a model that computes the number of cases during the weekend. We will try to find if the numbers reported on Monday could actually been reached somewhere during the weekend. We'll double-check the model against actual number reported after the blackout for sanity.
+
+## Methodology
+
+Data has been extracted from the [Datadista repository](https://github.com/datadista/datasets), in CSV format. This is the table of data available until March 6th:
+
+```{r tabla, echo=FALSE, message=FALSE}
 data.3.6 <- data[1:9,]
+data.3.6
+data.3.6$ds <- as.Date( data.3.6$fecha, "%Y-%m-%d")
+data.3.6$y <- data.3.6$casos
 model <- prophet(data.3.6)
 future <- make_future_dataframe(model, periods=3)
 forecast <- predict(model,future)
 ```
 
-## Introduction
-
-One of the essential 
 
 
 
