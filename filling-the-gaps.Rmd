@@ -99,6 +99,12 @@ check
 
 This check comes with a small twist, too. While during March 6th and 7th the prediction yields higher values than those reported (although only to the press), the actual casses when the general public blackout ended are *higher* that the prediction, to the point that two days into the week of March 9th reported cases exceed predictions by more than 200.
 
+Either taking into account the actual (430) number of cases on Saturday 7th or predicted (702) on Sunday 8th, authorities should probably have taken other kind of decisions, or at least not actively encouraged participation in mass parades. In either scenario, 1000 cases would have been reached any time during March 9th.
+
+The fact that there are more reported cases, by a factor of almost 15th, than those that could be predicted with a model computed with cases up to March 6th, remains to be explained. Several explanations are possible, including underreporting of cases before active measures started to be taken on Monday 9th. But this is left as future work.
+
+
+
 # Conclusions
 
 Transparency is of the utmost importance when dealing with a pandemic, and reporting accurate values, as well as putting in place the mechanism to be able to report them to the public, is very important.
@@ -107,6 +113,6 @@ While some people might claim that the direction of the outbreak couldn't be pre
 
 
 
-## Reconocimientos
+## Acknowledgements
 
-This file has been generated from data extracted from the Ministry of Health database and published by [Datadista](https://github.com/datadista/datasets) in GitHub under a free License. This paper uses RMarkdown, includes all code needed to generate it, and can be downloaded from [this repository](https://github.com/JJ/covid-reports).
+This report has been generated from data extracted from the Ministry of Health database and published by [Datadista](https://github.com/datadista/datasets) in GitHub under a free License. This paper uses RMarkdown, includes all code needed to generate it, and can be downloaded from [this repository](https://github.com/JJ/covid-reports).
