@@ -32,7 +32,7 @@ It's very likely the case that the number of cases exceeded 1000 during the week
 Data has been extracted from the [Datadista repository](https://github.com/datadista/datasets), in CSV format. This is the table of data available until March 6th:
 
 ```{r tabla, echo=FALSE, message=FALSE}
-data.3.6 <- data[1:9,]
+data.3.6 <- data[1:11,]
 data.3.6
 data.3.6$ds <- as.Date( data.3.6$fecha, "%Y-%m-%d")
 data.3.6$y <- data.3.6$casos
@@ -65,15 +65,47 @@ This linear model already predicted between 350 and 400 infected on the Saturday
 
 Prophet offers two options of growth. Linear is the default used above. Let's try the other version, logistic.
 
-```{r logistic}
-data.3.6$cap <- rep(45000000,9)
+```{r logistic, echo=FALSE}
+data.3.6$cap <- 45000000
+data.3.6$floor <- 1
 model.logistic <- prophet(data.3.6, growth='logistic')
-future.logistic <- make_future_dataframe(model.logistic, periods=3)
+future.logistic <- make_future_dataframe(model.logistic, periods=5)
+future.logistic$cap <- 45000000
+future.logistic$floor <- 1
 forecast.logistic <- predict(model.logistic,future.logistic)
 forecast.logistic$ds <- as.Date(forecast.logistic$ds, "%Y-%m-%d")
-ggplot(forecast.logistic,aes(x=ds)) + geom_point(data=forecast.logistic,aes(y=yhat,color="Predicted"))+ geom_point(data=forecast.logistic,aes(y=yhat_upper,color="Upper limit")) + geom_point(data=data.3.6,aes(y=y,color="Real")) + theme_economist()
+ggplot(forecast.logistic,aes(x=ds)) + geom_point(data=forecast.logistic,aes(y=yhat,color="Predicted"))+ geom_point(data=forecast.logistic,aes(y=yhat_upper,color="Upper limit")) + geom_point(data=data.3.6,aes(y=y,color="Actual")) + scale_y_log10() + theme_economist()
 
 ```
+
+Quite obviously, the logistic curve reflects quite well what happened, at least in the last few days, with upper limit and predicted values becoming increasingly closer.
+
+## Reality check against actual values
+
+As a matter of fact, this blackout during the weekend was not general, since the Ministry of Health maintains a channel open with journalists, and the values for these dates were revealed in that channel. These values were also [published under request by El Datadista](https://github.com/datadista/datasets/issues/16), as a matter of fact while I was writing this report. Let's then check predicted against real values next.
+
+```{r check, echo=FALSE}
+data.3.11 <- data[1:16,]
+data.3.11$Fecha <- as.Date( data.3.11$fecha, "%Y-%m-%d")
+ggplot(forecast.logistic,aes(x=ds)) + geom_point(data=forecast.logistic,aes(y=yhat,color="Predicted"))+ geom_point(data=forecast.logistic,aes(y=yhat_upper,color="Upper limit")) + geom_point(data=data.3.11,aes(x=Fecha,y=casos,color="Actual")) + scale_y_log10() + theme_economist()
+```
+
+The predicted number of cases slightly leads the real number of cases on the days of the (general public, not journalists) blackout. Let's see the real numbers in a table:
+
+```{r checktable,echo=FALSE}
+check <- data.frame( date = data.3.11$Fecha, actual = data.3.11$casos, predicted = forecast.logistic$yhat, difference = data.3.11$casos - forecast.logistic$yhat )
+check
+```
+
+This check comes with a small twist, too. While during March 6th and 7th the prediction yields higher values than those reported (although only to the press), the actual casses when the general public blackout ended are *higher* that the prediction, to the point that two days into the week of March 9th reported cases exceed predictions by more than 200.
+
+# Conclusions
+
+Transparency is of the utmost importance when dealing with a pandemic, and reporting accurate values, as well as putting in place the mechanism to be able to report them to the public, is very important.
+
+While some people might claim that the direction of the outbreak couldn't be predicted, this report shows that a relatively simple script could, in fact, do that. The code is available in the source of this article at [this GitHub repository](https://github.com/JJ/covid-reports/blob/master/filling-the-gaps.Rmd), with sources of data embedded in them.
+
+
 
 ## Reconocimientos
 
