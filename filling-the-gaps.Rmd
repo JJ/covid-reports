@@ -50,10 +50,30 @@ As it can be seen, there is a gap on February 29th and March 1st, which was the 
 | casos           | infected       |
 | ingresos_uci    | treated in ICU |
 | fallecimientos  | deceased       |
-| altas  | discharged |
-However, the rise in the previous days had been worrying, 
+| altas           | discharged     |
 
+However, the rise in the previous days had been worrying, so it might have been sensible to publish data on that Saturday so that citizens could assess their risk when attending crowded environments.
 
+We will use [Prophet](https://facebook.github.io/prophet/) to create a model and compute these numbers. Number of cases predicted are below, along with the higher and lower bound.
+
+```{r plot, echo=FALSE}
+forecast$ds <- as.Date(forecast$ds, "%Y-%m-%d")
+ggplot(forecast,aes(x=ds)) + geom_point(data=forecast,aes(y=yhat,color="Predicted"))+ geom_point(data=forecast,aes(y=yhat_upper,color="Upper limit")) + geom_point(data=data.3.6,aes(y=y,color="Real")) + theme_economist()
+```
+
+This linear model already predicted between 350 and 400 infected on the Saturday, and closer to 400 on the Sunday; however, this model predicts values that are already under known cases (in green) on Friday, so it is a very optimistic one. We need to try another, non-linear, model.
+
+Prophet offers two options of growth. Linear is the default used above. Let's try the other version, logistic.
+
+```{r logistic}
+data.3.6$cap <- rep(45000000,9)
+model.logistic <- prophet(data.3.6, growth='logistic')
+future.logistic <- make_future_dataframe(model.logistic, periods=3)
+forecast.logistic <- predict(model.logistic,future.logistic)
+forecast.logistic$ds <- as.Date(forecast.logistic$ds, "%Y-%m-%d")
+ggplot(forecast.logistic,aes(x=ds)) + geom_point(data=forecast.logistic,aes(y=yhat,color="Predicted"))+ geom_point(data=forecast.logistic,aes(y=yhat_upper,color="Upper limit")) + geom_point(data=data.3.6,aes(y=y,color="Real")) + theme_economist()
+
+```
 
 ## Reconocimientos
 
