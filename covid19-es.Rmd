@@ -1,7 +1,7 @@
 ---
 title: "Evolución casos COVID19 en España"
 author: "J. J. Merelo"
-date: "16 de marzo de 2020"
+date: "17 de marzo de 2020"
 output:
   html_document: default
   pdf_document: default
@@ -28,13 +28,13 @@ write.csv(data,'covid-19-es.csv')
 
 Trazando los casos nuevos
 
-```{r casos}
+```{r casos, warning=FALSE}
 ggplot(data,aes(x=Fecha,y=Casos.nuevos),na.rm = TRUE)+geom_line()+theme_tufte()
 ```
 
 Las nuevas altas por día
 
-```{r altas}
+```{r altas, warning=FALSE}
 ggplot(data,aes(x=Fecha,y=Altas.nuevas),na.rm = TRUE)+geom_line()+theme_tufte()
 ```
 
