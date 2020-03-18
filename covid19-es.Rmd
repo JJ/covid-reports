@@ -26,11 +26,12 @@ write.csv(data,'covid-19-es.csv')
 
 ## Análisis inicial
 
-Trazando los casos nuevos
+Una de los parámetros que es interesante conocer es el cambio con respecto al día anterior. Empezaremos por los casos nuevos
 
 ```{r casos, warning=FALSE}
-ggplot(data,aes(x=Fecha,y=Casos.nuevos),na.rm = TRUE)+geom_line()+theme_tufte()
+ggplot(data,aes(x=Fecha,y=Casos.nuevos),na.rm = TRUE)+geom_line()+geom_point()+theme_tufte()
 ```
+
 
 Las nuevas altas por día
 
@@ -50,6 +51,13 @@ Esta es la autocorrelación de casos, es decir, la relación que hay entre los c
 ```{r acfcasos}
 acf(data$casos)
 ```
+
+Pero también puede ser interesante ver cuál es la autocorrelación de esta serie temporal, como influyen los casos cada día en los siguientes.
+
+```{r acfcasosnuevos}
+acf(data$Casos.nuevos)
+```
+
 
 Esta es la correlación entre casos y fallecimientos
 ```{r ccffallecimientos}
