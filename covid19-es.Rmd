@@ -1,7 +1,7 @@
 ---
 title: "Evolución casos COVID19 en España"
 author: "J. J. Merelo"
-date: "18 de marzo de 2020"
+date: "19 de marzo de 2020"
 output:
   html_document: default
   pdf_document: default
@@ -51,7 +51,6 @@ Una de los parámetros que es interesante conocer es el cambio con respecto al d
 ggplot(data,aes(x=Fecha,y=Casos.nuevos),na.rm = TRUE)+geom_line()+geom_point()+theme_tufte()
 ```
 
-
 Las nuevas altas por día
 
 ```{r altas, warning=FALSE}
@@ -65,6 +64,14 @@ Los nuevos fallecimientos por día
 ggplot(data,aes(x=Fecha,y=Fallecimientos.nuevos),na.rm = TRUE)+geom_line()+theme_tufte()
 ```
 
+Desde mediados de marzo se publican también las hospitalizaciones
+
+```{r hospitalizaciones}
+ggplot(data,aes(x=Fecha,y=hospitalizados),na.rm = TRUE)+geom_point()+geom_line()+theme_tufte()
+```
+
+## Autocorrelaciones
+
 Esta es la autocorrelación de casos, es decir, la relación que hay entre los casos un día y el siguiente:
 
 ```{r acfcasos}
@@ -76,7 +83,6 @@ Pero también puede ser interesante ver cuál es la autocorrelación de esta ser
 ```{r acfcasosnuevos}
 acf(data$Casos.nuevos,na.action = na.pass)
 ```
-
 
 Esta es la correlación entre casos y fallecimientos
 ```{r ccffallecimientos}
