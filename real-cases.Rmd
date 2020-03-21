@@ -25,6 +25,19 @@ save(world.data,file="covid19-world.Rda")
 write.csv(world.data,'covid19-world.csv')
 ```
 
+# Introduction
+
+Transparency in the management of a critical situation such as the one we are living with coronavirus is essential. Not only for the peace of mind of the population, but also for being able to take informed decisions on the allocation of resources for those affected with the pandemia.
+
+Knowing the real number of infected people and their evolution is one of those things, and countries have reacted differently to this challente. From testing only those with symtomps and that self-select and call up health services, to testing massively, as it has been done in South Korea [@SHIM2020], Germany, or in Japan, at least with people repatriated from affected areas [@nishiura2020rate]. This might be the reason why these countries report a lower Case Fatality Ratio (CFR) than in other cases.
+
+```{r cfr,echo=FALSE}
+library(dplyr)
+world.data$CFR <- world.data$Deaths / world.data$Cases
+world.data.filtered.1k <- world.data[ world.data$Cases > 1000, ]
+world.data.filtered.1k %>% group_by(Country.Region) %>% summarize( max.CFR = max(CFR), min.CFR = min(CFR)) %>% arrange( - max.CFR)
+```
+
 
 ## Acknowledgements
 
