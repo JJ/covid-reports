@@ -67,6 +67,20 @@ ccf(KO.data$New.Cases, DE.data$New.Deaths,lag.max = 28)
 
 There is a very strong positive correlation with a lag of 10 days, as well as a very strong negative correlation with a lag of 12 days and 9 days; same-day correlation is also strong, but not as high as in the case of Korea.
 
+Let's try several more countries, Norway and Malaysia, chosen also by their low CCF
+```{r acf.mn,echo=FALSE,message=FALSE}
+NO.data <- world.data[world.data$Country.Region=="Norway",]
+ccf(NO.data$New.Cases, NO.data$New.Deaths,lag.max = 28)
+DK.data <- world.data[world.data$Country.Region=="Denmark",]
+ccf(DK.data$New.Cases, DK.data$New.Deaths,lag.max = 28)
+MY.data <- world.data[world.data$Country.Region=="Malaysia",]
+ccf(MY.data$New.Cases, MY.data$New.Deaths,lag.max = 28)
+```
+
+The two top ones, for Norway and Denmark, show again the strong correlation (or anti-) in the -12:-9 days area. In Malaysia the correlation is totally different, with a very strong same-day correlation, and then deaths preceding cases by 4 days, probably indicating an onslaught of testing when figures are published.
+
+Taking this into account, we will try to find an estimate of the IFR by using the ratio of deaths to cases reported 10 days before, using also 3-day aggregates.
+
 ## Acknowledgements
 
 This file has been generatd from data published by  [Datadista](https://github.com/datadista/datasets) as well as [JHU CSSE](https://github.com/CSSEGISandData/COVID-19). It's data-driven and it can be re-generated from the script in  [this repository](https://github.com/JJ/covid-reports).
