@@ -31,13 +31,16 @@ Transparency in the management of a critical situation such as the one we are li
 
 Knowing the real number of infected people and their evolution is one of those things, and countries have reacted differently to this challente. From testing only those with symtomps and that self-select and call up health services, to testing massively, as it has been done in South Korea [@SHIM2020], Germany, or in Japan, at least with people repatriated from affected areas [@nishiura2020rate]. This might be the reason why these countries report a lower Case Fatality Ratio (CFR) than in other cases.
 
-```{r cfr,echo=FALSE}
+Let's first check what's the reported case fatality ratio for different regions in the world, those that have at least 1000 cases. Max and min CFR are computed over the rows in which there were already 1000 cases.
+
+```{r cfr,echo=FALSE,message=false}
 library(dplyr)
 world.data$CFR <- world.data$Deaths / world.data$Cases
 world.data.filtered.1k <- world.data[ world.data$Cases > 1000, ]
-world.data.filtered.1k %>% group_by(Country.Region) %>% summarize( max.CFR = max(CFR), min.CFR = min(CFR)) %>% arrange( - max.CFR)
+world.data.filtered.1k %>% group_by(Country.Region) %>% summarize( max.CFR = max(CFR), min.CFR = min(CFR), last.CFR = last(CFR))  %>% arrange( - last.CFR)
 ```
 
+The countries with the lowest CFR is in the area of 0.3%, with some cases even below that. 
 
 ## Acknowledgements
 
