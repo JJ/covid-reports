@@ -21,6 +21,8 @@ world.deaths <- read.csv(paste0(base,"Deaths.csv"), sep=',',head=T)
 world.deaths <- gather( world.deaths, Date, Deaths, X1.22.20:X3.20.20)
 world.data <- merge(world.confirmed,world.deaths,by=c("Province.State","Country.Region","Lat", "Long", "Date"))
 world.data$Date <- as.Date(world.data$Date,"X%m.%d.%y")
+world.data$New.Cases <-  c( NA, diff(world.data$Cases))
+world.data$New.Deaths <-  c( NA, diff(world.data$Deaths))
 save(world.data,file="covid19-world.Rda")
 write.csv(world.data,'covid19-world.csv')
 ```
@@ -33,14 +35,37 @@ Knowing the real number of infected people and their evolution is one of those t
 
 Let's first check what's the reported case fatality ratio for different regions in the world, those that have at least 1000 cases. Max and min CFR are computed over the rows in which there were already 1000 cases.
 
-```{r cfr,echo=FALSE,message=false}
+```{r cfr,echo=FALSE,message=FALSE}
 library(dplyr)
 world.data$CFR <- world.data$Deaths / world.data$Cases
 world.data.filtered.1k <- world.data[ world.data$Cases > 1000, ]
 world.data.filtered.1k %>% group_by(Country.Region) %>% summarize( max.CFR = max(CFR), min.CFR = min(CFR), last.CFR = last(CFR))  %>% arrange( - last.CFR)
 ```
 
-The countries with the lowest CFR is in the area of 0.3%, with some cases even below that. 
+The countries with the lowest CFR have peaks in the area of 0.3%, with some cases even below that; China and Germany have very low last reported CFRs. The two mentioned countries, South Korea and Germany, have a current CFR in the 0.2-0.8% area. This constrasts with the US, which has the highest current CFR at 5%, similar to Italy, the UK and Netherlands.
+
+But the case fatality ratio does not give the whole picture. Some might have been tested one day before, other even post-mortem. Another quantity, the infected fatality ratio, will give a more accurate scenario of what's happening. But in absence of individualized data, we need to deduce that from published data, by calculating correlations between cases and deaths. We'll do this next.
+
+# Correlation between cases and deaths.
+
+What we need to know is, approximately, what's the expected time it transcurs from infection to the final outcome. We'll zero in on Germany and South Korea for this. Let's plot correlation first for South Korea
+
+```{r acf.ko,echo=FALSE,message=FALSE}
+KO.data <- world.data[world.data$Country.Region=="Korea, South",]
+ccf(KO.data$New.Cases, KO.data$New.Deaths,lag.max = 28)
+
+```
+
+There's negative correlation 12 and 2 days before, as well as positive same-day and -3 days. That is, lower than average cases will lead to higher-than-average deaths 12 days later. 
+
+Let's do the same for Germany:
+```{r acf.de,echo=FALSE,message=FALSE}
+DE.data <- world.data[world.data$Country.Region=="Germany",]
+ccf(KO.data$New.Cases, DE.data$New.Deaths,lag.max = 28)
+
+```
+
+There is a very strong positive correlation with a lag of 10 days, as well as a very strong negative correlation with a lag of 12 days and 9 days; same-day correlation is also strong, but not as high as in the case of Korea.
 
 ## Acknowledgements
 
