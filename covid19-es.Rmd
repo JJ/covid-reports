@@ -68,9 +68,10 @@ Mientras que hasta el día 20 aparecía una cierta periodicidad, a partir del d�
 
 Los nuevos fallecimientos por día
 
-```{r fallecimientos}
+```{r fallecimientos, message=FALSE}
 ggplot(data,aes(x=Fecha,y=Fallecimientos.nuevos),na.rm = TRUE)+geom_line()+theme_tufte()
 ```
+
 que también aparentan tener una cierta periodicidad, como se puede ver en el siguiente gráfico de correlación
 
 ```{r acf.fallecimientos.nuevos}
