@@ -46,6 +46,18 @@ The countries with the lowest CFR have peaks in the area of 0.3%, with some case
 
 But the case fatality ratio does not give the whole picture. Some might have been tested one day before, other even post-mortem. Another quantity, the infected fatality ratio, will give a more accurate scenario of what's happening. But in absence of individualized data, we need to deduce that from published data, by calculating correlations between cases and deaths. We'll do this next.
 
+```{r cfrevol,echo=FALSE,message=FALSE}
+world.data.filtered.1k$Territory <- paste(world.data.filtered.1k$Province.State, world.data.filtered.1k$Country.Region)
+ggplot(world.data.filtered.1k, aes(x=Date,y=CFR,color=Territory,group=Territory))+geom_line()+theme_tufte()+theme(legend.position = "bottom")
+```
+This chart, that shows the evolution of the CFR once 1000 reached in the territories where they have, shows roughly two groups. In one, the CFR remains roughly constant after initial growth; the other shows unlimited growth after the beginning. To exemplify these behaviours, let's show Germany vs. Italy:
+
+```{r de.it,echo=FALSE,message=FALSE}
+just.de.it <- world.data.filtered.1k[ world.data.filtered.1k$Country.Region == "Germany" | world.data.filtered.1k$Country.Region == "Italy",]
+ggplot(just.de.it, aes(x=Date,y=CFR,color=Territory,group=Territory))+geom_line()+theme_tufte()+theme(legend.position = "bottom")
+```
+While the CFR remains low, and more or less constant, in Germany, the one in Italy grows as just the cases that enter hospital are tested for coronavirus, yielding an ever-increasing CFR, which can't simply be true.
+
 # Correlation between cases and deaths.
 
 What we need to know is, approximately, what's the expected time it transcurs from infection to the final outcome. We'll zero in on Germany and South Korea for this. Let's plot correlation first for South Korea
