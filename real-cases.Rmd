@@ -13,6 +13,8 @@ abstract:
 
 ```{r setup, include=FALSE}
 library(tidyr)
+library(ggplot2)
+library(ggthemes)
 
 base <- "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-"
 world.confirmed <- read.csv(paste0(base,"Confirmed.csv"), sep=',',head=T)
@@ -91,7 +93,18 @@ ccf(MY.data$New.Cases, MY.data$New.Deaths,lag.max = 28)
 
 The two top ones, for Norway and Denmark, show again the strong correlation (or anti-) in the -12:-9 days area. In Malaysia the correlation is totally different, with a very strong same-day correlation, and then deaths preceding cases by 4 days, probably indicating an onslaught of testing when figures are published.
 
+It would be interesting to consider here Iceland. Although it's a small country, it's also performed extensive testing on their citizens ^[As published, for instance, in this [Iceland Review article](https://www.icelandreview.com/society/icelands-extensive-covid-19-screenings-indicate-virus-is-not-yet-widespread/)].
+
+```{r acf.id,echo=FALSE,message=FALSE}
+IS.data <- world.data[world.data$Country.Region=="Iceland",]
+ccf(IS.data$New.Cases, IS.data$New.Deaths,lag.max = 28)
+```
+
+In this case, correlation has been inverted, and deaths lead new cases because testing has literally lagged behind deaths. Although this is not ideal, it's better than no testing, and a negative correlation between testing and deaths is clearly observed at +5 days.
+
 Taking this into account, we will try to find an estimate of the IFR by using the ratio of deaths to cases reported 10 days before, using also 3-day aggregates.
+
+
 
 ## Acknowledgements
 
