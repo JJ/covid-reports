@@ -136,6 +136,13 @@ KO.data <- KO.data %>% ungroup() %>% mutate(Lagged.Rolling.New.Cases = lag(Rolli
 ggplot(KO.data,aes(x=Lagged.Rolling.New.Cases,y=Rolling.Sum.New.Deaths))+ geom_point()+geom_smooth(method='lm', formula= y~x)+theme_tufte()
 ```
 
+Let's create a linear model for this
+```{r ko.lm}
+KO.lm <- lm( Rolling.Sum.New.Deaths ~ Lagged.Rolling.New.Cases, data=KO.data)
+summary(KO.lm)
+```
+
+The estimation of the infected fatality rate would be, with a p value of 4e-6, 0.5172 in this case.
 
 
 ## Acknowledgements
