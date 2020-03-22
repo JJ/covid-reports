@@ -59,6 +59,7 @@ This chart, that shows the evolution of the CFR once 1000 reached in the territo
 just.de.it <- world.data.filtered.1k[ world.data.filtered.1k$Country.Region == "Germany" | world.data.filtered.1k$Country.Region == "Italy",]
 ggplot(just.de.it, aes(x=Date,y=CFR,color=Territory,group=Territory))+geom_line()+theme_tufte()+theme(legend.position = "bottom")
 ```
+
 While the CFR remains low, and more or less constant, in Germany, the one in Italy grows as just the cases that enter hospital are tested for coronavirus, yielding an ever-increasing CFR, which can't simply be true.
 
 # Correlation between cases and deaths.
@@ -77,7 +78,7 @@ Let's do the same for Germany:
 
 ```{r acf.de,echo=FALSE,message=FALSE}
 DE.data <- world.data[world.data$Country.Region=="Germany",]
-ccf(KO.data$New.Cases, DE.data$New.Deaths,lag.max = 28)
+ccf(DE.data$New.Cases, DE.data$New.Deaths,lag.max = 28)
 
 ```
 
@@ -124,3 +125,5 @@ KO.data$Rolling.Sum.New.Deaths <- roll_sum(KO.data$New.Deaths,3,fill=NA,align='r
 ## Acknowledgements
 
 This file has been generatd from data published by  [Datadista](https://github.com/datadista/datasets) as well as [JHU CSSE](https://github.com/CSSEGISandData/COVID-19). It's data-driven and it can be re-generated from the script in  [this repository](https://github.com/JJ/covid-reports).
+
+## References
