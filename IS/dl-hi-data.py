@@ -2,6 +2,7 @@
 
 import requests
 import re
+import json
 
 url = "https://e.infogram.com/8b33ac5e-6d56-40bc-8d3b-e6a6c941b94e"
 
@@ -13,4 +14,5 @@ else:
 
 scripts = re.search('<script.*>(.+)</script>', wholePage )
 json = re.search('window.infographicData=(.+);',scripts.group(1)).group(1)
-print(json)
+data = json.loads(json)
+print(data)
