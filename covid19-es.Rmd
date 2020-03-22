@@ -1,7 +1,7 @@
 ---
 title: "Evolución casos COVID19 en España"
 author: "J. J. Merelo"
-date: "21 de marzo de 2020"
+date: "22 de marzo de 2020"
 output:
   html_document: default
   pdf_document: default
@@ -64,11 +64,11 @@ Hay una curiosa periodicidad en este gráfico. Vamos a analizar la autocorrelaci
 acf(data$Altas.nuevas,na.action = na.pass)
 ```
 
-Mientras que hasta el día 20 aparecía una cierta periodicidad, a partir del día 21 prácticamente ha desaparecido.
+Mientras que hasta el día 20 aparecía una cierta periodicidad de unos dos días, a partir del día 21 prácticamente ha desaparecido. Hay una cierta correlación cada tres días, pero es muy débil.
 
 Los nuevos fallecimientos por día
 
-```{r fallecimientos, message=FALSE}
+```{r fallecimientos, message=FALSE, warning=FALSE}
 ggplot(data,aes(x=Fecha,y=Fallecimientos.nuevos),na.rm = TRUE)+geom_line()+theme_tufte()
 ```
 
@@ -78,9 +78,9 @@ que también aparentan tener una cierta periodicidad, como se puede ver en el si
 acf(data$Fallecimientos.nuevos,na.action = na.pass)
 ```
 
-Esta es de uno o incluso dos días, pero la situación puede cambiar en el futuro.
+Esta es de uno o incluso dos días, pero la situación puede cambiar en el futuro, aunque en los últimos días es bastante estable.
 
-Desde mediados de marzo se publican también las hospitalizaciones
+Desde mediados de marzo se publican también las hospitalizaciones, aunque de forma bastante irregular.
 
 ```{r hospitalizaciones}
 ggplot(data,aes(x=Fecha,y=hospitalizados),na.rm = TRUE)+geom_point()+geom_line()+theme_tufte()
