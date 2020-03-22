@@ -15,14 +15,16 @@ abstract:
 library(tidyr)
 library(ggplot2)
 library(ggthemes)
+library(dplyr)
 
 base <- "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-"
 world.confirmed <- read.csv(paste0(base,"Confirmed.csv"), sep=',',head=T)
-world.confirmed <- gather( world.confirmed, Date, Cases, X1.22.20:X3.20.20)
+world.confirmed <- gather( world.confirmed, Date, Cases, X1.22.20:X3.21.20)
 world.deaths <- read.csv(paste0(base,"Deaths.csv"), sep=',',head=T)
-world.deaths <- gather( world.deaths, Date, Deaths, X1.22.20:X3.20.20)
+world.deaths <- gather( world.deaths, Date, Deaths, X1.22.20:X3.21.20)
 world.data <- merge(world.confirmed,world.deaths,by=c("Province.State","Country.Region","Lat", "Long", "Date"))
 world.data$Date <- as.Date(world.data$Date,"X%m.%d.%y")
+world.data <- world.data %>% group_by(Province.State,Country.Region,Date) %>% arrange(Province.State,Country.Region, as.Date(Date))
 world.data$New.Cases <-  c( NA, diff(world.data$Cases))
 world.data$New.Deaths <-  c( NA, diff(world.data$Deaths))
 save(world.data,file="covid19-world.Rda")
@@ -73,6 +75,7 @@ ccf(KO.data$New.Cases, KO.data$New.Deaths,lag.max = 28)
 There's negative correlation 12 and 2 days before, as well as positive same-day and -3 days. That is, lower than average cases will lead to higher-than-average deaths 12 days later. 
 
 Let's do the same for Germany:
+
 ```{r acf.de,echo=FALSE,message=FALSE}
 DE.data <- world.data[world.data$Country.Region=="Germany",]
 ccf(KO.data$New.Cases, DE.data$New.Deaths,lag.max = 28)
@@ -100,10 +103,23 @@ IS.data <- world.data[world.data$Country.Region=="Iceland",]
 ccf(IS.data$New.Cases, IS.data$New.Deaths,lag.max = 28)
 ```
 
-In this case, correlation has been inverted, and deaths lead new cases because testing has literally lagged behind deaths. Although this is not ideal, it's better than no testing, and a negative correlation between testing and deaths is clearly observed at +5 days.
+In this case, correlation has been inverted, and deaths lead new cases because testing has literally lagged behind deaths. Although this is not ideal, it's better than no testing, and a negative correlation between testing and deaths is clearly observed at +5 days. Since, as the linked report indicates, those who test are self-selected largely (and, except for a few, test negative), this is probably the case.
 
 Taking this into account, we will try to find an estimate of the IFR by using the ratio of deaths to cases reported 10 days before, using also 3-day aggregates.
 
+# Computing rolling sums and correlations
+
+In order to find the relation between cases and deaths and thus the infection mortality rate, let's create a rolling window of three days for both, since the effect is spread over three days, and attempt correlation again. It might be that close positive and negative correlations eliminate each other, but since data for a day is spread over three days, we expect this will find bigger correlations, and then help us calculate ratios.
+
+```{r rolling, echo=FALSE}
+library(RcppRoll)
+KO.data$Province.State <- NULL
+KO.data$Country.Region <- NULL
+KO.data$Lat <- NULL
+KO.data$Long <- NULL
+KO.data$Rolling.Sum.New.Cases <- roll_sum(KO.data$New.Cases,3,fill=NA,align='right')
+KO.data$Rolling.Sum.New.Deaths <- roll_sum(KO.data$New.Deaths,3,fill=NA,align='right')
+```
 
 
 ## Acknowledgements
