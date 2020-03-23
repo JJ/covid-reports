@@ -1,7 +1,7 @@
 ---
-title: "Estimating the real number of cases of COVID19 in Spain and elsewhere"
+title: "Estimating the infection fatality rate by using time series correlations"
 author: "J. J. Merelo"
-date: "21 de marzo de 2020"
+date: "23 de marzo de 2020"
 bibliography: covid.bib
 urlcolor: blue
 output:
@@ -144,6 +144,55 @@ summary(KO.lm)
 
 The estimation of the infected fatality rate would be, with a p value of 4e-6, 0.5172 in this case.
 
+## Estimation of CFR for Germany
+
+Let's follow the same procedure for Germany, computing 3-day aggregates and correlation
+
+```{r rolling.DE, echo=FALSE}
+DE.data$Province.State <- NULL
+DE.data$Country.Region <- NULL
+DE.data$Lat <- NULL
+DE.data$Long <- NULL
+DE.data$Rolling.Sum.New.Cases <- roll_sum(DE.data$New.Cases,3,fill=NA,align='right')
+DE.data$Rolling.Sum.New.Deaths <- roll_sum(DE.data$New.Deaths,3,fill=NA,align='right')
+ccf(DE.data$Rolling.Sum.New.Cases, DE.data$Rolling.Sum.New.Deaths,lag.max = 31, na.action = na.pass)
+
+```
+The correlation in the case of Germany seems to start later than in the case of South Korea; we'll adjust the lag in the same way, using 8 days instead of 11 as in that case
+
+```{r lagged.DE, echo=FALSE}
+DE.data <- DE.data %>% ungroup() %>% mutate(Lagged.Rolling.New.Cases = lag(Rolling.Sum.New.Cases,8))
+ggplot(DE.data,aes(x=Lagged.Rolling.New.Cases,y=Rolling.Sum.New.Deaths))+ geom_point()+geom_smooth(method='lm', formula= y~x)+theme_tufte()
+```
+
+There are far more cases in the case of Germany, and the adjustment seems to be a bit better, but let's fit a linear model as in the case of South Korea.
+
+```{r de.lm}
+DE.lm <- lm( Rolling.Sum.New.Deaths ~ Lagged.Rolling.New.Cases, data=DE.data)
+summary(DE.lm)
+```
+
+The slope, at 2.72%, seems much higher than in the case of South Korea. This might be due to the fact that there might be some under-reporting of cases, something that is reinforced by the 3-days difference between the two countries. The intercept is not significant, however. If we try using the same delay as for South Korea
+
+```{r lagged.DE.11, echo=FALSE}
+DE.data.11 <- DE.data %>% ungroup() %>% mutate(Lagged.Rolling.New.Cases = lag(Rolling.Sum.New.Cases,11))
+ggplot(DE.data.11,aes(x=Lagged.Rolling.New.Cases,y=Rolling.Sum.New.Deaths))+ geom_point()+geom_smooth(method='lm', formula= y~x)+theme_tufte()
+DE.lm.11 <- lm( Rolling.Sum.New.Deaths ~ Lagged.Rolling.New.Cases, data=DE.data.11)
+summary(DE.lm.11)
+DE.data.5 <- DE.data %>% ungroup() %>% mutate(Lagged.Rolling.New.Cases = lag(Rolling.Sum.New.Cases,5))
+DE.lm.5 <- lm( Rolling.Sum.New.Deaths ~ Lagged.Rolling.New.Cases, data=DE.data.5)
+summary(DE.lm.5)
+```
+
+Linear models fit the slope for a lag of 11 and also 5; however, the intercept does not have a significant p value, which means that we can't really use it for projections. The fact that cases can't reliably predict deaths probably indicates that testing is not taking place as extensively as it appeared initially. Also, case fatality ratio is lower than infected fatality rate, which is probably an indicative either of underreporting of cases or underreporting of deaths. We should expect an IF similar to the one in Korea, however, it seems to be, as the slope of the case where delay is -5 days indicates, around 4 times as high.
+
+# Conclusions
+
+Different countries have different testing and reporting policies in the COVID-19 pandemia. Testing extensively and without a self-selection bias seems to be the best option; reporting all cases of deaths with persons that have been infected with the virus seems to be the best option too. South Korea seems to have followed these best practices, and in this case, the estimated time from infection to death seems to be around 11 days, and with this estimate, the infected fatality rate is 0.5172% against a CFR of 1.16%.
+
+In the case of Germany, the lag from reporting to death is around 5 days, estimated IFR for this delay 1.22%, with a CFR of 0.378%. Unlike in Korea, CFR < IFR. This probably indicates either lack of testing, or lack of reporting deahts, or maybe another, unknown, cause.
+
+At any rate, using correlations from raw time series, together with rolling sums, seems to be a valid methodology for estimating reliability in reporting by different countries and territories, as it allows us to discover inconsistencies in the time series, as well as possible errors in pandemia-tackling policies. As future work, we will try and use these IFR estimates to find out real infection rates for countries and territories where testing has not been so extensive.
 
 ## Acknowledgements
 
