@@ -1,7 +1,7 @@
 ---
 title: "Evolución casos COVID19 en España"
 author: "J. J. Merelo"
-date: "22 de marzo de 2020"
+date: "23 de marzo de 2020"
 output:
   html_document: default
   pdf_document: default
@@ -11,7 +11,6 @@ output:
 library(dplyr)
 library(ggplot2)
 library(ggthemes)
-library(prophet)
 data <- read.csv("https://raw.githubusercontent.com/datadista/datasets/master/COVID%2019/nacional_covid19.csv")
 data$Fecha <- as.Date( data$fecha, "%Y-%m-%d")
 data$salidas <- data$altas + data$fallecimientos
@@ -41,7 +40,7 @@ También la correlación
 ccf(data$casos,data$salidas,na.action = na.pass)
 ```
 
-Esta correlación indica que hay una correlación positiva entre casos en lags de -4 a 0; los casos preceden a las salidas hasta por 4 días, y luego una negativa entre salidas y casos entre 4 y 8 días. Esta última, difícil de interpretar.
+Esta correlación indica que hay una correlación positiva entre casos en lags de -4 a 0; los casos preceden a las salidas hasta por 4 días, y luego una negativa entre salidas y casos que era inicialmente entre 4 y 8 días, y ahora es entre 7 y 11 dias. Ni el desplazamiento ni la correlación negativa es fácil de interpretar.
 
 ## Análisis inicial
 
@@ -105,7 +104,7 @@ Esta es la correlación entre casos y fallecimientos
 ccf(data$casos,data$fallecimientos,na.action = na.pass)
 ```
 
-Parece que el el *lag* es uno o dos días.
+Parece que el el *lag*, que era inicalmente entre uno y dos días, se ha ampliado ahora hasta los 4 días.
 
 Y entre casos y curaciones
 
@@ -141,6 +140,8 @@ O quizás el dato más revelador:
 ```{r ucifallecimientos}
 ccf(data$Uci.nuevos,data$Fallecimientos.nuevos,na.action = na.pass)
 ```
+
+Los fallecimientos predicen ingresos en la UCI durante los dos días siguinetes, y al revés. Aparentemente, esa es la duración de tiempo en la UCI.
 
 ## Reconocimientos
 
