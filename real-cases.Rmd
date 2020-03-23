@@ -2,13 +2,19 @@
 title: "Estimating the infection fatality rate by using time series correlations"
 author: "J. J. Merelo"
 date: "23 de marzo de 2020"
-bibliography: covid.bib
-urlcolor: blue
 output:
-  html_document: default
   pdf_document: default
-abstract:
-  In a pandemic such as this one, it's impossible to ascertain the real number of cases except by testing the whole population; this leads to the problem of different death rates for different countries, but mainly to the more poignant problem of allocating resources for urgent and grave cases or assessing the local peak of the epidemic. In this report we will try to find out an estimate of the death rate by looking at the countries that have made a more extensive testing, like Germany or South Korea. We will first try to estimate the time from onset to outcome, and from that, we will try and give an estimate of cases (and possible deaths) in other countries where testing has not been so extensive, like Spain.
+  html_document: default
+bibliography: covid.bib
+abstract: In a pandemic such as this one, it's impossible to ascertain the real number
+  of cases except by testing the whole population; this leads to the problem of different
+  death rates for different countries, but mainly to the more poignant problem of
+  allocating resources for urgent and grave cases or assessing the local peak of the
+  epidemic. In this report we will try to find out an estimate of the death rate by
+  looking at the countries that have made a more extensive testing, like Germany or
+  South Korea. We will first try to estimate the time from onset to outcome, and from
+  that, we will try and find out inconsistencies in reporting or in these time series.
+urlcolor: blue
 ---
 
 ```{r setup, include=FALSE}
@@ -85,6 +91,7 @@ ccf(DE.data$New.Cases, DE.data$New.Deaths,lag.max = 28)
 There is a very strong positive correlation with a lag of 10 days, as well as a very strong negative correlation with a lag of 12 days and 9 days; same-day correlation is also strong, but not as high as in the case of Korea.
 
 Let's try several more countries, Norway and Malaysia, chosen also by their low CCF
+
 ```{r acf.mn,echo=FALSE,message=FALSE}
 NO.data <- world.data[world.data$Country.Region=="Norway",]
 ccf(NO.data$New.Cases, NO.data$New.Deaths,lag.max = 28)
@@ -122,6 +129,7 @@ KO.data$Rolling.Sum.New.Deaths <- roll_sum(KO.data$New.Deaths,3,fill=NA,align='r
 ```
 
 Let's compute again correlations, using these rolling averages
+
 ```{r acf.ko.rolling,echo=FALSE,message=FALSE}
 ccf(KO.data$Rolling.Sum.New.Cases, KO.data$Rolling.Sum.New.Deaths,lag.max = 31, na.action = na.pass)
 
@@ -137,6 +145,7 @@ ggplot(KO.data,aes(x=Lagged.Rolling.New.Cases,y=Rolling.Sum.New.Deaths))+ geom_p
 ```
 
 Let's create a linear model for this
+
 ```{r ko.lm}
 KO.lm <- lm( Rolling.Sum.New.Deaths ~ Lagged.Rolling.New.Cases, data=KO.data)
 summary(KO.lm)
@@ -158,6 +167,7 @@ DE.data$Rolling.Sum.New.Deaths <- roll_sum(DE.data$New.Deaths,3,fill=NA,align='r
 ccf(DE.data$Rolling.Sum.New.Cases, DE.data$Rolling.Sum.New.Deaths,lag.max = 31, na.action = na.pass)
 
 ```
+
 The correlation in the case of Germany seems to start later than in the case of South Korea; we'll adjust the lag in the same way, using 8 days instead of 11 as in that case
 
 ```{r lagged.DE, echo=FALSE}
