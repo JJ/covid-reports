@@ -32,9 +32,9 @@ write.csv(world.data,'covid19-world.csv')
 
 # Introduction
 
-Transparency in the management of a critical situation such as the one we are living with coronavirus is essential. Not only for the peace of mind of the population, but also for being able to take informed decisions on the allocation of resources for those affected with the pandemia.
+Transparency in the management of a critical situation such as the one we are living with coronavirus is essential. Not only for the peace of mind of the population, but also for being able to take informed decisions on the allocation of resources for those affected with the pandemic.
 
-Knowing the real number of infected people and their evolution is one of those things, and countries have reacted differently to this challente. From testing only those with symtomps and that self-select and call up health services, to testing massively, as it has been done in South Korea [@SHIM2020], Germany, or in Japan, at least with people repatriated from affected areas [@nishiura2020rate]. This might be the reason why these countries report a lower Case Fatality Ratio (CFR) than in other cases.
+Knowing the real number of infected people and their evolution is one of those things, and countries have reacted differently to this challenge. From testing only those with symptoms and that self-select and call up health services, to testing massively, as it has been done in South Korea [@SHIM2020], Germany, or in Japan, at least with people repatriated from affected areas [@nishiura2020rate]. This might be the reason why these countries report a lower Case Fatality Ratio (CFR) than in other cases.
 
 Let's first check what's the reported case fatality ratio for different regions in the world, those that have at least 1000 cases. Max and min CFR are computed over the rows in which there were already 1000 cases.
 
@@ -45,7 +45,7 @@ world.data.filtered.1k <- world.data[ world.data$Cases > 1000, ]
 world.data.filtered.1k %>% group_by(Country.Region) %>% summarize( max.CFR = max(CFR), min.CFR = min(CFR), last.CFR = last(CFR))  %>% arrange( - last.CFR)
 ```
 
-The countries with the lowest CFR have peaks in the area of 0.3%, with some cases even below that; China and Germany have very low last reported CFRs. The two mentioned countries, South Korea and Germany, have a current CFR in the 0.2-0.8% area. This constrasts with the US, which has the highest current CFR at 5%, similar to Italy, the UK and Netherlands.
+The countries with the lowest CFR have peaks in the area of 0.3%, with some cases even below that; China and Germany have very low last reported Cf Rs. The two mentioned countries, South Korea and Germany, have a current CFR in the 0.2-0.8% area. This contrasts with the US, which has the highest current CFR at 5%, similar to Italy, the UK and Netherlands.
 
 But the case fatality ratio does not give the whole picture. Some might have been tested one day before, other even post-mortem. Another quantity, the infected fatality ratio, will give a more accurate scenario of what's happening. But in absence of individualized data, we need to deduce that from published data, by calculating correlations between cases and deaths. We'll do this next.
 
@@ -53,7 +53,7 @@ But the case fatality ratio does not give the whole picture. Some might have bee
 world.data.filtered.1k$Territory <- paste(world.data.filtered.1k$Province.State, world.data.filtered.1k$Country.Region)
 ggplot(world.data.filtered.1k, aes(x=Date,y=CFR,color=Territory,group=Territory))+geom_line()+theme_tufte()+theme(legend.position = "bottom")
 ```
-This chart, that shows the evolution of the CFR once 1000 reached in the territories where they have, shows roughly two groups. In one, the CFR remains roughly constant after initial growth; the other shows unlimited growth after the beginning. To exemplify these behaviours, let's show Germany vs. Italy:
+This chart, that shows the evolution of the CFR once 1000 reached in the territories where they have, shows roughly two groups. In one, the CFR remains roughly constant after initial growth; the other shows unlimited growth after the beginning. To exemplify these behaviors, let's show Germany vs. Italy:
 
 ```{r de.it,echo=FALSE,message=FALSE}
 just.de.it <- world.data.filtered.1k[ world.data.filtered.1k$Country.Region == "Germany" | world.data.filtered.1k$Country.Region == "Italy",]
@@ -64,7 +64,7 @@ While the CFR remains low, and more or less constant, in Germany, the one in Ita
 
 # Correlation between cases and deaths.
 
-What we need to know is, approximately, what's the expected time it transcurs from infection to the final outcome. We'll zero in on Germany and South Korea for this. Let's plot correlation first for South Korea
+What we need to know is, approximately, what's the expected time it elapses from infection to the final outcome. We'll zero in on Germany and South Korea for this. Let's plot correlation first for South Korea
 
 ```{r acf.ko,echo=FALSE,message=FALSE}
 KO.data <- world.data[world.data$Country.Region=="Korea, South",]
@@ -184,18 +184,18 @@ DE.lm.5 <- lm( Rolling.Sum.New.Deaths ~ Lagged.Rolling.New.Cases, data=DE.data.5
 summary(DE.lm.5)
 ```
 
-Linear models fit the slope for a lag of 11 and also 5; however, the intercept does not have a significant p value, which means that we can't really use it for projections. The fact that cases can't reliably predict deaths probably indicates that testing is not taking place as extensively as it appeared initially. Also, case fatality ratio is lower than infected fatality rate, which is probably an indicative either of underreporting of cases or underreporting of deaths. We should expect an IF similar to the one in Korea, however, it seems to be, as the slope of the case where delay is -5 days indicates, around 4 times as high.
+Linear models fit the slope for a lag of 11 and also 5; however, the intercept does not have a significant p value, which means that we can't really use it for projections. The fact that cases can't reliably predict deaths probably indicates that testing is not taking place as extensively as it appeared initially. Also, case fatality ratio is lower than infected fatality rate, which is probably an indicative either of under-reporting of cases or under-reporting of deaths. We should expect an IF similar to the one in Korea, however, it seems to be, as the slope of the case where delay is -5 days indicates, around 4 times as high.
 
 # Conclusions
 
-Different countries have different testing and reporting policies in the COVID-19 pandemia. Testing extensively and without a self-selection bias seems to be the best option; reporting all cases of deaths with persons that have been infected with the virus seems to be the best option too. South Korea seems to have followed these best practices, and in this case, the estimated time from infection to death seems to be around 11 days, and with this estimate, the infected fatality rate is 0.5172% against a CFR of 1.16%.
+Different countries have different testing and reporting policies in the COVID-19 pandemic. Testing extensively and without a self-selection bias seems to be the best option; reporting all cases of deaths with persons that have been infected with the virus seems to be the best option too. South Korea seems to have followed these best practices, and in this case, the estimated time from infection to death seems to be around 11 days, and with this estimate, the infected fatality rate is 0.5172% against a CFR of 1.16%.
 
-In the case of Germany, the lag from reporting to death is around 5 days, estimated IFR for this delay 1.22%, with a CFR of 0.378%. Unlike in Korea, CFR < IFR. This probably indicates either lack of testing, or lack of reporting deahts, or maybe another, unknown, cause.
+In the case of Germany, the lag from reporting to death is around 5 days, estimated IFR for this delay 1.22%, with a CFR of 0.378%. Unlike in Korea, CFR < IFR. This probably indicates either lack of testing, or lack of reporting deaths, or maybe another, unknown, cause.
 
-At any rate, using correlations from raw time series, together with rolling sums, seems to be a valid methodology for estimating reliability in reporting by different countries and territories, as it allows us to discover inconsistencies in the time series, as well as possible errors in pandemia-tackling policies. As future work, we will try and use these IFR estimates to find out real infection rates for countries and territories where testing has not been so extensive.
+At any rate, using correlations from raw time series, together with rolling sums, seems to be a valid methodology for estimating reliability in reporting by different countries and territories, as it allows us to discover inconsistencies in the time series, as well as possible errors in pandemic-tackling policies. As future work, we will try and use these IFR estimates to find out real infection rates for countries and territories where testing has not been so extensive.
 
 ## Acknowledgements
 
-This file has been generatd from data published by  [Datadista](https://github.com/datadista/datasets) as well as [JHU CSSE](https://github.com/CSSEGISandData/COVID-19). It's data-driven and it can be re-generated from the script in  [this repository](https://github.com/JJ/covid-reports).
+This file has been generated from data published by [JHU CSSE](https://github.com/CSSEGISandData/COVID-19). It's data-driven and it can be re-generated from the script in  [this repository](https://github.com/JJ/covid-reports).
 
 ## References
