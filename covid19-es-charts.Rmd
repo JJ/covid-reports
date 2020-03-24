@@ -1,11 +1,16 @@
 ---
-title: "Evolución casos COVID19 en España: unos gráficos"
+title: "Evolución casos COVID19 en España en unos gráficos"
 author: "J. J. Merelo"
 date: "24 de marzo de 2020"
 output:
   html_document: default
   pdf_document: default
 ---
+
+Este artículo es una actualización diaria de la evolución de los casos de COVID-19 en España, con datos oficiales del Ministerio de Sanidad recogidos por [el Datadista](https://github.com/datadista/datasets). Sucede a [este artículo](https://rpubs.com/jjmerelo/585182), que se deja de publicar a 24 de marzo de 2020.
+
+
+
 
 ```{r setup, include=FALSE}
 library(dplyr)
@@ -19,6 +24,7 @@ data$y <- data$casos
 data$Casos.nuevos <- c( NA, diff(data$casos))
 data$Altas.nuevas <- c( NA, diff(data$altas))
 data$Fallecimientos.nuevos <- c( NA, diff(data$fallecimientos))
+data$Hospitalizaciones.nuevas <- c( NA, diff(data$hospitalizados))
 data$Uci.nuevos <- c( NA, diff(data$ingresos_uci))
 save(data,file="covid-19-es.Rda")
 write.csv(data,'covid-19-es.csv')
@@ -53,16 +59,26 @@ Las nuevas altas por día
 ggplot(data,aes(x=Fecha,y=Altas.nuevas),na.rm = TRUE)+geom_line()+theme_tufte()
 ```
 
-Los nuevos fallecimientos por día
+Dado que parece haber un cierto retraso en reportar los casos, realizamos la media de tres días para suavizar la curva
 
-```{r fallecimientos, message=FALSE, warning=FALSE}
-ggplot(data,aes(x=Fecha,y=Fallecimientos.nuevos),na.rm = TRUE)+geom_line()+theme_tufte()
+```{r altas.suaves, warning=FALSE}
+library(RcppRoll)
+data$Altas.Avg.3 <- roll_mean(ifelse(is.na(data$Altas.nuevas),0,data$Altas.nuevas),3,fill=NA,align='right')
+ggplot(data,aes(x=Fecha),na.rm = TRUE)+geom_line(aes(y=Altas.nuevas,color="Dato"))+geom_line(aes(y=Altas.Avg.3,color='Media a 3'))+theme_tufte()
 ```
 
-Desde mediados de marzo se publican también las hospitalizaciones, aunque de forma bastante irregular.
+Los nuevos fallecimientos por día, junto con la media a 3 días
 
-```{r hospitalizaciones}
+```{r fallecimientos, message=FALSE, warning=FALSE}
+data$Decesos.Avg.3 <- roll_mean(ifelse(is.na(data$Fallecimientos.nuevos),0,data$Fallecimientos.nuevos),3,fill=NA,align='right')
+ggplot(data,aes(x=Fecha))+geom_line(aes(y=Fallecimientos.nuevos, color='Dato'))+geom_line(aes(y=Decesos.Avg.3, color='Media a 3'))+theme_tufte()
+```
+
+Desde mediados de marzo se publican también las hospitalizaciones, aunque de forma bastante irregular. Primero vemos los números absolutos, y luego las nuevas por día
+
+```{r hospitalizaciones, warning=FALSE}
 ggplot(data,aes(x=Fecha,y=hospitalizados),na.rm = TRUE)+geom_point()+geom_line()+theme_tufte()
+ggplot(data,aes(x=Fecha,y=Hospitalizaciones.nuevas),na.rm = TRUE)+geom_point()+geom_line()+theme_tufte()
 ```
 
 
