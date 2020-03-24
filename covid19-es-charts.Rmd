@@ -1,5 +1,5 @@
 ---
-title: "Evolución casos COVID19 en España"
+title: "Evolución casos COVID19 en España: unos gráficos"
 author: "J. J. Merelo"
 date: "24 de marzo de 2020"
 output:
@@ -35,12 +35,9 @@ ggplot(data,aes(x=Fecha))+geom_line(aes(y=casos,color="Casos"))+geom_line(aes(y=
 
 Cabe notar que las primeras salidas no se dieron hasta pasar más de dos semanas desde los primeros casos, lo que posiblemente quiere decir que hay muchas altas que no se están teniendo en cuenta (o fallecimientos).
 
-También la correlación
-```{r casossalidascf}
-ccf(data$casos,data$salidas,na.action = na.pass)
-```
+Representamos también de forma gráfica y animada la evolución de los casos totales (casos - altas - decesos). Cabe notar que muchas altas no se anotarán ni se publicarán, ya que los informes recogen sólo las altas hospitalarias.
 
-Esta correlación indica que hay una correlación positiva entre casos en lags de -4 a 0; los casos preceden a las salidas hasta por 4 días, y luego una negativa entre salidas y casos que era inicialmente entre 4 y 8 días, y ahora es entre 7 y 11 dias. Ni el desplazamiento ni la correlación negativa es fácil de interpretar.
+![Animación con las salidas](gifs/totales-point.gif)
 
 ## Análisis inicial
 
@@ -56,28 +53,11 @@ Las nuevas altas por día
 ggplot(data,aes(x=Fecha,y=Altas.nuevas),na.rm = TRUE)+geom_line()+theme_tufte()
 ```
 
-
-Hay una curiosa periodicidad en este gráfico. Vamos a analizar la autocorrelación:
-
-```{r acf.altas.nuevos}
-acf(data$Altas.nuevas,na.action = na.pass)
-```
-
-Mientras que hasta el día 20 aparecía una cierta periodicidad de unos dos días, a partir del día 21 prácticamente ha desaparecido. Hay una cierta correlación cada tres días, pero es muy débil.
-
 Los nuevos fallecimientos por día
 
 ```{r fallecimientos, message=FALSE, warning=FALSE}
 ggplot(data,aes(x=Fecha,y=Fallecimientos.nuevos),na.rm = TRUE)+geom_line()+theme_tufte()
 ```
-
-que también aparentan tener una cierta periodicidad, como se puede ver en el siguiente gráfico de correlación
-
-```{r acf.fallecimientos.nuevos}
-acf(data$Fallecimientos.nuevos,na.action = na.pass)
-```
-
-Esta es de uno o incluso dos días, pero la situación puede cambiar en el futuro, aunque en los últimos días es bastante estable.
 
 Desde mediados de marzo se publican también las hospitalizaciones, aunque de forma bastante irregular.
 
@@ -85,63 +65,6 @@ Desde mediados de marzo se publican también las hospitalizaciones, aunque de fo
 ggplot(data,aes(x=Fecha,y=hospitalizados),na.rm = TRUE)+geom_point()+geom_line()+theme_tufte()
 ```
 
-## Autocorrelaciones
-
-Esta es la autocorrelación de casos, es decir, la relación que hay entre los casos un día y el siguiente:
-
-```{r acfcasos}
-acf(data$casos)
-```
-
-Pero también puede ser interesante ver cuál es la autocorrelación de esta serie temporal, como influyen los casos cada día en los siguientes.
-
-```{r acfcasosnuevos}
-acf(data$Casos.nuevos,na.action = na.pass)
-```
-
-Esta es la correlación entre casos y fallecimientos
-```{r ccffallecimientos}
-ccf(data$casos,data$fallecimientos,na.action = na.pass)
-```
-
-Parece que el el *lag*, que era inicalmente entre uno y dos días, se ha ampliado ahora hasta los 4 días.
-
-Y entre casos y curaciones
-
-```{r ccfaltas}
-ccf(data$casos,data$altas,na.action = na.pass)
-```
-
-En este caso hay también un lag de un día; los casos de cada día están correlacionados con las altas del siguiente.
-
-Una veremos como se correlaciona los datos de ingresos en la UCI
-```{r ccuci}
-ccf(data$casos,data$ingresos_uci,na.action = na.pass)
-```
-
-Y entre ingresos en la UCI y fallecimientos
-
-```{r ccucif}
-ccf(data$ingresos_uci,data$fallecimientos,na.action = na.pass)
-```
-
-## Correlación entre diferencias
-
-Quizás sea más interesante establecer correlaciones entre diferencias, porque los datos acumulados tienen más información.
-
-```{r diffccf}
-ccf(data$Casos.nuevos,data$Fallecimientos.nuevos,na.action = na.pass)
-ccf(data$Casos.nuevos,data$Uci.nuevos,na.action = na.pass)
-ccf(data$Casos.nuevos,data$Altas.nuevas,na.action = na.pass)
-```
-
-O quizás el dato más revelador:
-
-```{r ucifallecimientos}
-ccf(data$Uci.nuevos,data$Fallecimientos.nuevos,na.action = na.pass)
-```
-
-Los fallecimientos predicen ingresos en la UCI durante los dos días siguinetes, y al revés. Aparentemente, esa es la duración de tiempo en la UCI.
 
 ## Reconocimientos
 
