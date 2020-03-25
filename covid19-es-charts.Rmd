@@ -10,8 +10,6 @@ output:
 Este artículo es una actualización diaria de la evolución de los casos de COVID-19 en España, con datos oficiales del Ministerio de Sanidad recogidos por [el Datadista](https://github.com/datadista/datasets). Sucede a [este artículo](https://rpubs.com/jjmerelo/585182), que se deja de publicar a 24 de marzo de 2020.
 
 
-
-
 ```{r setup, include=FALSE}
 library(dplyr)
 library(ggplot2)
@@ -32,7 +30,7 @@ write.csv(data,'covid-19-es.csv')
 
 ## Análisis de salidas
 
-¿Cuanto se tarda en llegar a una salida de la situación? Trazaremos los casos frente al las altas y fallecimientos.
+¿Cuanto se tarda en llegar a una salida de la situación de infección? Trazaremos los casos frente al las altas y fallecimientos.
 
 ```{r salidas, warning=FALSE}
 ggplot(data,aes(x=Fecha))+geom_line(aes(y=casos,color="Casos"))+geom_line(aes(y=salidas,color="Salidas"))+theme_tufte()
