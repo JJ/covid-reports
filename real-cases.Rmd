@@ -3,8 +3,8 @@ title: "Estimating the infection fatality rate by using time series correlations
 author: "J. J. Merelo"
 date: "25 de marzo de 2020"
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
 bibliography: covid.bib
 abstract: In a pandemic such as this one, it's impossible to ascertain the real number
   of cases except by testing the whole population; this leads to the problem of different
@@ -48,7 +48,7 @@ Let's first check what's the reported case fatality ratio for different regions 
 library(dplyr)
 world.data$CFR <- world.data$Deaths / world.data$Cases
 world.data.filtered.1k <- world.data[ world.data$Cases > 1000, ]
-world.data.filtered.1k %>% group_by(Country.Region) %>% summarize( max.CFR = max(CFR), min.CFR = min(CFR), last.CFR = last(CFR))  %>% arrange( - last.CFR)
+world.data.filtered.1k %>% group_by(Country.Region,Province.State) %>% summarize( max.CFR = max(CFR), min.CFR = min(CFR), last.CFR = last(CFR))  %>% arrange( - last.CFR) %>% rmarkdown::paged_table()
 ```
 
 The countries with the lowest CFR have peaks in the area of 0.3%, with some cases even below that; China and Germany have very low last reported Cf Rs. The two mentioned countries, South Korea and Germany, have a current CFR in the 0.2-0.8% area. This contrasts with the US, which has the highest current CFR at 5%, similar to Italy, the UK and Netherlands.
@@ -59,6 +59,7 @@ But the case fatality ratio does not give the whole picture. Some might have bee
 world.data.filtered.1k$Territory <- paste(world.data.filtered.1k$Province.State, world.data.filtered.1k$Country.Region)
 ggplot(world.data.filtered.1k, aes(x=Date,y=CFR,color=Territory,group=Territory))+geom_line()+theme_tufte()+theme(legend.position = "bottom")
 ```
+
 This chart, that shows the evolution of the CFR once 1000 reached in the territories where they have, shows roughly two groups. In one, the CFR remains roughly constant after initial growth; the other shows unlimited growth after the beginning. To exemplify these behaviors, let's show Germany vs. Italy:
 
 ```{r de.it,echo=FALSE,message=FALSE}
