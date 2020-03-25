@@ -1,7 +1,7 @@
 ---
 title: "Estimating the infection fatality rate by using time series correlations"
 author: "J. J. Merelo"
-date: "23 de marzo de 2020"
+date: "25 de marzo de 2020"
 output:
   pdf_document: default
   html_document: default
@@ -27,7 +27,7 @@ base <- "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_c
 world.confirmed <- read.csv(paste0(base,"Confirmed.csv"), sep=',',head=T)
 world.confirmed <- gather( world.confirmed, Date, Cases, X1.22.20:X3.21.20)
 world.deaths <- read.csv(paste0(base,"Deaths.csv"), sep=',',head=T)
-world.deaths <- gather( world.deaths, Date, Deaths, X1.22.20:X3.21.20)
+world.deaths <- gather( world.deaths, Date, Deaths, X1.22.20:X3.23.20)
 world.data <- merge(world.confirmed,world.deaths,by=c("Province.State","Country.Region","Lat", "Long", "Date"))
 world.data$Date <- as.Date(world.data$Date,"X%m.%d.%y")
 world.data <- world.data %>% group_by(Province.State,Country.Region,Date) %>% arrange(Province.State,Country.Region, as.Date(Date))
