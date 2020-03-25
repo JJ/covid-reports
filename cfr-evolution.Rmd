@@ -49,8 +49,9 @@ The countries with the lowest CFR have peaks in the area of 0.3%, with some case
 The evolution of CFRs is presented in this chart
 
 ```{r cfrevol,echo=FALSE,message=FALSE}
+library(viridis)
 world.data.filtered.1k$Territory <- paste(world.data.filtered.1k$Province.State, world.data.filtered.1k$Country.Region)
-ggplot(world.data.filtered.1k, aes(x=Date,y=CFR,color=Territory,group=Territory))+geom_line()+theme_tufte()+theme(legend.position = "bottom")+labs(title = "Evolution of case fatality ratio",subtitle = "Countries and territories with more than 1k cases")
+ggplot(world.data.filtered.1k, aes(x=Date,y=CFR,color=Territory,group=Territory))+geom_line()+scale_color_viridis_d()+theme_tufte()+theme(legend.position = "bottom")+labs(title = "Evolution of case fatality ratio",subtitle = "Countries and territories with more than 1k cases")
 ```
 
 This chart, that shows the evolution of the CFR once 1000 cases have been reached in a territory, shows roughly two groups. In one, the CFR remains roughly constant after initial growth; the other shows unlimited growth after the beginning. To exemplify these behaviors, let's show Switzerland vs. Italy:
