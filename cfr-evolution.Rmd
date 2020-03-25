@@ -31,7 +31,7 @@ write.csv(world.data,'covid19-world.csv')
 
 # Introduction
 
-One of the essential weapons to fight pandemia is information. Knowing in a precise way how different countries have dealt with COVID-19 to ascertain how it has impacted case and mortality allows new countries and territories to deal with it in the most adequate way. 
+One of the essential weapons to fight pandemic is information. Knowing in a precise way how different countries have dealt with COVID-19 to ascertain how it has impacted case and mortality allows new countries and territories to deal with it in the most adequate way. 
 
 Trying to ascertain the real number of infected people,  deceases stemming from the infection and their evolution is one of those things, and countries have reacted differently to this challenge. From testing only those with symptoms and that self-select and call up health services, to testing massively, as it has been done in South Korea [@SHIM2020], Germany, or in Japan, at least with people repatriated from affected areas [@nishiura2020rate]. This might be the reason why these countries report a lower Case Fatality Ratio (CFR) than in other cases.
 
@@ -50,10 +50,10 @@ The evolution of CFRs is presented in this chart
 
 ```{r cfrevol,echo=FALSE,message=FALSE}
 world.data.filtered.1k$Territory <- paste(world.data.filtered.1k$Province.State, world.data.filtered.1k$Country.Region)
-ggplot(world.data.filtered.1k, aes(x=Date,y=CFR,color=Territory,group=Territory))+geom_line()+theme_tufte()+theme(legend.position = "bottom")
+ggplot(world.data.filtered.1k, aes(x=Date,y=CFR,color=Territory,group=Territory))+geom_line()+theme_tufte()+theme(legend.position = "bottom")+labs(title = "Evolution of case fatality ratio",subtitle = "Countries and territories with more than 1k cases")
 ```
 
-This chart, that shows the evolution of the CFR once 1000 cases have been reached in a teritory, shows roughly two groups. In one, the CFR remains roughly constant after initial growth; the other shows unlimited growth after the beginning. To exemplify these behaviors, let's show Switzerland vs. Italy:
+This chart, that shows the evolution of the CFR once 1000 cases have been reached in a territory, shows roughly two groups. In one, the CFR remains roughly constant after initial growth; the other shows unlimited growth after the beginning. To exemplify these behaviors, let's show Switzerland vs. Italy:
 
 ```{r de.it,echo=FALSE,message=FALSE}
 just.de.it <- world.data.filtered.1k[ world.data.filtered.1k$Country.Region == "Switzerland" | world.data.filtered.1k$Country.Region == "Italy",]
@@ -67,11 +67,11 @@ While the CFR remains low, and more or less constant, in Switzerland, the one in
 
 We can draw two main conclusions from this visualization of case fatality rates. Successful policies show an approximately flat line, with case-to-decease ration remaining approximately constant, which indicates that treatment facilities have not been overcome and every case is receiving the treatment it needs.
 
-Non-constant, and growing, CFRs clearly indicate a failure in policies; an ever growing number of deaths (related to the total number of reported cases) might indicate either lack of reporting of cases, overflowing of treatment facilities, or both. The main conclusion is that extensive testing, or lacking tests, some other kind of self-reporting of cases or nowcasting the number of existing cases is essential for countries and territories to properly deal with the pandemia.
+Non-constant, and growing, CFRs clearly indicate a failure in policies; an ever growing number of deaths (related to the total number of reported cases) might indicate either lack of reporting of cases, overflowing of treatment facilities, or both. The main conclusion is that extensive testing, or lacking tests, some other kind of self-reporting of cases or nowcasting the number of existing cases is essential for countries and territories to properly deal with the pandemic.
 
 
 ## Acknowledgements
 
-This file has been generated from data published by [JHU CSSE](https://github.com/CSSEGISandData/COVID-19). It's data-driven and it can be re-generated from the script in  [this repository](https://github.com/JJ/covid-reports). This report uses RMarkdown and it can be downloaded from [here]().
+This file has been generated from data published by [JHU CSSE](https://github.com/CSSEGISandData/COVID-19). It's data-driven and it can be re-generated from the script in  [this repository](https://github.com/JJ/covid-reports). This report uses RMarkdown and it can be downloaded from [here](https://github.com/JJ/covid-reports/blob/master/cfr-evolution.Rmd).
 
 ## References
