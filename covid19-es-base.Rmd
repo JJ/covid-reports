@@ -32,9 +32,12 @@ save(data,file="covid-19-es.Rda")
 write.csv(data,'covid-19-es.csv')
 ```
 
+Este es el porcentaje de fallecimientos con respecto al número de casos reformados:
+
 ```{r CFR,warning=FALSE}
-ggplot(data,aes(x=Fecha,y=CFR,color='red'))+geom_line()+geom_segment(aes(xend=max(Fecha), yend = CFR), linetype=2, colour='pink')+theme_economist()+
-  geom_text(aes(x = max(Fecha)+.1, label = sprintf("%.2f", CFR*100), hjust=0))
+library(ggrepel)
+ggplot(data,aes(x=Fecha,y=CFR))+geom_line()+geom_segment(aes(xend=max(Fecha), yend = CFR), linetype=2, colour='pink')+theme_economist()+
+  geom_text_repel(aes(x = max(Fecha)+.1, label = sprintf("%.2f", CFR*100), hjust=0))
 ```
 
 Este fichero está generado a partir de los datos elaborados por [Datadista](https://github.com/datadista/datasets) y tiene una licencia libre. Se puede generar con nuevos datos usando el script en [este repositorio](https://github.com/JJ/covid-reports).
