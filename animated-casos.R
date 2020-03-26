@@ -1,6 +1,7 @@
 library(ggplot2)
 library(gifski)
 library(gganimate)
+library(ggrepel)
 
 # Done with help from here https://stackoverflow.com/questions/54855334/gganimate-time-series-and-two-line-plot
 
@@ -11,8 +12,7 @@ my_plot <- ggplot(data,aes(x = Fecha,y = total, color=total ))+
   geom_point(size = 7) +
   scale_fill_gradient(name = "count", trans = "log") +
   shadow_wake(wake_length = 0.1, alpha = FALSE) +
-  geom_segment(aes(xend=max(Fecha), yend = total), linetype=2, colour='pink') +
-  geom_text(aes(x = max(Fecha)+.1, label = sprintf("%5d", total), hjust=0)) +
+  geom_label_repel(aes(label = sprintf("%5d", total), hjust=0)) +
   transition_states(Fecha, transition_length = 2, state_length = 1) +
   labs(title='Day: {closest_state}')
 
