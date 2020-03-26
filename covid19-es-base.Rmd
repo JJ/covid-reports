@@ -36,8 +36,8 @@ Este es el porcentaje de fallecimientos con respecto al número de casos reforma
 
 ```{r CFR,warning=FALSE}
 library(ggrepel)
-ggplot(data,aes(x=Fecha,y=CFR))+geom_line()+geom_segment(aes(xend=max(Fecha), yend = CFR), linetype=2, colour='pink')+theme_economist()+
-  geom_text_repel(aes(x = max(Fecha)+.1, label = sprintf("%.2f", CFR*100), hjust=0))
+ggplot(data,aes(x=Fecha,y=CFR))+geom_line()+theme_economist()+
+  geom_label_repel(aes(label = sprintf("%.2f", CFR*100), hjust=0))
 ```
 
 Este fichero está generado a partir de los datos elaborados por [Datadista](https://github.com/datadista/datasets) y tiene una licencia libre. Se puede generar con nuevos datos usando el script en [este repositorio](https://github.com/JJ/covid-reports).
