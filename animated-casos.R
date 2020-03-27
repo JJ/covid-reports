@@ -9,7 +9,7 @@ load("covid-19-es.Rda")
 data$total <- data$casos - ifelse(is.na(data$salidas),0,data$salidas)
 
 my_plot <- ggplot(data,aes(x = Fecha,y = total, color=total ))+
-  geom_point(size = 7) +
+  geom_(size = 7) +
   scale_fill_gradient(name = "count", trans = "log") +
   shadow_wake(wake_length = 0.1, alpha = FALSE) +
   transition_states(Fecha, transition_length = 2, state_length = 1) +
