@@ -29,6 +29,7 @@ data$Altas.Avg.3 <- roll_mean(ifelse(is.na(data$Altas.nuevas),0,data$Altas.nueva
 data$Decesos.Avg.3 <- roll_mean(ifelse(is.na(data$Fallecimientos.nuevos),0,data$Fallecimientos.nuevos),3,fill=NA,align='right')
 data$CFR <- data$fallecimientos / data$casos
 data <- data %>% mutate( Casos.vivos= casos-lag(casos, 28, default=0))
+data <- data %>% mutate( Déficit= fallecimientos-lag(casos, 11, default=0))
 data$total <- data$casos - ifelse(is.na(data$salidas),0,data$salidas)
 save(data,file="covid-19-es.Rda")
 write.csv(data,'covid-19-es.csv')
