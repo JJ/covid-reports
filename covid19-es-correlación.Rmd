@@ -1,91 +1,24 @@
 ---
-title: "Evolución casos COVID19 en España"
+title: "Encontrando correlaciones en los datos de COVID-19 en España"
 author: "J. J. Merelo"
-date: "24 de marzo de 2020"
+date: "27 de marzo de 2020"
 output:
   html_document: default
   pdf_document: default
+bibliography: covid.bib
 ---
 
+## Introducción
+
+Las correlaciones cruzadas entre diferentes variables nos indican cómo influyen una en la otra, y si una precede o va detrás de la otra. Aunque correlación nunca indica causalidad, al menos sí puede dar, en general, una cierta idea de qué va a suceder en el futuro: una correlación cruzada fuerte entre dos variables a uno, dos o tres días vista permite averiguar qué es lo que puede suceder, y con hipótesis adicionales se puede establecer relación causa-efecto.
+
 ```{r setup, include=FALSE}
-library(dplyr)
-library(ggplot2)
-library(ggthemes)
-data <- read.csv("https://raw.githubusercontent.com/datadista/datasets/master/COVID%2019/nacional_covid19.csv")
-data$Fecha <- as.Date( data$fecha, "%Y-%m-%d")
-data$salidas <- data$altas + data$fallecimientos
-data$ds <- data$Fecha
-data$y <- data$casos
-data$Casos.nuevos <- c( NA, diff(data$casos))
-data$Altas.nuevas <- c( NA, diff(data$altas))
-data$Fallecimientos.nuevos <- c( NA, diff(data$fallecimientos))
-data$Uci.nuevos <- c( NA, diff(data$ingresos_uci))
-save(data,file="covid-19-es.Rda")
-write.csv(data,'covid-19-es.csv')
+load("covid-19-es.Rda")
 ```
 
-## Análisis de salidas
+Utilizaremos [autocorrelaciones y correlaciones cruzadas en R, usando las funciones `acf` y `ccf`](https://online.stat.psu.edu/stat510/lesson/8/8.2). En estos gráficos se indican con barras de diferente longitud la correlación; líneas punteadas indican la zona a partir de la cual la correlación es significativa. A la izquierda del cero, la variable X antecede o predice la y, a la derecha es justo al contrario; por encima de la barra serían correlaciones positivas y por debajo negativas, es decir que cuando crece una variable, la otra disminuye.
 
-¿Cuanto se tarda en llegar a una salida de la situación? Trazaremos los casos frente al las altas y fallecimientos.
-
-```{r salidas, warning=FALSE}
-ggplot(data,aes(x=Fecha))+geom_line(aes(y=casos,color="Casos"))+geom_line(aes(y=salidas,color="Salidas"))+theme_tufte()
-
-```
-
-Cabe notar que las primeras salidas no se dieron hasta pasar más de dos semanas desde los primeros casos, lo que posiblemente quiere decir que hay muchas altas que no se están teniendo en cuenta (o fallecimientos).
-
-También la correlación
-```{r casossalidascf}
-ccf(data$casos,data$salidas,na.action = na.pass)
-```
-
-Esta correlación indica que hay una correlación positiva entre casos en lags de -4 a 0; los casos preceden a las salidas hasta por 4 días, y luego una negativa entre salidas y casos que era inicialmente entre 4 y 8 días, y ahora es entre 7 y 11 dias. Ni el desplazamiento ni la correlación negativa es fácil de interpretar.
-
-## Análisis inicial
-
-Una de los parámetros que es interesante conocer es el cambio con respecto al día anterior. Empezaremos por los casos nuevos
-
-```{r casos, warning=FALSE}
-ggplot(data,aes(x=Fecha,y=Casos.nuevos),na.rm = TRUE)+geom_line()+geom_point()+theme_tufte()
-```
-
-Las nuevas altas por día
-
-```{r altas, warning=FALSE}
-ggplot(data,aes(x=Fecha,y=Altas.nuevas),na.rm = TRUE)+geom_line()+theme_tufte()
-```
-
-
-Hay una curiosa periodicidad en este gráfico. Vamos a analizar la autocorrelación:
-
-```{r acf.altas.nuevos}
-acf(data$Altas.nuevas,na.action = na.pass)
-```
-
-Mientras que hasta el día 20 aparecía una cierta periodicidad de unos dos días, a partir del día 21 prácticamente ha desaparecido. Hay una cierta correlación cada tres días, pero es muy débil.
-
-Los nuevos fallecimientos por día
-
-```{r fallecimientos, message=FALSE, warning=FALSE}
-ggplot(data,aes(x=Fecha,y=Fallecimientos.nuevos),na.rm = TRUE)+geom_line()+theme_tufte()
-```
-
-que también aparentan tener una cierta periodicidad, como se puede ver en el siguiente gráfico de correlación
-
-```{r acf.fallecimientos.nuevos}
-acf(data$Fallecimientos.nuevos,na.action = na.pass)
-```
-
-Esta es de uno o incluso dos días, pero la situación puede cambiar en el futuro, aunque en los últimos días es bastante estable.
-
-Desde mediados de marzo se publican también las hospitalizaciones, aunque de forma bastante irregular.
-
-```{r hospitalizaciones}
-ggplot(data,aes(x=Fecha,y=hospitalizados),na.rm = TRUE)+geom_point()+geom_line()+theme_tufte()
-```
-
-## Autocorrelaciones
+## Autocorrelación de casos
 
 Esta es la autocorrelación de casos, es decir, la relación que hay entre los casos un día y el siguiente:
 
@@ -99,14 +32,41 @@ Pero también puede ser interesante ver cuál es la autocorrelación de esta ser
 acf(data$Casos.nuevos,na.action = na.pass)
 ```
 
+
+## Correlaciones de nuevos casos reportados.
+
+¿Cuanto se tarda en llegar a una salida de la situación? Trazaremos los casos frente al las altas y fallecimientos.
+
+Cabe notar que las primeras salidas no se dieron hasta pasar más de dos semanas desde los primeros casos, lo que posiblemente quiere decir que hay muchas altas que no se están teniendo en cuenta (o fallecimientos).
+
+```{r casossalidascf}
+ccf(data$casos,data$salidas,na.action = na.pass)
+```
+
+Este diagrama de correlación indica que es positiva entre casos en lags de -4 a 0; los casos preceden a las salidas hasta por 4 días, y luego una negativa entre salidas y casos que era inicialmente entre 4 y 8 días, y ahora es entre 8 y 11 dias. Ni el desplazamiento ni la correlación negativa es fácil de interpretar; a más salidas, menos casos una semana más tarde. Es posible que, al ser o altas o muertes, cuantas más personas haya en esa situación menos infecciones se van a producir una semana más tarde.
+
+Por otro lado, observando la gráfica de altas en [@covides1] se observa cierta periodicidad, al menos inicialmente 
+
+```{r acf.altas.nuevos}
+acf(data$Altas.nuevas,na.action = na.pass)
+```
+
+Mientras que hasta el día 20 aparecía una cierta periodicidad de unos dos días, a partir del día 21 prácticamente ha desaparecido y sólo hay periodicidad de un sólo día. Esta periodicidad también aparece en los fallecimientos, como se puede ver en el siguiente gráfico de correlación
+
+```{r acf.fallecimientos.nuevos}
+acf(data$Fallecimientos.nuevos,na.action = na.pass)
+```
+
+Esta es de uno y hasta 3 días, pero la situación puede cambiar en el futuro, aunque en los últimos días es bastante estable.
+
 Esta es la correlación entre casos y fallecimientos
 ```{r ccffallecimientos}
 ccf(data$casos,data$fallecimientos,na.action = na.pass)
 ```
 
-Parece que el el *lag*, que era inicalmente entre uno y dos días, se ha ampliado ahora hasta los 4 días.
+Parece que el el *lag*, que era inicalmente entre uno y dos días, se ha ampliado ahora hasta los 4 días. El hecho de que los fallecimientos predigan los casos futuro parece indicar que unas infecciones causan otras, o que las personas empiezan a testearse cuando sienten un fallecimiento cerca.
 
-Y entre casos y curaciones
+Y entre casos y altas hospitalarias
 
 ```{r ccfaltas}
 ccf(data$casos,data$altas,na.action = na.pass)
@@ -141,7 +101,7 @@ O quizás el dato más revelador:
 ccf(data$Uci.nuevos,data$Fallecimientos.nuevos,na.action = na.pass)
 ```
 
-Los fallecimientos predicen ingresos en la UCI durante los dos días siguinetes, y al revés. Aparentemente, esa es la duración de tiempo en la UCI.
+Los fallecimientos predicen ingresos en la UCI durante los dos días siguientes, y al revés. Aparentemente, esa es la duración de tiempo en la UCI.
 
 ## Reconocimientos
 
