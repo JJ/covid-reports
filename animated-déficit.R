@@ -23,4 +23,4 @@ animate(
   duration = 10,
   fps = 20)
 
-anim_save('gifs/totales-point.gif')
+anim_save('gifs/déficit-point.gif')
