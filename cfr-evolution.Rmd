@@ -1,7 +1,7 @@
 ---
 title: "Evolution and dynamics of case fatality rate in the COVID19 pandemia"
 author: "J. J. Merelo"
-date: "25 de marzo de 2020"
+date: "27 de marzo de 2020"
 output:
   html_document: default
   pdf_document: default
@@ -16,11 +16,11 @@ library(ggplot2)
 library(ggthemes)
 library(dplyr)
 
-base <- "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-"
-world.confirmed <- read.csv(paste0(base,"Confirmed.csv"), sep=',',head=T)
-world.confirmed <- gather( world.confirmed, Date, Cases, X1.22.20:X3.21.20)
-world.deaths <- read.csv(paste0(base,"Deaths.csv"), sep=',',head=T)
-world.deaths <- gather( world.deaths, Date, Deaths, X1.22.20:X3.23.20)
+base <- "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_"
+world.confirmed <- read.csv(paste0(base,"confirmed_global.csv"), sep=',',head=T)
+world.confirmed <- gather( world.confirmed, Date, Cases, X1.22.20:X3.26.20)
+world.deaths <- read.csv(paste0(base,"deaths_global.csv"), sep=',',head=T)
+world.deaths <- gather( world.deaths, Date, Deaths, X1.22.20:X3.26.20)
 world.data <- merge(world.confirmed,world.deaths,by=c("Province.State","Country.Region","Lat", "Long", "Date"))
 world.data$Date <- as.Date(world.data$Date,"X%m.%d.%y")
 world.data <- world.data %>% group_by(Province.State,Country.Region,Date) %>% arrange(Province.State,Country.Region, as.Date(Date))
