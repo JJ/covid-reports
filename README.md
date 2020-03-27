@@ -4,7 +4,9 @@ Scripts and reports that work on COVID-19 published open data, especially data f
 
 ## Published reports
 
-* [Evolution and dynamics of case fatality rate in the COVID19 pandemia](https://rpubs.com/jjmerelo/589205), with table of fatality rates for all countries and territories with more than 1000 deceases.
+* [Evolution and dynamics of case fatality rate in the COVID19 pandemia](https://rpubs.com/jjmerelo/589205), with table of fatality rates for all countries and territories with more than 1000 deceases; this is frequently updated.
+
+* [Estimating the infection fatality rate by using time series correlations](https://rpubs.com/jjmerelo/cfr-ifr-ko-de).
 
 ## Ongoing reports (in Spanish mostly)
 
