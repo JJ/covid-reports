@@ -26,7 +26,7 @@ Esta es la autocorrelación de casos, es decir, la relación que hay entre los c
 acf(data$casos)
 ```
 
-Pero también puede ser interesante ver cuál es la autocorrelación de esta serie temporal, como influyen los casos cada día en los siguientes.
+Pero también puede ser interesante ver cuál es la autocorrelación de esta serie temporal, como influyen los casos de los que se informa cada día en los siguientes.
 
 ```{r acfcasosnuevos}
 acf(data$Casos.nuevos,na.action = na.pass)
@@ -40,10 +40,10 @@ acf(data$Casos.nuevos,na.action = na.pass)
 Cabe notar que las primeras salidas no se dieron hasta pasar más de dos semanas desde los primeros casos, lo que posiblemente quiere decir que hay muchas altas que no se están teniendo en cuenta (o fallecimientos).
 
 ```{r casossalidascf}
-ccf(data$casos,data$salidas,na.action = na.pass)
+ccf(data$casos,data$salidas,na.action = na.pass, lag.max = 28)
 ```
 
-Este diagrama de correlación indica que es positiva entre casos en lags de -4 a 0; los casos preceden a las salidas hasta por 4 días, y luego una negativa entre salidas y casos que era inicialmente entre 4 y 8 días, y ahora es entre 8 y 11 dias. Ni el desplazamiento ni la correlación negativa es fácil de interpretar; a más salidas, menos casos una semana más tarde. Es posible que, al ser o altas o muertes, cuantas más personas haya en esa situación menos infecciones se van a producir una semana más tarde.
+Este diagrama de correlación indica que es positiva entre casos en lags de -5 a 0, es decir, nuevos casos se convierten en salidas (fallecimientos o altas) hasta 5 días más tarde; los casos preceden a las salidas hasta por 5 días, y luego una negativa entre salidas y casos que era inicialmente entre 4 y 8 días, y ahora es entre 7 y 12 dias. Ni el desplazamiento ni la correlación negativa es fácil de interpretar; a más salidas, menos casos una semana más tarde. Es posible que, al ser o altas o muertes, cuantas más personas haya en esa situación menos infecciones se van a producir una semana más tarde.
 
 Por otro lado, observando la gráfica de altas en [@covides1] se observa cierta periodicidad, al menos inicialmente 
 
@@ -54,35 +54,35 @@ acf(data$Altas.nuevas,na.action = na.pass)
 Mientras que hasta el día 20 aparecía una cierta periodicidad de unos dos días, a partir del día 21 prácticamente ha desaparecido y sólo hay periodicidad de un sólo día. Esta periodicidad también aparece en los fallecimientos, como se puede ver en el siguiente gráfico de correlación
 
 ```{r acf.fallecimientos.nuevos}
-acf(data$Fallecimientos.nuevos,na.action = na.pass)
+acf(data$Fallecimientos.nuevos,na.action = na.pass,lag.max = 28)
 ```
 
 Esta es de uno y hasta 3 días, pero la situación puede cambiar en el futuro, aunque en los últimos días es bastante estable.
 
 Esta es la correlación entre casos y fallecimientos
 ```{r ccffallecimientos}
-ccf(data$casos,data$fallecimientos,na.action = na.pass)
+ccf(data$casos,data$fallecimientos,na.action = na.pass,lag.max = 28)
 ```
 
-Parece que el el *lag*, que era inicalmente entre uno y dos días, se ha ampliado ahora hasta los 4 días. El hecho de que los fallecimientos predigan los casos futuro parece indicar que unas infecciones causan otras, o que las personas empiezan a testearse cuando sienten un fallecimiento cerca.
+Parece que el el *lag*, que era inicalmente entre uno y dos días, se ha ampliado ahora hasta los 4 días. El hecho de que los fallecimientos predigan los casos futuros parece indicar que unas infecciones causan otras, o que las personas empiezan a testearse cuando sienten un fallecimiento cerca.
 
 Y entre casos y altas hospitalarias
 
 ```{r ccfaltas}
-ccf(data$casos,data$altas,na.action = na.pass)
+ccf(data$casos,data$altas,na.action = na.pass,lag.max = 28)
 ```
 
 En este caso hay también un lag de un día; los casos de cada día están correlacionados con las altas del siguiente.
 
 Una veremos como se correlaciona los datos de ingresos en la UCI
 ```{r ccuci}
-ccf(data$casos,data$ingresos_uci,na.action = na.pass)
+ccf(data$casos,data$ingresos_uci,na.action = na.pass,lag.max = 28)
 ```
 
 Y entre ingresos en la UCI y fallecimientos
 
 ```{r ccucif}
-ccf(data$ingresos_uci,data$fallecimientos,na.action = na.pass)
+ccf(data$ingresos_uci,data$fallecimientos,na.action = na.pass,lag.max = 28)
 ```
 
 ## Correlación entre diferencias
@@ -90,15 +90,15 @@ ccf(data$ingresos_uci,data$fallecimientos,na.action = na.pass)
 Quizás sea más interesante establecer correlaciones entre diferencias, porque los datos acumulados tienen más información.
 
 ```{r diffccf}
-ccf(data$Casos.nuevos,data$Fallecimientos.nuevos,na.action = na.pass)
-ccf(data$Casos.nuevos,data$Uci.nuevos,na.action = na.pass)
-ccf(data$Casos.nuevos,data$Altas.nuevas,na.action = na.pass)
+ccf(data$Casos.nuevos,data$Fallecimientos.nuevos,na.action = na.pass,lag.max = 28)
+ccf(data$Casos.nuevos,data$Uci.nuevos,na.action = na.pass,lag.max = 28)
+ccf(data$Casos.nuevos,data$Altas.nuevas,na.action = na.pass,lag.max = 28)
 ```
 
 O quizás el dato más revelador:
 
 ```{r ucifallecimientos}
-ccf(data$Uci.nuevos,data$Fallecimientos.nuevos,na.action = na.pass)
+ccf(data$Uci.nuevos,data$Fallecimientos.nuevos,na.action = na.pass,lag.max = 28)
 ```
 
 Los fallecimientos predicen ingresos en la UCI durante los dos días siguientes, y al revés. Aparentemente, esa es la duración de tiempo en la UCI.
