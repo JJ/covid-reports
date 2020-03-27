@@ -13,7 +13,12 @@ Scripts and reports that work on COVID-19 published open data, especially data f
 
 Y esta imagen, que se actualiza todos los días.
 
-![Evolución del número de casos menos fallecimientos y altas](imgs/totales-point.gif)
+![Evolución del número de casos menos fallecimientos y altas](gifs/totales-point.gif)
+
+Estos informes se dejaron de actualizar, al crear nuevos informes a partir de los mismos:
+
+* [Nuevos casos, fallecimientos y altas hasta el 14 de marzo](https://rpubs.com/jjmerelo/covid-19-es-mar-14).
+* [Análisis de datos del COVID-19 en España](https://rpubs.com/jjmerelo/covid-19-es-evolucion)
 
 # Licencia
 
