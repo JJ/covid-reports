@@ -1,7 +1,7 @@
 ---
 title: "Evolution and dynamics of case fatality rate in the COVID19 pandemia"
 author: "J. J. Merelo"
-date: "27 de marzo de 2020"
+date: "28 de marzo de 2020"
 output:
   html_document: default
   pdf_document: default
@@ -18,7 +18,7 @@ library(dplyr)
 
 base <- "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_"
 world.confirmed <- read.csv(paste0(base,"confirmed_global.csv"), sep=',',head=T)
-world.confirmed <- gather( world.confirmed, Date, Cases, X1.22.20:X3.26.20)
+world.confirmed <- gather( world.confirmed, Date, Cases, X1.22.20:X3.27.20)
 world.deaths <- read.csv(paste0(base,"deaths_global.csv"), sep=',',head=T)
 world.deaths <- gather( world.deaths, Date, Deaths, X1.22.20:X3.26.20)
 world.data <- merge(world.confirmed,world.deaths,by=c("Province.State","Country.Region","Lat", "Long", "Date"))
