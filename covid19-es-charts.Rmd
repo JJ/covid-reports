@@ -39,6 +39,8 @@ Una de los parámetros que es interesante conocer es el cambio con respecto al d
 ggplot(data,aes(x=Fecha,y=Casos.nuevos),na.rm = TRUE)+geom_line()+geom_point()+theme_tufte()
 ```
 
+Parece que el pico de casos nuevos se ha alcanzado el 26 de marzo, pero todavía tiene que consolidarse, porque los fines de semana se suelen informar de menos casos.
+
 Las nuevas altas por día
 
 ```{r altas, warning=FALSE}
@@ -64,6 +66,7 @@ ggplot(data,aes(x=Fecha,y=hospitalizados),na.rm = TRUE)+geom_point()+geom_line()
 ggplot(data,aes(x=Fecha,y=Hospitalizaciones.nuevas),na.rm = TRUE)+geom_point()+geom_line()+theme_tufte()
 ```
 
+Las hospitalizaciones nuevas también parecen haber alcanzado un pico el día 26. Esperemos que dure.
 
 ## Reconocimientos
 

@@ -29,7 +29,7 @@ acf(data$casos)
 Pero también puede ser interesante ver cuál es la autocorrelación de esta serie temporal, como influyen los casos de los que se informa cada día en los siguientes.
 
 ```{r acfcasosnuevos}
-acf(data$Casos.nuevos,na.action = na.pass)
+acf(data$Casos.nuevos,na.action = na.pass, lag=28)
 ```
 
 
@@ -43,7 +43,7 @@ Cabe notar que las primeras salidas no se dieron hasta pasar más de dos semanas
 ccf(data$casos,data$salidas,na.action = na.pass, lag.max = 28)
 ```
 
-Este diagrama de correlación indica que es positiva entre casos en lags de -5 a 0, es decir, nuevos casos se convierten en salidas (fallecimientos o altas) hasta 5 días más tarde; los casos preceden a las salidas hasta por 5 días, y luego una negativa entre salidas y casos que era inicialmente entre 4 y 8 días, y ahora es entre 7 y 12 dias. Ni el desplazamiento ni la correlación negativa es fácil de interpretar; a más salidas, menos casos una semana más tarde. Es posible que, al ser o altas o muertes, cuantas más personas haya en esa situación menos infecciones se van a producir una semana más tarde.
+Este diagrama de correlación indica que es positiva entre casos en lags de -5 a 0, es decir, nuevos casos se convierten en salidas (fallecimientos o altas) hasta 5 días más tarde; los casos preceden a las salidas hasta por 5 días, y luego una negativa entre salidas y casos que era inicialmente entre 4 y 8 días, y ahora es entre 7 y 12 dias. Ni el desplazamiento ni la correlación negativa es fácil de interpretar; a más salidas, menos casos aproximadamente 8 días más tarde. Es posible que, al ser o altas o muertes, cuantas más personas haya en esa situación menos infecciones se van a producir una semana más tarde.
 
 Por otro lado, observando la gráfica de altas en [@covides1] se observa cierta periodicidad, al menos inicialmente 
 
@@ -91,6 +91,10 @@ Quizás sea más interesante establecer correlaciones entre diferencias, porque 
 
 ```{r diffccf}
 ccf(data$Casos.nuevos,data$Fallecimientos.nuevos,na.action = na.pass,lag.max = 28)
+
+ccf(data$Casos.nuevos,data$Hospitalizaciones.nuevas,na.action = na.pass,lag.max = 28)
+ccf(data$Hospitalizaciones.nuevas,data$Uci.nuevos,na.action = na.pass,lag.max = 28)
+ccf(data$Hospitalizaciones.nuevas,data$Fallecimientos.nuevos,na.action = na.pass,lag.max = 28)
 ccf(data$Casos.nuevos,data$Uci.nuevos,na.action = na.pass,lag.max = 28)
 ccf(data$Casos.nuevos,data$Altas.nuevas,na.action = na.pass,lag.max = 28)
 ```
