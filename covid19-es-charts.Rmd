@@ -1,7 +1,7 @@
 ---
 title: "Evolución casos COVID19 en España en unos gráficos"
 author: "J. J. Merelo"
-date: "27 de marzo de 2020"
+date: "29 de marzo de 2020"
 output:
   html_document: default
   pdf_document: default
@@ -59,7 +59,7 @@ Los nuevos fallecimientos por día, junto con la media a 3 días
 ggplot(data,aes(x=Fecha))+geom_line(aes(y=Fallecimientos.nuevos, color='Dato'))+geom_line(aes(y=Decesos.Avg.3, color='Media a 3'))+theme_tufte()
 ```
 
-Desde mediados de marzo se publican también las hospitalizaciones, aunque de forma bastante irregular. Primero vemos los números absolutos, y luego las nuevas por día
+Desde mediados de marzo se publican también las hospitalizaciones, inicialmente de forma bastante irregular. Primero vemos los números absolutos, y luego las nuevas por día
 
 ```{r hospitalizaciones, warning=FALSE}
 ggplot(data,aes(x=Fecha,y=hospitalizados),na.rm = TRUE)+geom_point()+geom_line()+theme_tufte()

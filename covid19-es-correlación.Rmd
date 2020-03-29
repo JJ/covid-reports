@@ -1,7 +1,7 @@
 ---
 title: "Encontrando correlaciones en los datos de COVID-19 en España"
 author: "J. J. Merelo"
-date: "27 de marzo de 2020"
+date: "29 de marzo de 2020"
 output:
   html_document: default
   pdf_document: default
@@ -93,19 +93,27 @@ Quizás sea más interesante establecer correlaciones entre diferencias, porque 
 ccf(data$Casos.nuevos,data$Fallecimientos.nuevos,na.action = na.pass,lag.max = 28)
 
 ccf(data$Casos.nuevos,data$Hospitalizaciones.nuevas,na.action = na.pass,lag.max = 28)
-ccf(data$Hospitalizaciones.nuevas,data$Uci.nuevos,na.action = na.pass,lag.max = 28)
-ccf(data$Hospitalizaciones.nuevas,data$Fallecimientos.nuevos,na.action = na.pass,lag.max = 28)
 ccf(data$Casos.nuevos,data$Uci.nuevos,na.action = na.pass,lag.max = 28)
 ccf(data$Casos.nuevos,data$Altas.nuevas,na.action = na.pass,lag.max = 28)
 ```
 
-O quizás el dato más revelador:
+Las hospitalizaciones nuevas y su correlación con otras deltas
+
+```{r hospitalizaciones}
+ccf(data$Hospitalizaciones.nuevas,data$Uci.nuevos,na.action = na.pass,lag.max = 28)
+ccf(data$Hospitalizaciones.nuevas,data$Fallecimientos.nuevos,na.action = na.pass,lag.max = 28)
+ccf(data$Hospitalizaciones.nuevas,data$Altas.nuevas,na.action = na.pass,lag.max = 28)
+```
+
+Las hospitalizaciones parecen ir en sentido contrario que las altas entre 6 y 7 días antes, pero en el mismo sentido dos o tres días antes. Quizás viene a decir que las personas a las que les dan el alta pasan esos días en el hospital, si no van a resultar en altas pasan más días, o simplemente que si hay muchas hospitalizaciones en una fecha, habrá menos altas una semana más tarde.
+
+Quizás el dato más revelador:
 
 ```{r ucifallecimientos}
 ccf(data$Uci.nuevos,data$Fallecimientos.nuevos,na.action = na.pass,lag.max = 28)
 ```
 
-Los fallecimientos predicen ingresos en la UCI durante los dos días siguientes, y al revés. Aparentemente, esa es la duración de tiempo en la UCI.
+Los fallecimientos predicen ingresos en la UCI durante los días siguientes, hasta 6 días, y al revés. Aparentemente, esa es la duración de tiempo en la UCI.
 
 ## Reconocimientos
 
