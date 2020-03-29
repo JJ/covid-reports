@@ -1,7 +1,7 @@
 ---
 title: "Evolución casos COVID19 en España: datos básicos"
 author: "J. J. Merelo"
-date: "28 de marzo de 2020"
+date: "29 de marzo de 2020"
 output:
   html_document: default
   pdf_document: default
@@ -42,5 +42,9 @@ library(ggrepel)
 ggplot(data,aes(x=Fecha,y=CFR))+geom_line()+theme_economist()+
   geom_label_repel(aes(label = sprintf("%.2f", CFR*100), hjust=0))
 ```
+
+Según avanza la cuarentena, el número de fallecimientos (que se arrastra desde atrás, por contagios anteriores) aumenta con respecto al número de contagios (que disminuye). Por eso la tasa no deja de aumentar hasta los valores actuales.
+
+## Reconocimientos.
 
 Este fichero está generado a partir de los datos elaborados por [Datadista](https://github.com/datadista/datasets) y tiene una licencia libre. Se puede generar con nuevos datos usando el script en [este repositorio](https://github.com/JJ/covid-reports).
