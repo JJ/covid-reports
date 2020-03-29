@@ -38,7 +38,6 @@ Trying to ascertain the real number of infected people,  deceases stemming from 
 Let's first check what's the reported case fatality ratio for different regions in the world, those that have at least 1000 cases. Max and min CFR are computed over the rows in which there were already 1000 cases; `last.CFR` is the last case fatality ratio that has been reported. Territories are sorted over the last CFR reported.
 
 ```{r cfr,echo=FALSE,message=FALSE}
-library(dplyr)
 world.data$CFR <- world.data$Deaths / world.data$Cases
 world.data.filtered.1k <- world.data[ world.data$Cases > 1000, ]
 world.data.filtered.1k %>% group_by(Country.Region,Province.State) %>% summarize( max.CFR = max(CFR), min.CFR = min(CFR), last.CFR = last(CFR))  %>% arrange( - last.CFR) %>% rmarkdown::paged_table()
