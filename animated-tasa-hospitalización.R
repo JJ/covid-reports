@@ -14,8 +14,8 @@ my_plot <- ggplot(data,aes(x = Fecha,y = Tasa.Hospitalizacion, color=total ))+
 animate(
   plot = my_plot,
   render = gifski_renderer(),
-  height = 1200,
-  width = 800, 
+  height = 800,
+  width = 1200, 
   duration = 10,
   fps = 20)
 

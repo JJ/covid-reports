@@ -32,6 +32,11 @@ Pero también puede ser interesante ver cuál es la autocorrelación de esta ser
 acf(data$Casos.nuevos,na.action = na.pass, lag=28)
 ```
 
+Realmente este dato es poco fiable, porque no se sabe cuantas altas hay ni cuantos tests se están haciendo. El dato más fiable es el número de personas hospitalizadas y su cambio cada día. Veamos su autocorrelación.
+
+```{r acfhnuevas}
+acf(data$Hospitalizaciones.nuevas,na.action = na.pass, lag=28)
+```
 
 ## Correlaciones de nuevos casos reportados.
 
