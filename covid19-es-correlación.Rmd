@@ -1,7 +1,7 @@
 ---
 title: "Encontrando correlaciones en los datos de COVID-19 en España"
 author: "J. J. Merelo"
-date: "29 de marzo de 2020"
+date: "30 de marzo de 2020"
 output:
   html_document: default
   pdf_document: default
@@ -23,7 +23,7 @@ Utilizaremos [autocorrelaciones y correlaciones cruzadas en R, usando las funcio
 Esta es la autocorrelación de casos, es decir, la relación que hay entre los casos un día y el siguiente:
 
 ```{r acfcasos}
-acf(data$casos)
+acf(data$casos,lag.max = 28)
 ```
 
 Pero también puede ser interesante ver cuál es la autocorrelación de esta serie temporal, como influyen los casos de los que se informa cada día en los siguientes.
@@ -48,7 +48,7 @@ Este diagrama de correlación indica que es positiva entre casos en lags de -5 a
 Por otro lado, observando la gráfica de altas en [@covides1] se observa cierta periodicidad, al menos inicialmente 
 
 ```{r acf.altas.nuevos}
-acf(data$Altas.nuevas,na.action = na.pass)
+acf(data$Altas.nuevas,na.action = na.pass,lag.max = 28)
 ```
 
 Mientras que hasta el día 20 aparecía una cierta periodicidad de unos dos días, a partir del día 21 prácticamente ha desaparecido y sólo hay periodicidad de un sólo día. Esta periodicidad también aparece en los fallecimientos, como se puede ver en el siguiente gráfico de correlación

@@ -1,7 +1,7 @@
 ---
 title: "Evolución casos COVID19 en España en unos gráficos"
 author: "J. J. Merelo"
-date: "29 de marzo de 2020"
+date: "30 de marzo de 2020"
 output:
   html_document: default
   pdf_document: default
@@ -66,7 +66,7 @@ ggplot(data,aes(x=Fecha,y=hospitalizados),na.rm = TRUE)+geom_point()+geom_line()
 ggplot(data,aes(x=Fecha,y=Hospitalizaciones.nuevas),na.rm = TRUE)+geom_point()+geom_line()+theme_tufte()
 ```
 
-Las hospitalizaciones nuevas también parecen haber alcanzado un pico el día 26. Esperemos que dure.
+Las hospitalizaciones nuevas también parecen haber alcanzado un pico el día 26, y el acumulado de hospitalizaciones parece haberse decelerado.
 
 ## Reconocimientos
 
