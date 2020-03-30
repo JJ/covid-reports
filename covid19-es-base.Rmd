@@ -31,7 +31,7 @@ data$CFR <- data$fallecimientos / data$casos
 data <- data %>% mutate( Casos.vivos= casos-lag(casos, 28, default=0))
 data <- data %>% mutate( Déficit= hospitalizados-lag(casos, 5, default=0))
 data$total <- data$casos - ifelse(is.na(data$salidas),0,data$salidas)
-data$Tasa.Hospitalizacion <- data$total / data$hospitalizados
+data$Tasa.Hospitalizacion <- data$hospitalizados / data$total 
 save(data,file="covid-19-es.Rda")
 write.csv(data,'covid-19-es.csv')
 ```
