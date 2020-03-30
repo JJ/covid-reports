@@ -45,10 +45,22 @@ ccf(IT.data$Cases, ES.data$Cases,lag.max = 28)
 ccf(IT.data$Deaths, ES.data$Deaths,lag.max = 28)
 ```
 
-The cross-correlation is evident, and subtantially similar in profile, and but it goes from -11 days (Italy leading Spain) to +8 days (Italy lagging Spain).
+The cross-correlation is evident, and subtantially similar in profile, and but it goes from -11 days (Italy leading Spain) to +8 days (Italy lagging Spain). This is probably due alto to auto-correlation of the time series, which provokes this effect.
+
+New cases are probably a bit more revelatory:
+
+```{r ccf.new,echo=FALSE,message=FALSE}
+ccf(IT.data$New.Cases, ES.data$New.Cases,lag.max = 28)
+ccf(IT.data$New.Deaths, ES.data$New.Deaths,lag.max = 28)
+```
+
+Again, same effect, only extended in time and skewed to Italy leading Spain for up to 12 to 14 days. The peak is at 0, anyway, so the best predictor of one time series is the other time series *the same day*.
 
 # Conclusions
 
+Correlation of time series in Spain and Italy do not yield a clear result. Although it is significant, and the distribution of cross-correlation values is slightly skewed to the left indicating Italy leading Spain, it can't clearly be said that there's a difference of one week between them. If we make the difference between Italy leading Spain and the inverse, it's around 6 days for the deltas, 5 days for the absolute time series; that is the only hint of this difference, but it would be cut short by one day to the guesstimate of 7 days.
+
+At least, we have a statistical confirmation of this relation, and by checking the situation in Italy, we can at least reduce incertainty of what the situation in Spain is going to be in approximately 6 days.
 
 
 ## Acknowledgements
