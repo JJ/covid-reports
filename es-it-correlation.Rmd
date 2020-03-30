@@ -67,4 +67,8 @@ At least, we have a statistical confirmation of this relation, and by checking t
 
 This file has been generated from data published by <a href="https://github.com/CSSEGISandData/COVID-19" target="_new">JHU CSSE</a>. It's data-driven and it can be re-generated from the script in  <a href="https://github.com/JJ/covid-reports" target="_new">this repository</a>. This report uses RMarkdown and it can be downloaded from <a href="https://github.com/JJ/covid-reports/blob/master/cfr-evolution.Rmd" target="_new">here</a>.
 
+## License
+
+This report has a cc-by-sa license, and its code a GPL license. Reviews, suggestions and patches are welcome. It's written in RMarkdown and [hosted in GitHu](https://github.com/JJ/covid-reports/blob/master/es-it-correlation.Rmd).
+
 ## References
