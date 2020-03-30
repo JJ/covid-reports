@@ -32,7 +32,7 @@ write.csv(world.data,'covid19-world.csv')
 
 # Introduction
 
-Information on possible future evolution of the pandemia gives the citizen a bit of control over what's going to happen to their lives [@liu2020effects]. Since different countries seem to be in different stages of the epidemic, and Italy is substantially similar to Spain, we will try to see if those similarities translate in correlation between the different time series, and, in that case, if the lag is similar to the [perceived lag of one week](https://www.euronews.com/2020/03/25/coronavirus-spain-surpasses-china-in-the-overall-number-of-covid-19-deaths).
+Information on possible future evolution of the pandemic gives the citizen a bit of control over what's going to happen to their lives [@liu2020effects]. Since different countries seem to be in different stages of the epidemic, and Italy is substantially similar to Spain, we will try to see if those similarities translate in correlation between the different time series, and, in that case, if the lag is similar to the [perceived lag of one week](https://www.euronews.com/2020/03/25/coronavirus-spain-surpasses-china-in-the-overall-number-of-covid-19-deaths).
 
 ```{r setupites,echo=FALSE,message=FALSE}
 IT.data <- world.data[world.data$Country.Region=="Italy",]
@@ -45,7 +45,7 @@ ccf(IT.data$Cases, ES.data$Cases,lag.max = 28)
 ccf(IT.data$Deaths, ES.data$Deaths,lag.max = 28)
 ```
 
-The cross-correlation is evident, and subtantially similar in profile, and but it goes from -11 days (Italy leading Spain) to +8 days (Italy lagging Spain). This is probably due alto to auto-correlation of the time series, which provokes this effect.
+The cross-correlation is evident, and substantially similar in profile, and but it goes from -11 days (Italy leading Spain) to +8 days (Italy lagging Spain). This is probably due alto to auto-correlation of the time series, which provokes this effect.
 
 New cases are probably a bit more revelatory:
 
@@ -60,15 +60,15 @@ Again, same effect, only extended in time and skewed to Italy leading Spain for 
 
 Correlation of time series in Spain and Italy do not yield a clear result. Although it is significant, and the distribution of cross-correlation values is slightly skewed to the left indicating Italy leading Spain, it can't clearly be said that there's a difference of one week between them. If we make the difference between Italy leading Spain and the inverse, it's around 6 days for the deltas, 5 days for the absolute time series; that is the only hint of this difference, but it would be cut short by one day to the guesstimate of 7 days.
 
-At least, we have a statistical confirmation of this relation, and by checking the situation in Italy, we can at least reduce incertainty of what the situation in Spain is going to be in approximately 6 days.
+At least, we have a statistical confirmation of this relation, and by checking the situation in Italy, we can at least reduce uncertainty of what the situation in Spain is going to be in approximately 6 days.
 
 
 ## Acknowledgements
 
-This file has been generated from data published by <a href="https://github.com/CSSEGISandData/COVID-19" target="_new">JHU CSSE</a>. It's data-driven and it can be re-generated from the script in  <a href="https://github.com/JJ/covid-reports" target="_new">this repository</a>. This report uses RMarkdown and it can be downloaded from <a href="https://github.com/JJ/covid-reports/blob/master/cfr-evolution.Rmd" target="_new">here</a>.
+This file has been generated from data published by <a href="https://github.com/CSSEGISandData/COVID-19" target="_new">JHU CSSE</a>. It's data-driven and it can be re-generated from the script in  <a href="https://github.com/JJ/covid-reports" target="_new">this repository</a>.
 
 ## License
 
-This report has a cc-by-sa license, and its code a GPL license. Reviews, suggestions and patches are welcome. It's written in RMarkdown and [hosted in GitHu](https://github.com/JJ/covid-reports/blob/master/es-it-correlation.Rmd).
+This report has a cc-by-sa license, and its code a GPL license. Reviews, suggestions and patches are welcome. It's written in RMarkdown and <a href='https://github.com/JJ/covid-reports/blob/master/es-it-correlation.Rmd' target='_new'>hosted in GitHub</a>.
 
 ## References
