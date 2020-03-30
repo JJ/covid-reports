@@ -1,0 +1,58 @@
+---
+title: "Spain and Italy time series correlation"
+author: "J. J. Merelo"
+date: "30 de marzo de 2020"
+output:
+  html_document: default
+  pdf_document: default
+bibliography: covid.bib
+abstract: |
+  Different countries attacked the COVID-19 outbreak in different ways; however, the results seem to have some correlation, even more so if the countries are similar geographically, politically and culturally. In this report we investigate correlations between the time series of infection and deceases in Spain and Italy, and try to come up with a *lag* between them, so that we can infer something on the Spanish situation, which seems to go behind.
+urlcolor: blue
+---
+
+```{r setup, include=FALSE}
+library(tidyr)
+library(ggplot2)
+library(ggthemes)
+library(dplyr)
+
+base <- "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_"
+world.confirmed <- read.csv(paste0(base,"confirmed_global.csv"), sep=',',head=T)
+world.confirmed <- gather( world.confirmed, Date, Cases, X1.22.20:X3.29.20)
+world.deaths <- read.csv(paste0(base,"deaths_global.csv"), sep=',',head=T)
+world.deaths <- gather( world.deaths, Date, Deaths, X1.22.20:X3.29.20)
+world.data <- merge(world.confirmed,world.deaths,by=c("Province.State","Country.Region","Lat", "Long", "Date"))
+world.data$Date <- as.Date(world.data$Date,"X%m.%d.%y")
+world.data <- world.data %>% group_by(Province.State,Country.Region,Date) %>% arrange(Province.State,Country.Region, as.Date(Date))
+world.data <- world.data %>% group_by(Province.State,Country.Region) %>% mutate( New.Cases= Cases-lag(Cases, default=0), New.Deaths= Deaths -lag(Deaths, default=0))
+save(world.data,file="covid19-world.Rda")
+write.csv(world.data,'covid19-world.csv')
+```
+
+# Introduction
+
+Information on possible future evolution of the pandemia gives the citizen a bit of control over what's going to happen to their lives [@liu2020effects]. Since different countries seem to be in different stages of the epidemic, and Italy is substantially similar to Spain, we will try to see if those similarities translate in correlation between the different time series, and, in that case, if the lag is similar to the [perceived lag of one week](https://www.euronews.com/2020/03/25/coronavirus-spain-surpasses-china-in-the-overall-number-of-covid-19-deaths).
+
+```{r setupites,echo=FALSE,message=FALSE}
+IT.data <- world.data[world.data$Country.Region=="Italy",]
+ES.data <- world.data[world.data$Country.Region=="Spain",]
+```
+
+Absolute correlation will be investigated first.
+```{r ccf.abs,echo=FALSE,message=FALSE}
+ccf(IT.data$Cases, ES.data$Cases,lag.max = 28)
+ccf(IT.data$Deaths, ES.data$Deaths,lag.max = 28)
+```
+
+The cross-correlation is evident, and subtantially similar in profile, and but it goes from -11 days (Italy leading Spain) to +8 days (Italy lagging Spain).
+
+# Conclusions
+
+
+
+## Acknowledgements
+
+This file has been generated from data published by <a href="https://github.com/CSSEGISandData/COVID-19" target="_new">JHU CSSE</a>. It's data-driven and it can be re-generated from the script in  <a href="https://github.com/JJ/covid-reports" target="_new">this repository</a>. This report uses RMarkdown and it can be downloaded from <a href="https://github.com/JJ/covid-reports/blob/master/cfr-evolution.Rmd" target="_new">here</a>.
+
+## References
