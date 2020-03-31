@@ -31,7 +31,9 @@ data$CFR <- data$fallecimientos / data$casos
 data <- data %>% mutate( Casos.vivos= casos-lag(casos, 28, default=0))
 data <- data %>% mutate( Déficit= hospitalizados-lag(casos, 5, default=0))
 data$total <- data$casos - ifelse(is.na(data$salidas),0,data$salidas)
+data$h.total <- data$hospitalizados - ifelse(is.na(data$salidas),0,data$salidas)
 data <- data %>% mutate( R0= total / lag(total, 1, default=1))
+data <- data %>% mutate( HR0= h.total / lag(h.total, 1, default=1))
 data$Tasa.Hospitalizacion <- data$hospitalizados / data$total 
 save(data,file="covid-19-es.Rda")
 write.csv(data,'covid-19-es.csv')
@@ -52,6 +54,15 @@ Se habla de `R0` como la relación de personas infectadas por cada una que tenga
 ```{r R0}
 ggplot(data,aes(x=Fecha,y=R0))+geom_point()+geom_line()+theme_economist()
 ```
+
+Siendo la cantidad de hospitalizados la más fiable, conviene calcularlo usándola, aunque todavía hay pocos datos:
+
+
+```{r HR0}
+ggplot(data,aes(x=Fecha,y=HR0))+geom_point()+geom_line()+theme_economist()
+```
+
+Como se ve, la tasa actual estaría alrededor de 1, ligeramente por debajo, y se alcanzó por primera vez hace dos días.
 
 ## Reconocimientos.
 
