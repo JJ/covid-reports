@@ -6,7 +6,6 @@ library(ggrepel)
 # Done with help from here https://stackoverflow.com/questions/54855334/gganimate-time-series-and-two-line-plot
 
 load("covid-19-es.Rda")
-data$total <- data$casos - ifelse(is.na(data$salidas),0,data$salidas)
 
 my_plot <- ggplot(data,aes(x = Fecha,y = total, color=total ))+
   geom_point(size = 7) +

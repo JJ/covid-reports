@@ -1,7 +1,7 @@
 ---
 title: "Evolución casos COVID19 en España en unos gráficos"
 author: "J. J. Merelo"
-date: "30 de marzo de 2020"
+date: "1 de abril de 2020"
 output:
   html_document: default
   pdf_document: default
@@ -39,7 +39,7 @@ Una de los parámetros que es interesante conocer es el cambio con respecto al d
 ggplot(data,aes(x=Fecha,y=Casos.nuevos),na.rm = TRUE)+geom_line()+geom_point()+theme_tufte()
 ```
 
-Parece que el pico de casos nuevos se ha alcanzado el 26 de marzo, pero todavía tiene que consolidarse, porque los fines de semana se suelen informar de menos casos.
+El pico de casos nuevos se alcanzó aparentemente el 26 de marzo, pero ha vuelto a repuntar en un lunes. Aparentemente, hay cierta periodicidad en los informes de nuevos casos que habría que investigar.
 
 Las nuevas altas por día
 
@@ -59,6 +59,8 @@ Los nuevos fallecimientos por día, junto con la media a 3 días
 ggplot(data,aes(x=Fecha))+geom_line(aes(y=Fallecimientos.nuevos, color='Dato'))+geom_line(aes(y=Decesos.Avg.3, color='Media a 3'))+theme_tufte()
 ```
 
+Parece haberse aplanado a partir del día 26, pero sigue aumentando, en media, en la tasa diaria. El *pico* del que tanto se ha hablado se desvanece a datos de hoy.
+
 Desde mediados de marzo se publican también las hospitalizaciones, inicialmente de forma bastante irregular. Primero vemos los números absolutos, y luego las nuevas por día
 
 ```{r hospitalizaciones, warning=FALSE}
@@ -66,7 +68,9 @@ ggplot(data,aes(x=Fecha,y=hospitalizados),na.rm = TRUE)+geom_point()+geom_line()
 ggplot(data,aes(x=Fecha,y=Hospitalizaciones.nuevas),na.rm = TRUE)+geom_point()+geom_line()+theme_tufte()
 ```
 
-Las hospitalizaciones nuevas también parecen haber alcanzado un pico el día 26, y el acumulado de hospitalizaciones parece haberse decelerado.
+Las hospitalizaciones nuevas también parecen haber alcanzado un pico el día 25 (aparecido en el informe del día 26), y el acumulado de hospitalizaciones parece haberse decelerado; dado que este es el dato más fiable, cabe predecir que en unos días empiece a disminuir de forma sostenible el número de fallecimientos.
+
+Las [correlaciones entre diferentes series, que dan una idea más clara de los datos futuros, se encuentran en otro informe](https://rpubs.com/jjmerelo/correlaciones-es-covid19).
 
 ## Reconocimientos
 
