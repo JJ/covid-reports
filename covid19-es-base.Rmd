@@ -32,6 +32,8 @@ data <- data %>% mutate( Casos.vivos= casos-lag(casos, 28, default=0))
 data <- data %>% mutate( Déficit= hospitalizados-lag(casos, 5, default=0))
 data$total <- data$casos - ifelse(is.na(data$salidas),0,data$salidas)
 data$h.total <- data$hospitalizados - ifelse(is.na(data$salidas),0,data$salidas)
+data$Tasa.Resolucion <- (data$altas + data$fallecimientos)/data$casos
+data$Tasa.Resolucion.R <- (data$Altas.nuevas+data$Fallecimientos.nuevos)/data$Casos.nuevos
 data <- data %>% mutate( R0= Casos.nuevos / lag(total, 1, default=1))
 data <- data %>% mutate( HR0= Hospitalizaciones.nuevas / lag(h.total, 1, default=1))
 data$Tasa.Hospitalizacion <- data$hospitalizados / data$total 
@@ -63,6 +65,21 @@ ggplot(data,aes(x=Fecha,y=HR0))+geom_point()+geom_line()+theme_economist()
 ```
 
 Como se ve, la tasa actual estaría alrededor de 1, ligeramente por debajo, y se alcanzó por primera vez hace dos días.
+
+La tasa de resolución absoluta es la relación entre casos resueltos (positiva y negativamente) y casos totales. Dado que todos los datos en el mismo son inciertos, interesa más la dinámica que los valores absolutos:
+
+```{r TR,warning=FALSE}
+ggplot(data,aes(x=Fecha,y=Tasa.Resolucion))+geom_point()+geom_line()+theme_economist()
+```
+
+Quizás con la relativa (es decir, lo mismo calculado puntualmente para cada día con deltas desde el día anterior) el panorama sea un poco más claro:
+
+```{r TRR,warning=FALSE}
+ggplot(data,aes(x=Fecha,y=Tasa.Resolucion.R))+geom_point()+geom_line()+theme_economist()
+```
+
+En cuanlquiera de los casos las tasas son muy bajas, y queda todavía mucho camino por recorrer a los 17 días del cierre.
+
 
 ## Reconocimientos.
 
