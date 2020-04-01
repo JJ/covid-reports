@@ -39,7 +39,7 @@ Una de los parámetros que es interesante conocer es el cambio con respecto al d
 ggplot(data,aes(x=Fecha,y=Casos.nuevos),na.rm = TRUE)+geom_line()+geom_point()+theme_tufte()
 ```
 
-El pico de casos nuevos se alcanzó aparentemente el 26 de marzo, pero ha vuelto a repuntar en un lunes. Aparentemente, hay cierta periodicidad en los informes de nuevos casos que habría que investigar.
+El pico de casos nuevos se alcanzó aparentemente el 31 de marzo, después de un primer pico el día 26. Aparentemente, hay cierta periodicidad en los informes de nuevos casos que habría que investigar.
 
 Las nuevas altas por día
 
