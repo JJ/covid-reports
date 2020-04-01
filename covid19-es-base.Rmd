@@ -32,8 +32,8 @@ data <- data %>% mutate( Casos.vivos= casos-lag(casos, 28, default=0))
 data <- data %>% mutate( Déficit= hospitalizados-lag(casos, 5, default=0))
 data$total <- data$casos - ifelse(is.na(data$salidas),0,data$salidas)
 data$h.total <- data$hospitalizados - ifelse(is.na(data$salidas),0,data$salidas)
-data <- data %>% mutate( R0= total / lag(total, 1, default=1))
-data <- data %>% mutate( HR0= h.total / lag(h.total, 1, default=1))
+data <- data %>% mutate( R0= Casos.nuevos / lag(total, 1, default=1))
+data <- data %>% mutate( HR0= Hospitalizaciones.nuevas / lag(h.total, 1, default=1))
 data$Tasa.Hospitalizacion <- data$hospitalizados / data$total 
 save(data,file="covid-19-es.Rda")
 write.csv(data,'covid-19-es.csv')
@@ -49,16 +49,16 @@ ggplot(data,aes(x=Fecha,y=CFR))+geom_line()+theme_economist()+
 
 Según avanza la cuarentena, el número de fallecimientos (que se arrastra desde atrás, por contagios anteriores) aumenta con respecto al número de contagios (que disminuye). Por eso la tasa no deja de aumentar hasta los valores actuales.
 
-Se habla de `R0` como la relación de personas infectadas por cada una que tenga COVID-19. La estimación directa es imposible, pero de forma indirecta se puede estimar a partir del número total de casos no fallecidos ni dados de alta, comparándolo con el del día anterior.
+Se habla de `R0` como la relación de personas infectadas por cada una que tenga COVID-19. La estimación directa es imposible, pero de forma indirecta se puede estimar a partir del número nuevo de casos, comparando con el número total de casos del día anterior.
 
-```{r R0}
+```{r R0,warning=FALSE}
 ggplot(data,aes(x=Fecha,y=R0))+geom_point()+geom_line()+theme_economist()
 ```
 
-Siendo la cantidad de hospitalizados la más fiable, conviene calcularlo usándola, aunque todavía hay pocos datos:
+Siendo la cantidad de hospitalizados la más fiable, conviene calcularlo usándola, aunque todavía hay pocos datos; una vez más, se compararía el nuevo número de hospitalizaciones con el número del día anterior de casos no fallecidos ni dados de alta.
 
 
-```{r HR0}
+```{r HR0,warning=FALSE}
 ggplot(data,aes(x=Fecha,y=HR0))+geom_point()+geom_line()+theme_economist()
 ```
 
