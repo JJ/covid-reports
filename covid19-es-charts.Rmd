@@ -59,7 +59,7 @@ Los nuevos fallecimientos por día, junto con la media a 3 días
 ggplot(data,aes(x=Fecha))+geom_line(aes(y=Fallecimientos.nuevos, color='Dato'))+geom_line(aes(y=Decesos.Avg.3, color='Media a 3'))+theme_tufte()
 ```
 
-Parece haberse aplanado a partir del día 26, pero sigue aumentando, en media, en la tasa diaria. El *pico* del que tanto se ha hablado se desvanece a datos de hoy.
+Parece haberse aplanado a partir del día 26, pero sigue aumentando, en media, en la tasa diaria. El *pico* del que tanto se ha hablado se desvanece teniendo en cuenta los datos de hoy. Al menos los fallecimientos aumentan más lentamente, pero siguen alcanzándose nuevos máximos en número de fallecimientos.
 
 Desde mediados de marzo se publican también las hospitalizaciones, inicialmente de forma bastante irregular. Primero vemos los números absolutos, y luego las nuevas por día
 

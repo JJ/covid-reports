@@ -1,7 +1,6 @@
 library(ggplot2)
 library(gifski)
 library(gganimate)
-library(ggrepel)
 
 # Done with help from here https://stackoverflow.com/questions/54855334/gganimate-time-series-and-two-line-plot
 
