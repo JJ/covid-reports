@@ -99,6 +99,15 @@ forecast.d$ds <- as.Date(forecast.d$ds, "%Y-%m-%d")
 ggplot(forecast.d,aes(x=ds)) + geom_point(data=forecast.d,aes(y=trend,color="Trend"))+  geom_point(data=dc,aes(y=y,color="Actual")) + theme_economist()
 ```
 
+With this model, we can try and predict future reported deceases
+
+```{r future.d, message=FALSE}
+forecast.d <- forecast.d %>% mutate( Future.Deceases= trend - lag(trend, 1, default=1))
+ggplot(forecast.d,aes(x=ds,y=Future.Deceases,color="Predicted")) + geom_point()+geom_line() + geom_point(data=data,aes(y=Fallecimientos.nuevos,color="Actual"))+ theme_economist()
+```
+
+The fit is not too precise, but it seems clear that the peak was reached on March 31st or thereabouts; the data the next few days will be essential to determine if that's the case or we will actually have to wait a few days more.
+
 # Conclusions
 
 If data provided is correct, and there's no hidden pocket of contagions somewhere, the accumulated number of cases of COVID-19 in Spain might be capped at approximately 190000 cases, with an accumulated 57000 check-ins into hospital and that might happen in or around April 15th.
