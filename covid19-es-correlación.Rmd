@@ -1,7 +1,7 @@
 ---
-title: "Encontrando correlaciones en los datos de COVID-19 en España"
+title: "Encontrando correlaciones en los datos diarios de COVID-19 en España"
 author: "J. J. Merelo"
-date: "1 de abril de 2020"
+date: "2 de abril de 2020"
 output:
   html_document: default
   pdf_document: default
@@ -18,18 +18,12 @@ load("covid-19-es.Rda")
 
 Utilizaremos [autocorrelaciones y correlaciones cruzadas en R, usando las funciones `acf` y `ccf`](https://online.stat.psu.edu/stat510/lesson/8/8.2). En estos gráficos se indican con barras de diferente longitud la correlación; líneas punteadas indican la zona a partir de la cual la correlación es significativa. A la izquierda del cero, la variable X antecede o predice la y, a la derecha es justo al contrario; por encima de la barra serían correlaciones positivas y por debajo negativas, es decir que cuando crece una variable, la otra disminuye.
 
-## Autocorrelación de casos
+## Autocorrelación de nuevos casos
 
-Esta es la autocorrelación de casos, es decir, la relación que hay entre los casos un día y el siguiente:
-
-```{r acfcasos}
-acf(data$casos,lag.max = 28)
-```
-
-Pero también puede ser interesante ver cuál es la autocorrelación de esta serie temporal, como influyen los casos de los que se informa cada día en los siguientes.
+Esta es la autocorrelación de nuevos casos, es decir como influyen los casos de los que se informa cada día en los siguientes. Esta serie temporal tiene mucha incertidumbre, ya que sólo refleja los hospitalizados y, a estas alturas, personal crítico (o políticos o personas que se lo hayan pagado de su bolsillo).
 
 ```{r acfcasosnuevos}
-acf(data$Casos.nuevos,na.action = na.pass, lag=28)
+acf(data$Casos.nuevos,na.action = na.pass, lag=35)
 ```
 
 Realmente este dato es poco fiable, porque no se sabe cuantas altas hay ni cuantos tests se están haciendo. El dato más fiable es el número de personas hospitalizadas y su cambio cada día. Veamos su autocorrelación.
@@ -40,17 +34,7 @@ acf(data$Hospitalizaciones.nuevas,na.action = na.pass, lag=28)
 
 ## Correlaciones de nuevos casos reportados.
 
-¿Cuanto se tarda en llegar a una salida de la situación? Trazaremos los casos frente al las altas y fallecimientos.
-
-Cabe notar que las primeras salidas no se dieron hasta pasar más de dos semanas desde los primeros casos, lo que posiblemente quiere decir que hay muchas altas que no se están teniendo en cuenta (o fallecimientos).
-
-```{r casossalidascf}
-ccf(data$casos,data$salidas,na.action = na.pass, lag.max = 28)
-```
-
-Este diagrama de correlación indica que es positiva entre casos en lags de -5 a 0, es decir, nuevos casos se convierten en salidas (fallecimientos o altas) hasta 5 días más tarde; los casos preceden a las salidas hasta por 5 días, y luego una negativa entre salidas y casos que era inicialmente entre 4 y 8 días, y ahora es entre 7 y 12 dias. Ni el desplazamiento ni la correlación negativa es fácil de interpretar; a más salidas, menos casos aproximadamente 8 días más tarde. Es posible que, al ser o altas o muertes, cuantas más personas haya en esa situación menos infecciones se van a producir una semana más tarde.
-
-Por otro lado, observando la gráfica de altas en [@covides1] se observa cierta periodicidad, al menos inicialmente 
+¿Cuanto se tarda en llegar a una salida de la situación? Trazaremos los casos frente al las altas y fallecimientos. Observando la gráfica de altas en [@covides1] se observa cierta periodicidad, al menos inicialmente 
 
 ```{r acf.altas.nuevos}
 acf(data$Altas.nuevas,na.action = na.pass,lag.max = 28)
@@ -64,35 +48,7 @@ acf(data$Fallecimientos.nuevos,na.action = na.pass,lag.max = 28)
 
 Esta es de uno y hasta 3 días, pero la situación puede cambiar en el futuro, aunque en los últimos días es bastante estable.
 
-Esta es la correlación entre casos y fallecimientos
-```{r ccffallecimientos}
-ccf(data$casos,data$fallecimientos,na.action = na.pass,lag.max = 28)
-```
-
-Parece que el el *lag*, que era inicalmente entre uno y dos días, se ha ampliado ahora hasta los 4 días. El hecho de que los fallecimientos predigan los casos futuros parece indicar que unas infecciones causan otras, o que las personas empiezan a testearse cuando sienten un fallecimiento cerca.
-
-Y entre casos y altas hospitalarias
-
-```{r ccfaltas}
-ccf(data$casos,data$altas,na.action = na.pass,lag.max = 28)
-```
-
-En este caso hay también un lag de un día; los casos de cada día están correlacionados con las altas del siguiente.
-
-Una veremos como se correlaciona los datos de ingresos en la UCI
-```{r ccuci}
-ccf(data$casos,data$ingresos_uci,na.action = na.pass,lag.max = 28)
-```
-
-Y entre ingresos en la UCI y fallecimientos
-
-```{r ccucif}
-ccf(data$ingresos_uci,data$fallecimientos,na.action = na.pass,lag.max = 28)
-```
-
-## Correlación entre diferencias
-
-Quizás sea más interesante establecer correlaciones entre diferencias, porque los datos acumulados tienen más información.
+La correlación entre casos y el resto de los datos se muestra a continuación
 
 ```{r diffccf}
 ccf(data$Casos.nuevos,data$Fallecimientos.nuevos,na.action = na.pass,lag.max = 28)
