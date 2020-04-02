@@ -55,19 +55,19 @@ Fitting this model is actually a try-and-error process, where you need to check 
 hospitalizados <- data.frame( y = data[22:38,]$hospitalizados,
                               ds = data[22:38,]$Fecha,
                               floor = 3215,
-                              cap = 57000)
+                              cap = 60000)
 model.h <- prophet(hospitalizados, growth='logistic')
 future.h <- make_future_dataframe(model.h, periods=30)
-future.h$cap <- 57000
+future.h$cap <- 60000
 future.h$floor <- 1
 forecast.h <- predict(model.h,future.h)
 forecast.h$ds <- as.Date(forecast.h$ds, "%Y-%m-%d")
 ggplot(forecast.h,aes(x=ds)) + geom_point(data=forecast.h,aes(y=trend,color="Trend"))+  geom_point(data=hospitalizados,aes(y=y,color="Actual")) + theme_economist()
 ```
 
-Again, some time around April 15th might reach the peak, and it might be around 57000 accumulated people treated in hospitals. But in this case the problem is not sampling, which is probably accurate, but saturation of hospitals. So let us try a different approach: checking the progress of the resolution rate, that is, the relationship between discharges and deceases and new cases. 
+Again, some time around April 15th might reach the peak, and it might be around 60000 accumulated people treated in hospitals (which is an increase over previous estimation, which was 57000). But in this case the problem is not sampling, which is probably accurate, but saturation of hospitals. So let us try a different approach: checking the progress of the resolution rate, that is, the relationship between discharges and deceases and new cases. 
 
-```{r resolution rate, echo= FALSE, warning=FALSE}
+```{r resolution rate, echo= FALSE, message=FALSE,warning=FALSE}
 dr <- data.frame( y = data[11:38,]$Tasa.Resolucion.R,
                               ds = data[11:38,]$Fecha,
                               floor = 0,
@@ -82,6 +82,22 @@ ggplot(forecast.r,aes(x=ds)) + geom_point(data=forecast.r,aes(y=trend,color="Tre
 ```
 
 We set the cap of the resolution rate at 1.5. That would be a very good outcome, when the system is able to cope with more cases than there are actually. And in this case, the date is exactly April 15th, when the resolution rate will go over 1.
+
+Unfortunately, we have to try and preview the number of deaths reported. Although this is going to be much lower than the real number or increment of deaths due to the overall situation, so this is mostly an academic exercise. We can see, however, how it evolves in the next few days and we'll be able to check if we're past the daily peak in deceases. 
+
+```{r deceases}
+dc <- data.frame( y = data$fallecimientos,
+                              ds = data$Fecha,
+                              floor = 0,
+                              cap = 15250)
+model.d <- prophet(dc, growth='logistic')
+future.d <- make_future_dataframe(model.d, periods=30)
+future.d$cap <- 15250
+future.d$floor <- 0
+forecast.d <- predict(model.d,future.d)
+forecast.d$ds <- as.Date(forecast.d$ds, "%Y-%m-%d")
+ggplot(forecast.d,aes(x=ds)) + geom_point(data=forecast.d,aes(y=trend,color="Trend"))+  geom_point(data=dc,aes(y=y,color="Actual")) + theme_economist()
+```
 
 # Conclusions
 

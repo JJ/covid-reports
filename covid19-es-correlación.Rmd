@@ -67,16 +67,17 @@ ccf(data$Casos.nuevos,data$Altas.nuevas,na.action = na.pass,lag.max = 28)
 El problema principal de esta serie es lo pocos datos que hay, ya que se empezó a dar el día 14 de marzo. A continuación las hospitalizaciones nuevas y su correlación con otras deltas
 
 ```{r hospitalizaciones}
-ccf(data$Hospitalizaciones.nuevas,data$Uci.nuevos,na.action = na.pass,lag.max = 28)
-ccf(data$Hospitalizaciones.nuevas,data$Fallecimientos.nuevos,na.action = na.pass,lag.max = 28)
+ccf(data$Hospitalizaciones.nuevas,data$Uci.nuevos,na.action = na.pass,lag.max = 20)
+ccf(data$Hospitalizaciones.nuevas,data$Fallecimientos.nuevos,na.action = na.pass,lag.max = 20)
 ```
 
 Las hospitalizaciones nuevas influyen en los fallecimientos a partir de cuatro días más tarde; el día 2 de abril se ha alcanzado el pico de fallecimientos que correspondería a las hospitalizaciones del día 30 de marzo; aunque no fue el pico, efectivamente ese día los ingresos estuvieron por encima de la media, y además recoge también la correlación positiva de los picos anteriores el día 28 de marzo. 
 
+```{r ccfhaltas}
 ccf(data$Hospitalizaciones.nuevas,data$Altas.nuevas,na.action = na.pass,lag.max = 28)
 ```
 
-Las hospitalizaciones parecen ir en sentido contrario que las altas entre 6 y 7 días antes, pero en el mismo sentido dos o tres días antes. Quizás viene a decir que las personas a las que les dan el alta pasan esos días en el hospital, si no van a resultar en altas pasan más días, o simplemente que si hay muchas hospitalizaciones en una fecha, habrá menos altas una semana más tarde.
+Las hospitalizaciones parecen ir en sentido contrario que las altas entre 11 y 10 días antes, pero en el mismo sentido de 8 a 2 días antes. Quizás viene a decir que las personas a las que les dan el alta pasan esos días en el hospital, entre 8 y dos días, si no van a resultar en altas pasan más días, o simplemente que si hay muchas hospitalizaciones en una fecha, habrá menos altas una 10 días más tarde. Pero una vez más, la serie es muy pequeña y es muy difícil de decir con precisión.
 
 Quizás el dato más revelador:
 
@@ -84,7 +85,7 @@ Quizás el dato más revelador:
 ccf(data$Uci.nuevos,data$Fallecimientos.nuevos,na.action = na.pass,lag.max = 28)
 ```
 
-Los fallecimientos predicen ingresos en la UCI durante los días siguientes, hasta 6 días, y al revés. Aparentemente, esa es la duración de tiempo en la UCI.
+Los fallecimientos predicen ingresos en la UCI durante los días siguientes, hasta 9 días, y al revés. Es decir, entre 20 y 14 días correlación negativa: menos fallecimientos, y a continuación, correlación positiva. Sigue prediciendo el número de fallecimiento los nuevos ingresos en la UCI, así que en muchos casos las UCIs están saturadas; de la misma forma los fallecimientos predicen los ingresos en UCI 15 días más tarde, lo que indica que a 15 días se producirá también una rebaja.
 
 ## Reconocimientos
 
