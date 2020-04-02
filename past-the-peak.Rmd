@@ -1,0 +1,98 @@
+---
+title: 'Past the peak: predicting peak COVID-19 and the end of the lockdown in Spain'
+author: "J. J. Merelo"
+date: "April 2nd, 2020"
+output:
+  html_document: default
+  pdf_document: default
+bibliography: covid.bib
+abstract: |
+  The Spanish Government declared a national emergency on March 14th, 2020 due to the coronavirus outbreak. Three weeks later, there's no end in sight. The scarcity of hard data makes it hard to predict when the peak will be reached, and when it might end. In this report we will try and estimate the peak combining prediction based on different time series and the logistic growth curve.
+urlcolor: blue
+---
+
+```{r setup, include=FALSE}
+library(dplyr)
+library(ggplot2)
+library(ggthemes)
+library(prophet)
+load("covid-19-es.Rda")
+```
+
+## Introduction
+
+For those of us who are lucky enough to not be sick with COVID-19, confinement and lack of expectations on when it will end [@wang2020mitigate,@bsdpandemic] might cause anxiety and decrease mental wellbeing due to the lack of control over what might happend in the inmediate future. Having at least a rough estimation over how many days the situation will last will give at least a bit of control back to the individual person and their families.
+
+## Methodology
+
+Data has been extracted from the [Datadista repository](https://github.com/datadista/datasets), in CSV format; the data is officially published by the Spanish Ministry of Health, and every quantity is clearly a sample of the real number. Reported cases are a sample of total cases, since testing is patchy and not extensive; discharges is also a sample, since it reveals mostly hospital discharges. The amount of people in hospitals and in ICUs is probably the one with the highest certainty, except for the fact that these are mostly overwhelmed and in some cases saturation point has been reached, so it does not say how many requests are there. In any case, let's just assume that at least the dynamics has some similarity to reality, and let's predict the future cases based on the current curve.
+
+```{r tabla, echo=FALSE, message=FALSE}
+data$cap <- 190000
+data$floor <- 1
+model.logistic <- prophet(data, growth='logistic')
+future.logistic <- make_future_dataframe(model.logistic, periods=60)
+future.logistic$cap <- 190000
+future.logistic$floor <- 1
+forecast.logistic <- predict(model.logistic,future.logistic)
+```
+
+We will be using [Prophet](https://facebook.github.io/prophet/) to create a model and compute these numbers. Number of cases predicted are below, along with the higher and lower bound. Underneath, `prophet` uses a series of models for prediction, including the Bayesian models included in Stan. We have capped the growth at 1 million initially.
+
+## Results
+
+Let's try and predict future growth of the number of cases using a logistic growth model.
+
+```{r plot, echo=FALSE}
+forecast.logistic$ds <- as.Date(forecast.logistic$ds, "%Y-%m-%d")
+ggplot(forecast.logistic,aes(x=ds)) + geom_point(data=forecast.logistic,aes(y=trend,color="Trend"))+  geom_point(data=data,aes(y=y,color="Actual")) + scale_y_log10() + theme_economist()
+
+```
+
+Fitting this model is actually a try-and-error process, where you need to check different cap values until one that fits the curve the best, at least for the last few days. Finally, 190000 seems to yield the fit shown above, which might indicate that the cap is actually far away, and in fact could take place some time in mid-April. Since this is the series that has the most uncertainty, let's try to check it against hospital occupation
+
+```{r hospitalizados, echo=FALSE, message=FALSE}
+hospitalizados <- data.frame( y = data[22:37,]$hospitalizados,
+                              ds = data[22:37,]$Fecha,
+                              floor = 3215,
+                              cap = 57000)
+model.h <- prophet(hospitalizados, growth='logistic')
+future.h <- make_future_dataframe(model.h, periods=30)
+future.h$cap <- 57000
+future.h$floor <- 1
+forecast.h <- predict(model.h,future.h)
+forecast.h$ds <- as.Date(forecast.h$ds, "%Y-%m-%d")
+ggplot(forecast.h,aes(x=ds)) + geom_point(data=forecast.h,aes(y=trend,color="Trend"))+  geom_point(data=hospitalizados,aes(y=y,color="Actual")) + scale_y_log10() + theme_economist()
+```
+
+Again, some time around April 15th might reach the peak, and it might be around 57000 accumulated people treated in hospitals. But in this case the problem is not sampling, which is probably accurate, but saturation of hospitals. So let us try a different approach: checking the progress of the resolution rate, that is, the relationship between discharges and deceases and new cases. 
+
+```{r resolution rate, echo= FALSE}
+dr <- data.frame( y = data[11:37,]$Tasa.Resolucion.R,
+                              ds = data[11:37,]$Fecha,
+                              floor = 0,
+                              cap = 1.5)
+model.r <- prophet(dr, growth='logistic')
+future.r <- make_future_dataframe(model.r, periods=30)
+future.r$cap <- 1.5
+future.r$floor <- 0
+forecast.r <- predict(model.r,future.r)
+forecast.r$ds <- as.Date(forecast.r$ds, "%Y-%m-%d")
+ggplot(forecast.r,aes(x=ds)) + geom_point(data=forecast.r,aes(y=trend,color="Trend"))+  geom_point(data=dr,aes(y=y,color="Actual")) + theme_economist()
+```
+
+We set the cap of the resolution rate at 1.5. That would be a very good outcome, when the system is able to cope with more cases than there are actually. And in this case, the date is exactly April 15th, when the resolution rate will go over 1.
+
+# Conclusions
+
+If data provided is correct, and there's no hidden pocket of contagions somewhere, the accumulated number of cases of COVID-19 in Spain might be capped at approximately 190000 cases, with an accumulated 57000 check-ins into hospital and that might happen in or around April 15th.
+
+Past that date, there will still be contagions and deceases, but the health system will be able to arrive to a resolution before new cases pile in.
+
+The initial if, however, is a big if. Health system might be already past its breaking point, and this might result in more unwanted deceseases, not to mention an almost total collapse of the economic system. And past the peak, the population will still be susceptible to get sick, since 190000 cases are a very small fraction of the population, so health measures will need to be taken. But this at least gives us a little hope that we might be able to hit the streets again on or before the beginning of May. 
+
+## Acknowledgements
+
+This report has been generated from data extracted from the Ministry of Health database and published by [Datadista](https://github.com/datadista/datasets) in GitHub under a free License. This paper uses RMarkdown, includes all code needed to generate it, and can be downloaded from [this repository](https://github.com/JJ/covid-reports).
+
+## References
