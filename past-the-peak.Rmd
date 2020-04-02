@@ -21,7 +21,7 @@ load("covid-19-es.Rda")
 
 ## Introduction
 
-For those of us who are lucky enough to not be sick with COVID-19, confinement and lack of expectations on when it will end [@wang2020mitigate,@bsdpandemic] might cause anxiety and decrease mental wellbeing due to the lack of control over what might happend in the inmediate future. Having at least a rough estimation over how many days the situation will last will give at least a bit of control back to the individual person and their families.
+For those of us who are lucky enough to not be sick with COVID-19, confinement and lack of expectations on when it will end [@wang2020mitigate,@bsdpandemic] might cause anxiety and decrease mental well-being due to the lack of control over what might happen in the immediate future. Having at least a rough estimation over how many days the situation will last will give at least a bit of control back to the individual person and their families.
 
 ## Methodology
 
@@ -89,7 +89,7 @@ If data provided is correct, and there's no hidden pocket of contagions somewher
 
 Past that date, there will still be contagions and deceases, but the health system will be able to arrive to a resolution before new cases pile in.
 
-The initial if, however, is a big if. Health system might be already past its breaking point, and this might result in more unwanted deceseases, not to mention an almost total collapse of the economic system. And past the peak, the population will still be susceptible to get sick, since 190000 cases are a very small fraction of the population, so health measures will need to be taken. But this at least gives us a little hope that we might be able to hit the streets again on or before the beginning of May. 
+The initial if, however, is a big if. Health system might be already past its breaking point, and this might result in more unwanted deceases, not to mention an almost total collapse of the economic system. And past the peak, the population will still be susceptible to get sick, since 190000 cases are a very small fraction of the population, so health measures will need to be taken. But this at least gives us a little hope that we might be able to hit the streets again on or before the beginning of May. 
 
 ## Acknowledgements
 
