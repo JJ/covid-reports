@@ -111,7 +111,16 @@ predict(ICU.lm.5,data.frame(ICU.plus.5=data[c(35:38),]$Uci.nuevos))
 
 The first column indicates the value of deceases that will be published today, according to past hospital checkins (on March 30th), ICU wards new check-ins from March 25th, and from March 30th. The one closest to the prediction of the time series is the first. However, it's interesting to note the dynamics of the three time series: the two first ones show a maximum today, while the ICUs from 5 days ago predict a peak *tomorrow*. Any of them is affected by an error band.
 
-Today data will give us a reality check. 
+Today data will give us a reality check. The confidence interval is also shown below:
+
+```{r confidence}
+predict(H.lm,data.frame(H.plus.5=data[c(35),]$Hospitalizaciones.nuevas),interval="confidence")
+predict(ICU.lm.10,data.frame(ICU.plus.10=data[c(30),]$Uci.nuevos),interval="confidence")
+predict(ICU.lm.5,data.frame(ICU.plus.5=data[c(35),]$Uci.nuevos),interval="confidence")
+```
+
+These intervals do not really match. Given that the predicion from 10 days ago might have lower confidence, we'll just take from it the fact that the peak might be reached tomorrow, and not yesterday, but if we take the other two intervals the quantity today might be between 646 and 718 deceases, in which case we might well be past the peak yesterday. 
+
 
 ## Acknowledgement
 
