@@ -69,6 +69,37 @@ summary(H.lm)
 
 Since correlation is not so strong, it's even worse and it does not even fit. So hospital check-ins are useless for this purpose.
 
+Let's try next with ICU check-ins
+
+```{r lmicu,message=FALSE,warning=FALSE}
+data <- data %>% mutate(ICU.plus.10 = lag(Uci.nuevos,10))
+ggplot(data,aes(x=ICU.plus.10,y=Fallecimientos.nuevos))+ geom_point()+geom_smooth(method='lm', formula= y~x)+theme_tufte()
+```
+
+Again, looks like a relatively good fit, although it seems to go in the opposite direction of what the cross-correlation would indicate. Also, not a lot of data.
+
+```{r icu10}
+ICU.lm <- lm( ICU.plus.10 ~ Fallecimientos.nuevos, data=data)
+summary(ICU.lm)
+```
+Again we find the same pattern: the slope has a good fit, but the intercept does not, so it can't be used for prediction. Again, this is probably due to the lack of data points. Let's try with the second strong correlation, where ICUs check-ins predict deceases in 5 days.
+
+```{r lmicu5,message=FALSE,warning=FALSE}
+data <- data %>% mutate(ICU.plus.5 = lag(Uci.nuevos,5))
+ggplot(data,aes(x=ICU.plus.5,y=Fallecimientos.nuevos))+ geom_point()+geom_smooth(method='lm', formula= y~x)+theme_tufte()
+```
+
+The fit looks a bit better than before, and it goes in the same direction. Let's try the fit.
+
+```{r icu5}
+ICU.lm <- lm( ICU.plus.5 ~ Fallecimientos.nuevos, data=data)
+summary(ICU.lm)
+```
+
+The slope has the best fit; however, again the intercept does not fit, so we can't use it for prediction.
+
+## Using rolling averages
+
 ## Reconocimientos
 
 Este fichero está generado a partir de los datos elaborados por [Datadista](https://github.com/datadista/datasets) y tiene una licencia libre. Se puede generar con nuevos datos usando el script en [este repositorio](https://github.com/JJ/covid-reports).
