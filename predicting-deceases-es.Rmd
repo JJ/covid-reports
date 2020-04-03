@@ -1,0 +1,50 @@
+---
+title: "Finding the best predictor for the number of deceases in the COVID-19 pandemic in Spain"
+author: "J. J. Merelo"
+date: "2 de abril de 2020"
+output:
+  html_document: default
+  pdf_document: default
+bibliography: covid.bib
+---
+
+
+## Introduction
+
+Predicting the worst possible outcome in this crisis can be done in a number of ways. The first is using the dynamics of the deceases time series, but that has got its own uncertainties and it's never possible to find out too precise values. It's convenient to use different predictors for that. Given that the decease usually follows a course, starting with detection, followed by hospitalization, then by moving to an ICU, those three quantities might predict, several days in advance, the number of deaths that are going to happen today. For several days starting in March 30th, the "peak deceases" was announced; hoever, April 2nd saw the highest number so far, so it's impossible or very difficult to predict what's going to happen from now on. This is the main reason why we try to use time series correlations to find out the value on April 3rd.
+
+
+```{r setup, include=FALSE}
+load("covid-19-es.Rda")
+```
+
+## Methodology 
+
+We will mainly use  [the cross-correlation function `ccf` of the language R](https://online.stat.psu.edu/stat510/lesson/8/8.2). The Spanish ministry of Health publishes daily accumulated values of new hospital and ICU check-ins, as well as new cases. We will discard this one initially, since testing is done patchily, if at all, so it is the quantity with the biggest uncertainty of them all.
+
+Looking at the cross-correlation in those time series, we will try to find the day before decease that best predicts them, and them fit a linear model to it. A good fit will indicate a good predictor, the greater the lag, the better. After today's values are published, we will also try and find out which one has been the closer.
+
+## Cross-correlation, hospital and ICU cases.
+
+We will plot here the cross-correlation between new daily cases and new deceases. Below the cross-correlation between new cases in hospital and daily deceases.
+
+
+```{r hospitalizaciones}
+ccf(data$Hospitalizaciones.nuevas,data$Fallecimientos.nuevos,na.action = na.pass,lag.max = 20)
+```
+
+Main problem with this series is that there are so few cases published. In fact, until today there were not a sufficient amount of them; they go back only to March 14th. It, however, exhibits a peak five days before decease. We will use that date to create the model.
+
+```{r ccfhaltas}
+ccf(data$Hospitalizaciones.nuevas,data$Altas.nuevas,na.action = na.pass,lag.max = 28)
+```
+
+There's a negative cross-correlation for 10 days before, probably indicating that early check-in into the ICU ward will probably avoid premature deaths; there's also a positive cross-correlation which is stronger 5 days before. We will try and use both for the models.
+
+## Fitting linear models 
+
+We will first 
+
+## Reconocimientos
+
+Este fichero está generado a partir de los datos elaborados por [Datadista](https://github.com/datadista/datasets) y tiene una licencia libre. Se puede generar con nuevos datos usando el script en [este repositorio](https://github.com/JJ/covid-reports).
