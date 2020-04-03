@@ -56,18 +56,18 @@ ggplot(data,aes(x=H.plus.5,y=Fallecimientos.nuevos))+ geom_point()+geom_smooth(m
 Although the fit seems to be adequate, there are so few data points that it will probably be useless. Let's try to fit a linear model anyway.
 
 ```{r fith}
-H.lm <- lm( H.plus.5 ~ Fallecimientos.nuevos, data=data)
+H.lm <- lm(Fallecimientos.nuevos  ~ H.plus.5 , data=data)
 summary(H.lm)
 ```
-Although the slope has a relatively good fit, the intercept does not fit, which should be expected given the small amount of data points in the series. We can try again with 3 days, where there's also a strong correlation and at least we have 2 more points
+This test has a p-value below 0.5, but it's not excellent. We can try again with a 3 days, where there's also a strong correlation and at least we have 2 more points
 
 ```{r h3}
 data <- data %>% mutate(H.plus.3 = lag(Hospitalizaciones.nuevas,3))
-H.lm <- lm( H.plus.3 ~ Fallecimientos.nuevos, data=data)
-summary(H.lm)
+H.lm.3 <- lm(  Fallecimientos.nuevos ~ H.plus.3, data=data)
+summary(H.lm.3)
 ```
 
-Since correlation is not so strong, it's even worse and it does not even fit. So hospital check-ins are useless for this purpose.
+Since cross-correlation was not so strong to start with, it's even worse and it does not even fit. So hospital check-ins are useless for this purpose.
 
 Let's try next with ICU check-ins
 
@@ -79,10 +79,10 @@ ggplot(data,aes(x=ICU.plus.10,y=Fallecimientos.nuevos))+ geom_point()+geom_smoot
 Again, looks like a relatively good fit, although it seems to go in the opposite direction of what the cross-correlation would indicate. Also, not a lot of data.
 
 ```{r icu10}
-ICU.lm <- lm( ICU.plus.10 ~ Fallecimientos.nuevos, data=data)
-summary(ICU.lm)
+ICU.lm.10 <- lm(  Fallecimientos.nuevos ~ ICU.plus.10 , data=data)
+summary(ICU.lm.10)
 ```
-Again we find the same pattern: the slope has a good fit, but the intercept does not, so it can't be used for prediction. Again, this is probably due to the lack of data points. Let's try with the second strong correlation, where ICUs check-ins predict deceases in 5 days.
+The fit is quite good at the intercept and slope level. Anyway, let's check for 
 
 ```{r lmicu5,message=FALSE,warning=FALSE}
 data <- data %>% mutate(ICU.plus.5 = lag(Uci.nuevos,5))
@@ -92,14 +92,27 @@ ggplot(data,aes(x=ICU.plus.5,y=Fallecimientos.nuevos))+ geom_point()+geom_smooth
 The fit looks a bit better than before, and it goes in the same direction. Let's try the fit.
 
 ```{r icu5}
-ICU.lm <- lm( ICU.plus.5 ~ Fallecimientos.nuevos, data=data)
-summary(ICU.lm)
+ICU.lm.5 <- lm( Fallecimientos.nuevos ~ ICU.plus.5, data=data)
+summary(ICU.lm.5)
 ```
 
-The slope has the best fit; however, again the intercept does not fit, so we can't use it for prediction.
+The fit is again excellent. We have then 3 good predictors, let's compare them.
 
-## Using rolling averages
 
-## Reconocimientos
+## Conclusions
 
-Este fichero está generado a partir de los datos elaborados por [Datadista](https://github.com/datadista/datasets) y tiene una licencia libre. Se puede generar con nuevos datos usando el script en [este repositorio](https://github.com/JJ/covid-reports).
+In ["Past the peak"](https://rpubs.com/jjmerelo/593493), the logistic growth model of deseases, using data published April 2nd, predicted 802 deceases today April 3rd. 
+
+```{r predictions}
+predict(H.lm,data.frame(H.plus.5=data[c(35:38),]$Hospitalizaciones.nuevas))
+predict(ICU.lm.10,data.frame(ICU.plus.10=data[c(30:33),]$Uci.nuevos))
+predict(ICU.lm.5,data.frame(ICU.plus.5=data[c(35:38),]$Uci.nuevos))
+```
+
+The first column indicates the value of deceases that will be published today, according to past hospital checkins (on March 30th), ICU wards new check-ins from March 25th, and from March 30th. The one closest to the prediction of the time series is the first. However, it's interesting to note the dynamics of the three time series: the two first ones show a maximum today, while the ICUs from 5 days ago predict a peak *tomorrow*. Any of them is affected by an error band.
+
+Today data will give us a reality check. 
+
+## Acknowledgement
+
+This report uses data provided by  [Datadista](https://github.com/datadista/datasets) and has a free license; it can be regenerated with data and scripts from [this repository](https://github.com/JJ/covid-reports).
