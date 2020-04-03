@@ -39,88 +39,69 @@ ccf(data$Hospitalizaciones.nuevas,data$Fallecimientos.nuevos,na.action = na.pass
 Main problem with this series is that there are so few cases published. In fact, until today there were not a sufficient amount of them; they go back only to March 14th. It, however, exhibits a peak five days before decease. We will use that date to create the model.
 
 ```{r ccfhaltas}
-ccf(data$Hospitalizaciones.nuevas,data$Altas.nuevas,na.action = na.pass,lag.max = 28)
+ccf(data$Uci.nuevos,data$Fallecimientos.nuevos,na.action = na.pass,lag.max = 28)
 ```
 
-There's a negative cross-correlation for 10 days before, probably indicating that early check-in into the ICU ward will probably avoid premature deaths; there's also a positive cross-correlation which is stronger 5 days before. We will try and use both for the models.
+There's a negative cross-correlation for 11 days before, probably indicating that early check-in into the ICU ward will probably avoid premature deaths; there's also a positive cross-correlation which is stronger 6 days before. We will try and use both for the models.
 
 ## Fitting linear models 
 
 We will first try to compute correlations betweeh hospital check ins 5 days in advance.
 
 ```{r lmh,message=FALSE,warning=FALSE}
-data <- data %>% mutate(H.plus.5 = lag(Hospitalizaciones.nuevas,5))
-ggplot(data,aes(x=H.plus.5,y=Fallecimientos.nuevos))+ geom_point()+geom_smooth(method='lm', formula= y~x)+theme_tufte()
+data <- data %>% mutate(H.plus.6 = lag(Hospitalizaciones.nuevas,6))
+ggplot(data,aes(x=H.plus.6,y=Fallecimientos.nuevos))+ geom_point()+geom_smooth(method='lm', formula= y~x)+theme_tufte()
 ```
 
 Although the fit seems to be adequate, there are so few data points that it will probably be useless. Let's try to fit a linear model anyway.
 
 ```{r fith}
-H.lm <- lm(Fallecimientos.nuevos  ~ H.plus.5 , data=data)
+H.lm <- lm(Fallecimientos.nuevos  ~ H.plus.6 , data=data)
 summary(H.lm)
 ```
-This test has a p-value below 0.5, but it's not excellent. We can try again with a 3 days, where there's also a strong correlation and at least we have 2 more points
+The slope has a bad p-value; the intercept, however, is rather good.
 
 ```{r h3}
-data <- data %>% mutate(H.plus.3 = lag(Hospitalizaciones.nuevas,3))
-H.lm.3 <- lm(  Fallecimientos.nuevos ~ H.plus.3, data=data)
-summary(H.lm.3)
+data <- data %>% mutate(H.plus.7 = lag(Hospitalizaciones.nuevas,7))
+H.lm.7 <- lm(  Fallecimientos.nuevos ~ H.plus.7, data=data)
+summary(H.lm.7)
 ```
 
-Since cross-correlation was not so strong to start with, it's even worse and it does not even fit. So hospital check-ins are useless for this purpose.
+The intercept is quite good, which might imply a very good prediction capability; however, the slope is at a 5% so it is not so valid. The problem is still that there's very little data to work with, so this will vary every single day.
 
 Let's try next with ICU check-ins
 
 ```{r lmicu,message=FALSE,warning=FALSE}
-data <- data %>% mutate(ICU.plus.10 = lag(Uci.nuevos,10))
-ggplot(data,aes(x=ICU.plus.10,y=Fallecimientos.nuevos))+ geom_point()+geom_smooth(method='lm', formula= y~x)+theme_tufte()
+data <- data %>% mutate(ICU.plus.17 = lag(Uci.nuevos,17))
+ggplot(data,aes(x=ICU.plus.17,y=Fallecimientos.nuevos))+ geom_point()+geom_smooth(method='lm', formula= y~x)+theme_tufte()
 ```
 
 Again, looks like a relatively good fit, although it seems to go in the opposite direction of what the cross-correlation would indicate. Also, not a lot of data.
 
 ```{r icu10}
-ICU.lm.10 <- lm(  Fallecimientos.nuevos ~ ICU.plus.10 , data=data)
-summary(ICU.lm.10)
+ICU.lm.17 <- lm(  Fallecimientos.nuevos ~ ICU.plus.17 , data=data)
+summary(ICU.lm.17)
 ```
-The fit is quite good at the intercept and slope level. Anyway, let's check for 
+The fit is quite good at the intercept, not so good at the slope level. Anyway, let's check for the next good fit, which should be at t -2.
 
 ```{r lmicu5,message=FALSE,warning=FALSE}
-data <- data %>% mutate(ICU.plus.5 = lag(Uci.nuevos,5))
-ggplot(data,aes(x=ICU.plus.5,y=Fallecimientos.nuevos))+ geom_point()+geom_smooth(method='lm', formula= y~x)+theme_tufte()
+data <- data %>% mutate(ICU.plus.2 = lag(Uci.nuevos,2))
+ggplot(data,aes(x=ICU.plus.2,y=Fallecimientos.nuevos))+ geom_point()+geom_smooth(method='lm', formula= y~x)+theme_tufte()
 ```
 
-The fit looks a bit better than before, and it goes in the same direction. Let's try the fit.
+The fit looks a bit better than before, although most data points fall outside the confidence interval. Let's try the fit.
 
 ```{r icu5}
-ICU.lm.5 <- lm( Fallecimientos.nuevos ~ ICU.plus.5, data=data)
-summary(ICU.lm.5)
+ICU.lm.2 <- lm( Fallecimientos.nuevos ~ ICU.plus.2, data=data)
+summary(ICU.lm.2)
 ```
 
-The fit is again excellent. We have then 3 good predictors, let's compare them.
+The fit is now not so good.
 
 
 ## Conclusions
 
-In ["Past the peak"](https://rpubs.com/jjmerelo/593493), the logistic growth model of deseases, using data published April 2nd, predicted 802 deceases today April 3rd. 
-
-```{r predictions}
-predict(H.lm,data.frame(H.plus.5=data[c(35:38),]$Hospitalizaciones.nuevas))
-predict(ICU.lm.10,data.frame(ICU.plus.10=data[c(30:33),]$Uci.nuevos))
-predict(ICU.lm.5,data.frame(ICU.plus.5=data[c(35:38),]$Uci.nuevos))
-```
-
-The first column indicates the value of deceases that will be published today, according to past hospital checkins (on March 30th), ICU wards new check-ins from March 25th, and from March 30th. The one closest to the prediction of the time series is the first. However, it's interesting to note the dynamics of the three time series: the two first ones show a maximum today, while the ICUs from 5 days ago predict a peak *tomorrow*. Any of them is affected by an error band.
-
-Today data will give us a reality check. The confidence interval is also shown below:
-
-```{r confidence}
-predict(H.lm,data.frame(H.plus.5=data[c(35),]$Hospitalizaciones.nuevas),interval="confidence")
-predict(ICU.lm.10,data.frame(ICU.plus.10=data[c(30),]$Uci.nuevos),interval="confidence")
-predict(ICU.lm.5,data.frame(ICU.plus.5=data[c(35),]$Uci.nuevos),interval="confidence")
-```
-
-These intervals do not really match. Given that the predicion from 10 days ago might have lower confidence, we'll just take from it the fact that the peak might be reached tomorrow, and not yesterday, but if we take the other two intervals the quantity today might be between 646 and 718 deceases, in which case we might well be past the peak yesterday. 
-
+In ["Past the peak"](https://rpubs.com/jjmerelo/593493), the logistic growth model of deseases, using data published April 2nd, predicted 802 deceases today April 3rd. Published data has been above that. Once data for today has been published, and all models re-evaluated, there's no model that gives a good fith with a p-value below 0.001 for both slope and intercept. It's not possible, then, to give good estimations of new values for deceases for the time being.
 
 ## Acknowledgement
 

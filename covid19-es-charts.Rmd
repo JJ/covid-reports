@@ -1,7 +1,7 @@
 ---
 title: "Evolución casos COVID19 en España en unos gráficos"
 author: "J. J. Merelo"
-date: "2 de abril de 2020"
+date: "3 de abril de 2020"
 output:
   html_document: default
   pdf_document: default
@@ -70,7 +70,7 @@ ggplot(data,aes(x=Fecha,y=Hospitalizaciones.nuevas),na.rm = TRUE)+geom_point()+g
 
 Las hospitalizaciones nuevas también parecen haber alcanzado un pico el día 25 (aparecido en el informe del día 26), y el acumulado de hospitalizaciones parece haberse decelerado; dado que este es el dato más fiable, cabe predecir que en unos días empiece a disminuir de forma sostenible el número de fallecimientos.
 
-Las [correlaciones entre diferentes series, que dan una idea más clara de los datos futuros, se encuentran en otro informe](https://rpubs.com/jjmerelo/correlaciones-es-covid19).
+Las [correlaciones entre diferentes series de incrementos diarios, que dan una idea más clara de los datos futuros, se encuentran en otro informe](https://rpubs.com/jjmerelo/correlaciones-diarias-es-covid-19).
 
 ## Reconocimientos
 
