@@ -15,6 +15,9 @@ Predicting the worst possible outcome in this crisis can be done in a number of 
 
 
 ```{r setup, include=FALSE}
+library(dplyr)
+library(ggplot2)
+library(ggthemes)
 load("covid-19-es.Rda")
 ```
 
@@ -43,7 +46,28 @@ There's a negative cross-correlation for 10 days before, probably indicating tha
 
 ## Fitting linear models 
 
-We will first 
+We will first try to compute correlations betweeh hospital check ins 5 days in advance.
+
+```{r lmh,message=FALSE,warning=FALSE}
+data <- data %>% mutate(H.plus.5 = lag(Hospitalizaciones.nuevas,5))
+ggplot(data,aes(x=H.plus.5,y=Fallecimientos.nuevos))+ geom_point()+geom_smooth(method='lm', formula= y~x)+theme_tufte()
+```
+
+Although the fit seems to be adequate, there are so few data points that it will probably be useless. Let's try to fit a linear model anyway.
+
+```{r fith}
+H.lm <- lm( H.plus.5 ~ Fallecimientos.nuevos, data=data)
+summary(H.lm)
+```
+Although the slope has a relatively good fit, the intercept does not fit, which should be expected given the small amount of data points in the series. We can try again with 3 days, where there's also a strong correlation and at least we have 2 more points
+
+```{r h3}
+data <- data %>% mutate(H.plus.3 = lag(Hospitalizaciones.nuevas,3))
+H.lm <- lm( H.plus.3 ~ Fallecimientos.nuevos, data=data)
+summary(H.lm)
+```
+
+Since correlation is not so strong, it's even worse and it does not even fit. So hospital check-ins are useless for this purpose.
 
 ## Reconocimientos
 
