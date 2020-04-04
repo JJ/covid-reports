@@ -67,9 +67,9 @@ While the CFR remains low, and more or less constant, in South Korea, the one in
 
 What we need to know is, approximately, what's the expected time it elapses from infection to the final outcome. We'll zero in on Germany and South Korea for this. Let's plot correlation first for South Korea
 
-```{r acf.ko,echo=FALSE,message=FALSE}
+```{r ccf.ko,echo=FALSE,message=FALSE}
 KO.data <- world.data[world.data$Country.Region=="Korea, South",]
-ccf(KO.data$New.Cases, KO.data$New.Deaths,lag.max = 35)
+ccf(KO.data$New.Cases, KO.data$New.Deaths,lag.max = 35, main=c("KO cross-correlation", "New cases vs. deceases"), xlab ='Lag', ylab='Cross-correlation')
 
 ```
 
