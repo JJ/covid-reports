@@ -8,3 +8,4 @@ rsconnect
 *.pdf
 covid19-es_files/
 real-cases-es_files/
+*.log
