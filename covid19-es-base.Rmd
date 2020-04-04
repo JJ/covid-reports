@@ -89,6 +89,15 @@ ggplot(data,aes(x=Fecha,y=Casos.Hospitalizados))+geom_point()+geom_line()+theme_
 
 En los últimos días, alcanza su nivel más bajo que es casi 8 veces inferior al nivel inicial, con casi un 100% de casos nuevos hospitalizados.
 
+Considerando que esta relación entre hospitalizaciones y casos reportados ha cambiado de la misma forma que la relación entre casos reportados y casos reales, vamos a multiplicar los casos totales por la última relación entre casos reportados y casos hospitalizados.
+
+```{r estimaciones}
+data$Casos.reales <- data$total*data$Casos.Hospitalizados/0.1387703
+ggplot(data,aes(x=Fecha,y=Casos.reales))+geom_point()+geom_line()+theme_economist()
+```
+
+Lo que daría a día de hoy cerca de medio millón de casos reales; en este caso estamos dividiendo el total en un día (casos totales - fallecidos -altas) multiplicado por la tasa de hospitalización calculada anteriormente por el porcentaje a día de hoy. Tiene que tratarse como una estimación, y con un interés puramente académico, pero puede ser interesante para ver la evolución del número de casos y la posible dinámica en el futuro. Como se ve, el pico se habría alcanzado con unos 200000 casos el día 28 de marzo. A día de hoy ha alcanzado su valor inferior, y la tendencia es a que baje más todavía. 
+
 ## Reconocimientos.
 
 Este fichero está generado a partir de los datos elaborados por [Datadista](https://github.com/datadista/datasets) y tiene una licencia libre. Se puede generar con nuevos datos usando el script en [este repositorio](https://github.com/JJ/covid-reports).
