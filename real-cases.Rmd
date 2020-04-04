@@ -55,9 +55,11 @@ cfr.table <- world.data.filtered.1k %>% group_by(Country.Region,Province.State) 
 kable(cfr.table, caption="Reported Case Fatality Ratio for different regions that have at least 1000 cases.")
 ```
 
-The countries with the lowest CFR have peaks in the area of 0.3%, with some cases even below that; China and Germany have very low last reported Cf Rs. The two mentioned countries, South Korea and Germany, have a current CFR in the 0.2-0.8% area. This contrasts with the US, which has the highest current CFR at 5%, similar to Italy, the UK and Netherlands.
+The countries with the lowest CFR among these have peaks in the area of 2%, with some cases even below that; China and Germany have very low last reported CFRs; and Germany is the lowest among these countries with more than 10000 cases. The two mentioned countries, South Korea and Germany, have a current CFR in the 1-2% area. This contrasts with Italy, which has the highest CFR at 12.25%.
 
-But the case fatality ratio does not give the whole picture. Some might have been tested one day before, other even post-mortem. Another quantity, the infected fatality ratio, will give a more accurate scenario of what's happening. But in absence of individualized data, we need to deduce that from published data, by calculating correlations between cases and deaths. We'll do this next.
+But the (accumulated) case fatality ratio does not give the whole picture. Some might have been tested one day before, other even post-mortem. Another quantity, the infected fatality ratio, will give a more accurate scenario of what's happening. This has been computed in few cases, but recent papers [@princess] have estimated that the IFR is around 6.4% in the case of the Diamond Princess, with a high percertange of high-risk individuals. IFR is, in this case, higher than the naïve CFR which would be around 2.6%; for all ages, IFR is computed to be around 1.3%.
+
+But in absence of individualized data, we need to deduce that from published data, by calculating correlations between cases and deaths. We'll do this next.
 
 ```{r cfrevol,echo=FALSE,message=FALSE,warning=FALSE, fig.cap="Case Fatality Rate for countries with different COVID19 test policies"}
 world.data.filtered <- world.data %>% filter( Country.Region == "Korea, South" | Country.Region == "Italy" | Country.Region == "Spain" | Country.Region == "Switzerland" | Country.Region == "Germany" )
@@ -129,7 +131,9 @@ Again, the estimation is significant with a `p` value less than 0.005 in both in
 
 # Conclusions
 
+This paper gives two estimations of the IFR for Korea, using correlation between cases reported and deaths and taking the (local) maxima of this correlation function, once 3-days sums have been computed. While in cases such as [@princess] the rate has been reported around 1%, in this case the rate is lower (and also lower than CFR) with IFR for the -22 days bump at `0.6 ± 0.1%`, and IFR for the 3 days bump at `0.5 ± 0.1%`, giving an bracket of between 0.4 and 0.7% IFR. This a low value which says more about the early detection approach taken by South Korea and the quality of its health system, but in any case is a statistically sound estimate of the (low) IFR that could be reached with best-of-breed health policies and therapies.
 
+It should be emphasized also that these good fits are an indication of transparency in data; any kind of tampering or lack of data usually results in bad models. This might be a future line of work: using fits for detecting errors or tampering (such as smoothing) in time series published by governments during the COVID-19 crisis.
 
 ## Acknowledgements
 
