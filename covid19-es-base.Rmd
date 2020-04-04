@@ -36,7 +36,8 @@ data$Tasa.Resolucion <- (data$altas + data$fallecimientos)/data$casos
 data$Tasa.Resolucion.R <- (data$Altas.nuevas+data$Fallecimientos.nuevos)/data$Casos.nuevos
 data <- data %>% mutate( R0= Casos.nuevos / lag(total, 1, default=1))
 data <- data %>% mutate( HR0= Hospitalizaciones.nuevas / lag(h.total, 1, default=1))
-data$Tasa.Hospitalizacion <- data$hospitalizados / data$total 
+data$Tasa.Hospitalizacion <- data$hospitalizados / data$total
+data$Casos.Hospitalizados <- data$Hospitalizaciones.nuevas / data$Casos.nuevos
 save(data,file="covid-19-es.Rda")
 write.csv(data,'covid-19-es.csv')
 ```
@@ -80,6 +81,13 @@ ggplot(data,aes(x=Fecha,y=Tasa.Resolucion.R))+geom_point()+geom_line()+theme_eco
 
 En cuanlquiera de los casos las tasas son muy bajas, y queda todavía mucho camino por recorrer a los 17 días del cierre.
 
+Pero también la relación entre casos y hospitalizados diarios varía a lo largo del tiempo. Veámosla a continuación:
+
+```{r CR,warning=FALSE}
+ggplot(data,aes(x=Fecha,y=Casos.Hospitalizados))+geom_point()+geom_line()+theme_economist()
+```
+
+En los últimos días, alcanza su nivel más bajo que es casi 8 veces inferior al nivel inicial, con casi un 100% de casos nuevos hospitalizados.
 
 ## Reconocimientos.
 
