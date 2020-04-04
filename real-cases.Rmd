@@ -1,6 +1,6 @@
 ---
 title: "Estimating the infection fatality rate of COVID 19  in South Korea by using time series correlations"
-author: "J. J. Merelo"
+author: "J. J. Merelo, Víctor Rivas-Santos"
 date: "April 4th, 2020"
 output:
   bookdown::pdf_document2: default
@@ -42,8 +42,7 @@ Transparency in the management of a critical situation such as the one we are li
 
 Knowing the real number of infected people and their evolution is one of those things, and countries have reacted differently to this challenge. From testing only those with symptoms and that self-select and call up health services, to testing massively, as it has been done in South Korea [@SHIM2020], Germany, or in Japan, at least with people repatriated from affected areas [@nishiura2020rate]. This might be the reason why these countries report a lower Case Fatality Ratio (CFR) than in other cases.
 
-Let's first check what's the reported case fatality ratio for different regions in the world, those that have at least 10000 cases 
-(see table 1, below). Max and mininum CFR are computed over the rows in which there were already 1000 cases.
+Let's first check what's the reported case fatality ratio for different regions in the world, those that have at least 10000 cases (see table \@ref(tab:cfr)). Max and mininum CFR are computed over the rows in which there were already 10000 cases.
 
 ```{r cfr,echo=FALSE,message=FALSE}
 library(dplyr)
@@ -59,28 +58,26 @@ The countries with the lowest CFR among these have peaks in the area of 2%, with
 
 But the (accumulated) case fatality ratio does not give the whole picture. Some might have been tested one day before, other even post-mortem. Another quantity, the infected fatality ratio, will give a more accurate scenario of what's happening. This has been computed in few cases, but recent papers [@princess] have estimated that the IFR is around 6.4% in the case of the Diamond Princess, with a high percentage of high-risk individuals. IFR is, in this case, higher than the naive CFR which would be around 2.6%; for all ages, IFR is computed to be around 1.3%.
 
-But in absence of individualized data, we need to deduce that from published data, by calculating correlations between cases and deaths. We'll do this next.
-
-```{r cfrevol,echo=FALSE,message=FALSE,warning=FALSE, fig.cap="Case Fatality Rate for countries with different COVID19 test policies"}
+```{r cfrevol,echo=FALSE,message=FALSE,warning=FALSE,fig.cap="Case Fatality Rate for countries with different COVID19 test policies"}
 world.data.filtered <- world.data %>% filter( Country.Region == "Korea, South" | Country.Region == "Italy" | Country.Region == "Spain" | Country.Region == "Switzerland" | Country.Region == "Germany" )
 ggplot(world.data.filtered, aes(x=Date,y=CFR,color=Country.Region,group=Country.Region))+ggtitle("Evolution of CFR from February for selected countries")+geom_line()+theme_tufte()+theme(legend.position = "bottom")
 ```
 
-As shown in figure \@ref(fig:cfrevol), while the CFR remains low, and more or less constant, in South Korea, the one in Italy grows as just the cases that enter hospital are tested for coronavirus, yielding an ever-increasing CFR, which can't simply be true.
+As shown in figure \@ref(fig:cfrevol), while the CFR remains low, and more or less constant, in South Korea, the one in Italy grows as just the cases that enter hospital are tested for coronavirus, yielding an ever-increasing CFR, which can't simply be true, as the letality rate should be more or less constant (barring circumstances like overcrowded ICU wards).
+
+But in absence of individualized data, we need to deduce that from published data, by calculating correlations between cases and deaths. We'll do this next.
 
 # Correlation between cases and deaths.
 
-What we need to know is, approximately, what's the expected time it elapses from infection to the final outcome. We'll zero in on South Korea for this. Let's plot correlation first for South Korea
+What we need to know is, approximately, what's the expected time it elapses from infection to the final outcome. We'll zero in on South Korea for this. Let's plot correlation first for South Korea, as seen in figure \@ref(fig:ccfko).
 
-```{r ccf.ko,echo=FALSE,message=FALSE, fig.cap="Caption"}
+```{r ccfko,echo=FALSE,message=FALSE, warning=FALSE, fig.cap="Raw cross-correlation between daily new cases and new deaths"}
 KO.data <- world.data[world.data$Country.Region=="Korea, South",]
 ccf(KO.data$New.Cases, KO.data$New.Deaths,lag.max = 35, main=c("KO cross-correlation", "New cases vs. deceases"), xlab ='Lag', ylab='Cross-correlation')
 
 ```
 
-There's negative correlation 12 and 2 days before, as well as positive same-day and -3 days. That is, lower than average cases will lead to higher-than-average deaths 12 days later. 
-
-# Computing rolling sums and correlations
+There's negative correlation 12 and 2 days before, as well as positive same-day and -3 days. That is, lower than average cases will lead to higher-than-average deaths 12 days later.
 
 In order to find the relation between cases and deaths and thus the infection mortality rate, let's create a rolling window of three days for both, since the effect is spread over three days, and attempt correlation again. It might be that close positive and negative correlations eliminate each other, but since data for a day is spread over three days, we expect this will find bigger correlations, and then help us calculate ratios.
 
@@ -94,9 +91,9 @@ KO.data$Rolling.Sum.New.Cases <- roll_sum(KO.data$New.Cases,3,fill=NA,align='rig
 KO.data$Rolling.Sum.New.Deaths <- roll_sum(KO.data$New.Deaths,3,fill=NA,align='right')
 ```
 
-Let's compute again correlations, using these rolling averages
+Let's compute again correlations, using these rolling averages, which are shown in figure \@ref(fig:ccfrolling).
 
-```{r acf.ko.rolling,echo=FALSE,message=FALSE}
+```{r ccfrolling,echo=FALSE,message=FALSE,fig.cap="Cross-correlation for 3-days rolling sum"}
 ko.ccf <- ccf(KO.data$Rolling.Sum.New.Cases, KO.data$Rolling.Sum.New.Deaths,lag.max = 31, na.action = na.pass, main=c("KO cross-correlation", "New cases vs. deceases", "3-day rolling window"), xlab ='Lag', ylab='Cross-correlation')
 ko.ccf
 
@@ -113,7 +110,7 @@ ggplot(KO.data,aes(x=Lagged.Rolling.New.Cases,y=Rolling.Sum.New.Deaths))+ geom_p
 
 Let's create a linear model for this
 
-```{r ko.lm}
+```{r ko.lm, echo=FALSE}
 KO.data <- KO.data %>% ungroup() %>% mutate(Lagged.Rolling.New.Cases = lag(Rolling.Sum.New.Cases,22))
 KO.lm <- lm( Rolling.Sum.New.Deaths ~ Lagged.Rolling.New.Cases, data=KO.data)
 summary(KO.lm)
@@ -121,7 +118,7 @@ summary(KO.lm)
 
 The estimation of the infected fatality rate would be, with a `p` less than 1e-8, 0.66101% in this case. However, let's try to confirm this number by using the second maximum, although signification is lower, there will be more usable values. 
 
-```{r minus.3}
+```{r minus.3, echo=FALSE}
 KO.data <- KO.data %>% ungroup() %>% mutate(Lagged.Rolling.New.Cases.minus.3 = lag(Rolling.Sum.New.Cases,3))
 KO.lm.minus.3 <- lm( Rolling.Sum.New.Deaths ~ Lagged.Rolling.New.Cases.minus.3, data=KO.data)
 summary(KO.lm.minus.3)
