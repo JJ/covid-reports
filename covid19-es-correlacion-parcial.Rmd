@@ -1,7 +1,7 @@
 ---
 title: "Encontrando correlaciones en los datos diarios de COVID-19 en España"
-author: "J. J. Merelo"
-date: "3 de abril de 2020"
+author: "J. J. Merelo, V. M. Rivas"
+date: "4 de abril de 2020"
 output:
   html_document: default
   pdf_document: default
@@ -10,17 +10,17 @@ bibliography: covid.bib
 
 ### Nota
 
-Este informe sucede a [este otro](https://rpubs.com/jjmerelo/correlaciones-es-covid19) sobre correlaciones, que usaba los acumulados, cuya correlación no va a indicar más que relaciones entre uno y otro y no van a tener demasiado valor predictivo, sobre todo porque siempre sus valores van a estar por encima de la media. A partir de ahora usamos sólo los incrementos diarios, que permiten predecir con mucha más precisión.
+Este informe sucede a [este otro](https://rpubs.com/jjmerelo/correlaciones-es-covid19) sobre correlaciones, que usaba datos acumulados, cuya correlación no va a indicar más que relaciones entre uno y otro, sin tener demasiado valor predictivo, dado que sus valores van a estar siempre por encima de la media. A partir de ahora usamos solamente los incrementos diarios, que permiten predecir con mucha más precisión.
 
 ## Introducción
 
-Las correlaciones cruzadas entre diferentes variables nos indican cómo influyen una en la otra, y si una precede o va detrás de la otra. Aunque correlación nunca indica causalidad, al menos sí puede dar, en general, una cierta idea de qué va a suceder en el futuro: una correlación cruzada fuerte entre dos variables a uno, dos o tres días vista permite averiguar qué es lo que puede suceder, y con hipótesis adicionales se puede establecer relación causa-efecto.
+Las correlaciones cruzadas entre diferentes variables nos indican cómo influyen una en la otra, y si una precede o va detrás de la otra. Aunque correlación no implica causalidad, al menos sí puede dar, en general, una cierta idea de qué va a suceder en el futuro: una correlación cruzada fuerte entre dos variables a uno, dos o tres días vista permite aproximar qué es lo que puede suceder, y con la aportación de hipótesis y/o conocimientos adicionales se puede establecer relación causa-efecto.
 
 ```{r setup, include=FALSE}
 load("covid-19-es.Rda")
 ```
 
-Utilizaremos [autocorrelaciones y correlaciones cruzadas en R, usando las funciones `acf` y `ccf`](https://online.stat.psu.edu/stat510/lesson/8/8.2). En estos gráficos se indican con barras de diferente longitud la correlación; líneas punteadas indican la zona a partir de la cual la correlación es significativa. A la izquierda del cero, la variable X antecede o predice la y, a la derecha es justo al contrario; por encima de la barra serían correlaciones positivas y por debajo negativas, es decir que cuando crece una variable, la otra disminuye.
+Utilizaremos [autocorrelaciones, autocorrelaciones parciales y correlaciones cruzadas en R, usando las funciones `acf`, `pacf` y `ccf`](https://online.stat.psu.edu/stat510/lesson/8/8.2). En estos gráficos se indican con barras de diferente longitud la correlación; líneas punteadas indican la zona a partir de la cual la correlación es significativa. A la izquierda del cero, la variable X antecede o predice la y, a la derecha es justo al contrario; por encima de la barra serían correlaciones positivas y por debajo negativas, es decir que cuando crece una variable, la otra disminuye.
 
 ## Autocorrelación de nuevos casos
 
@@ -31,9 +31,10 @@ acf(data$Casos.nuevos,na.action = na.pass, lag=35)
 ```
 
 
-```{r acpcasosnuevos}
-acp(data$Casos.nuevos,na.action = na.pass, lag=35)
+```{r pacfcasosnuevos}
+pacf(data$Casos.nuevos,na.action = na.pass, lag=35)
 ```
+
 
 Realmente este dato es poco fiable, porque no se sabe cuantas altas hay ni cuantos tests se están haciendo. El dato más fiable es el número de personas hospitalizadas y su cambio cada día. Veamos su autocorrelación.
 
@@ -41,6 +42,10 @@ Realmente este dato es poco fiable, porque no se sabe cuantas altas hay ni cuant
 acf(data$Hospitalizaciones.nuevas,na.action = na.pass, lag=28)
 ```
 
+
+```{r pacfhnuevas}
+pacf(data$Hospitalizaciones.nuevas,na.action = na.pass, lag=28)
+```
 ## Correlaciones de nuevos casos reportados.
 
 ¿Cuanto se tarda en llegar a una salida de la situación? Trazaremos los casos frente al las altas y fallecimientos. Observando la gráfica de altas en [@covides1] se observa cierta periodicidad, al menos inicialmente 
@@ -48,7 +53,9 @@ acf(data$Hospitalizaciones.nuevas,na.action = na.pass, lag=28)
 ```{r acf.altas.nuevos}
 acf(data$Altas.nuevas,na.action = na.pass,lag.max = 28)
 ```
-
+```{r pacf.altas.nuevos}
+pacf(data$Altas.nuevas,na.action = na.pass,lag.max = 28)
+```
 Mientras que hasta el día 20 aparecía una cierta periodicidad de unos dos días, a partir del día 21 prácticamente ha desaparecido y sólo hay periodicidad de un sólo día. Esta periodicidad también aparece en los fallecimientos, como se puede ver en el siguiente gráfico de correlación
 
 ```{r acf.fallecimientos.nuevos}
