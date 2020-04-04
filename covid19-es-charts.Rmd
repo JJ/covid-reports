@@ -1,7 +1,7 @@
 ---
 title: "Evolución casos COVID19 en España en unos gráficos"
 author: "J. J. Merelo"
-date: "3 de abril de 2020"
+date: "4 de abril de 2020"
 output:
   html_document: default
   pdf_document: default
@@ -59,7 +59,7 @@ Los nuevos fallecimientos por día, junto con la media a 3 días
 ggplot(data,aes(x=Fecha))+geom_line(aes(y=Fallecimientos.nuevos, color='Dato'))+geom_line(aes(y=Decesos.Avg.3, color='Media a 3'))+theme_tufte()
 ```
 
-Parece haberse aplanado a partir del día 26, pero sigue aumentando, en media, en la tasa diaria. El *pico* del que tanto se ha hablado se desvanece teniendo en cuenta los datos de hoy. Al menos los fallecimientos aumentan más lentamente, pero siguen alcanzándose nuevos máximos en número de fallecimientos.
+Hubo dos picos, uno el día 26, otro el día 2 de abril; los descensos ahora se comienzan a notar también en la media diaria a tres días, así que cabe hablar de una consolidación que llegaría, probablemente, el 3 de abril.
 
 Desde mediados de marzo se publican también las hospitalizaciones, inicialmente de forma bastante irregular. Primero vemos los números absolutos, y luego las nuevas por día
 
@@ -68,7 +68,7 @@ ggplot(data,aes(x=Fecha,y=hospitalizados),na.rm = TRUE)+geom_point()+geom_line()
 ggplot(data,aes(x=Fecha,y=Hospitalizaciones.nuevas),na.rm = TRUE)+geom_point()+geom_line()+theme_tufte()
 ```
 
-Las hospitalizaciones nuevas también parecen haber alcanzado un pico el día 25 (aparecido en el informe del día 26), y el acumulado de hospitalizaciones parece haberse decelerado; dado que este es el dato más fiable, cabe predecir que en unos días empiece a disminuir de forma sostenible el número de fallecimientos.
+Las hospitalizaciones nuevas también parecen haber alcanzado un pico el día 25 (aparecido en el informe del día 26), y el acumulado de hospitalizaciones parece haberse decelerado; dado que este es el dato más fiable, cabe predecir que en unos días empiece a disminuir de forma sostenible el número de fallecimientos. Los últimos días está cayendo en picado, aunque la tasa entre casos y hospitalizaciones parece ser cada vez menor, probablemente debido a que se están haciendo cada vez más tests.
 
 Las [correlaciones entre diferentes series de incrementos diarios, que dan una idea más clara de los datos futuros, se encuentran en otro informe](https://rpubs.com/jjmerelo/correlaciones-diarias-es-covid-19).
 
