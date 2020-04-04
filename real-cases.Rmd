@@ -1,5 +1,5 @@
 ---
-title: "Estimating the infection fatality rate by using time series correlations"
+title: "Estimating the infection fatality rate of COVID 19 by using time series correlations in South Korea"
 author: "J. J. Merelo"
 date: "April 4th, 2020"
 output:
