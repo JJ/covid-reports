@@ -1,0 +1,97 @@
+---
+title: "Encontrando correlaciones en los datos diarios de COVID-19 en España"
+author: "J. J. Merelo"
+date: "3 de abril de 2020"
+output:
+  html_document: default
+  pdf_document: default
+bibliography: covid.bib
+---
+
+### Nota
+
+Este informe sucede a [este otro](https://rpubs.com/jjmerelo/correlaciones-es-covid19) sobre correlaciones, que usaba los acumulados, cuya correlación no va a indicar más que relaciones entre uno y otro y no van a tener demasiado valor predictivo, sobre todo porque siempre sus valores van a estar por encima de la media. A partir de ahora usamos sólo los incrementos diarios, que permiten predecir con mucha más precisión.
+
+## Introducción
+
+Las correlaciones cruzadas entre diferentes variables nos indican cómo influyen una en la otra, y si una precede o va detrás de la otra. Aunque correlación nunca indica causalidad, al menos sí puede dar, en general, una cierta idea de qué va a suceder en el futuro: una correlación cruzada fuerte entre dos variables a uno, dos o tres días vista permite averiguar qué es lo que puede suceder, y con hipótesis adicionales se puede establecer relación causa-efecto.
+
+```{r setup, include=FALSE}
+load("covid-19-es.Rda")
+```
+
+Utilizaremos [autocorrelaciones y correlaciones cruzadas en R, usando las funciones `acf` y `ccf`](https://online.stat.psu.edu/stat510/lesson/8/8.2). En estos gráficos se indican con barras de diferente longitud la correlación; líneas punteadas indican la zona a partir de la cual la correlación es significativa. A la izquierda del cero, la variable X antecede o predice la y, a la derecha es justo al contrario; por encima de la barra serían correlaciones positivas y por debajo negativas, es decir que cuando crece una variable, la otra disminuye.
+
+## Autocorrelación de nuevos casos
+
+Esta es la autocorrelación de nuevos casos, es decir como influyen los casos de los que se informa cada día en los siguientes. Esta serie temporal tiene mucha incertidumbre, ya que sólo refleja los hospitalizados y, a estas alturas, personal crítico (o políticos o personas que se lo hayan pagado de su bolsillo).
+
+```{r acfcasosnuevos}
+acf(data$Casos.nuevos,na.action = na.pass, lag=35)
+```
+
+
+```{r acpcasosnuevos}
+acp(data$Casos.nuevos,na.action = na.pass, lag=35)
+```
+
+Realmente este dato es poco fiable, porque no se sabe cuantas altas hay ni cuantos tests se están haciendo. El dato más fiable es el número de personas hospitalizadas y su cambio cada día. Veamos su autocorrelación.
+
+```{r acfhnuevas}
+acf(data$Hospitalizaciones.nuevas,na.action = na.pass, lag=28)
+```
+
+## Correlaciones de nuevos casos reportados.
+
+¿Cuanto se tarda en llegar a una salida de la situación? Trazaremos los casos frente al las altas y fallecimientos. Observando la gráfica de altas en [@covides1] se observa cierta periodicidad, al menos inicialmente 
+
+```{r acf.altas.nuevos}
+acf(data$Altas.nuevas,na.action = na.pass,lag.max = 28)
+```
+
+Mientras que hasta el día 20 aparecía una cierta periodicidad de unos dos días, a partir del día 21 prácticamente ha desaparecido y sólo hay periodicidad de un sólo día. Esta periodicidad también aparece en los fallecimientos, como se puede ver en el siguiente gráfico de correlación
+
+```{r acf.fallecimientos.nuevos}
+acf(data$Fallecimientos.nuevos,na.action = na.pass,lag.max = 28)
+```
+
+Esta es de uno y hasta 3 días, pero la situación puede cambiar en el futuro, aunque en los últimos días es bastante estable.
+
+La correlación entre casos y el resto de los datos se muestra a continuación
+
+```{r diffccf}
+ccf(data$Casos.nuevos,data$Fallecimientos.nuevos,na.action = na.pass,lag.max = 28)
+
+ccf(data$Casos.nuevos,data$Hospitalizaciones.nuevas,na.action = na.pass,lag.max = 28)
+ccf(data$Casos.nuevos,data$Uci.nuevos,na.action = na.pass,lag.max = 28)
+ccf(data$Casos.nuevos,data$Altas.nuevas,na.action = na.pass,lag.max = 28)
+```
+
+## Correlaciones de nuevas hospitalizaciones
+
+El problema principal de esta serie es lo pocos datos que hay, ya que se empezó a dar el día 14 de marzo. A continuación las hospitalizaciones nuevas y su correlación con otras deltas
+
+```{r hospitalizaciones}
+ccf(data$Hospitalizaciones.nuevas,data$Uci.nuevos,na.action = na.pass,lag.max = 20)
+ccf(data$Hospitalizaciones.nuevas,data$Fallecimientos.nuevos,na.action = na.pass,lag.max = 20)
+```
+
+Las hospitalizaciones nuevas influyen en los fallecimientos a partir de cuatro días más tarde; el día 2 de abril se ha alcanzado el pico de fallecimientos que correspondería a las hospitalizaciones del día 30 de marzo; aunque no fue el pico, efectivamente ese día los ingresos estuvieron por encima de la media, y además recoge también la correlación positiva de los picos anteriores el día 28 de marzo. 
+
+```{r ccfhaltas}
+ccf(data$Hospitalizaciones.nuevas,data$Altas.nuevas,na.action = na.pass,lag.max = 28)
+```
+
+Las hospitalizaciones parecen ir en sentido contrario que las altas entre 11 y 10 días antes, pero en el mismo sentido de 8 a 2 días antes. Quizás viene a decir que las personas a las que les dan el alta pasan esos días en el hospital, entre 8 y dos días, si no van a resultar en altas pasan más días, o simplemente que si hay muchas hospitalizaciones en una fecha, habrá menos altas una 10 días más tarde. Pero una vez más, la serie es muy pequeña y es muy difícil de decir con precisión.
+
+Quizás el dato más revelador:
+
+```{r ucifallecimientos}
+ccf(data$Uci.nuevos,data$Fallecimientos.nuevos,na.action = na.pass,lag.max = 28)
+```
+
+Los fallecimientos predicen ingresos en la UCI durante los días siguientes, hasta 9 días, y al revés. Es decir, entre 20 y 14 días correlación negativa: menos fallecimientos, y a continuación, correlación positiva. Sigue prediciendo el número de fallecimiento los nuevos ingresos en la UCI, así que en muchos casos las UCIs están saturadas; de la misma forma los fallecimientos predicen los ingresos en UCI 15 días más tarde, lo que indica que a 15 días se producirá también una rebaja.
+
+## Reconocimientos
+
+Este fichero está generado a partir de los datos elaborados por [Datadista](https://github.com/datadista/datasets) y tiene una licencia libre. Se puede generar con nuevos datos usando el script en [este repositorio](https://github.com/JJ/covid-reports).
