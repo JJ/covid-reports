@@ -1,7 +1,7 @@
 ---
 title: "Encontrando correlaciones en los datos diarios de COVID-19 en España"
 author: "J. J. Merelo"
-date: "3 de abril de 2020"
+date: "4 de abril de 2020"
 output:
   html_document: default
   pdf_document: default
@@ -35,6 +35,7 @@ Realmente este dato es poco fiable, porque no se sabe cuantas altas hay ni cuant
 ```{r acfhnuevas}
 acf(data$Hospitalizaciones.nuevas,na.action = na.pass, lag=28)
 ```
+
 
 ## Correlaciones de nuevos casos reportados.
 
@@ -77,7 +78,9 @@ Las hospitalizaciones nuevas influyen en los fallecimientos a partir de cuatro d
 ccf(data$Hospitalizaciones.nuevas,data$Altas.nuevas,na.action = na.pass,lag.max = 28)
 ```
 
-Las hospitalizaciones parecen ir en sentido contrario que las altas entre 11 y 10 días antes, pero en el mismo sentido de 8 a 2 días antes. Quizás viene a decir que las personas a las que les dan el alta pasan esos días en el hospital, entre 8 y dos días, si no van a resultar en altas pasan más días, o simplemente que si hay muchas hospitalizaciones en una fecha, habrá menos altas una 10 días más tarde. Pero una vez más, la serie es muy pequeña y es muy difícil de decir con precisión.
+Mientras que hace unos días, las hospitalizaciones parecían ir en sentido contrario que las altas entre 11 y 10 días antes, pero en el mismo sentido de 8 a 2 días antes, quizás implicando que las personas a las que les dan el alta pasan esos días en el hospital, entre 8 y dos días, si no van a resultar en altas pasan más días, o simplemente que si hay muchas hospitalizaciones en una fecha, habrá menos altas una 10 días más tarde. 
+
+Pero la situación ha cambiado ahora, y esa correlación negativa ha desaparecido. Sólo hay una correlación positiva que empieza unos 9 días antes y termina 5 días antes, revelando el tiempo que se pasa en el hospital es una semana más o menos dos días. También hay una fuerte correlación negativa en +d días: altas van en sentido contrario de hospitalizaciones dos días más tarde, y sólo dos días. 
 
 Quizás el dato más revelador:
 
@@ -85,7 +88,9 @@ Quizás el dato más revelador:
 ccf(data$Uci.nuevos,data$Fallecimientos.nuevos,na.action = na.pass,lag.max = 28)
 ```
 
-Los fallecimientos predicen ingresos en la UCI durante los días siguientes, hasta 9 días, y al revés. Es decir, entre 20 y 14 días correlación negativa: menos fallecimientos, y a continuación, correlación positiva. Sigue prediciendo el número de fallecimiento los nuevos ingresos en la UCI, así que en muchos casos las UCIs están saturadas; de la misma forma los fallecimientos predicen los ingresos en UCI 15 días más tarde, lo que indica que a 15 días se producirá también una rebaja.
+Los fallecimientos predicen ingresos en la UCI durante los días siguientes, hasta 3 días, y al revés. Es decir, entre 22 y 16 días correlación negativa: más ingresos en la UCI, menos fallecimientos, y a continuación, correlación positiva a partir de -8 días. 
+
+Sigue prediciendo el número de fallecimiento los nuevos ingresos en la UCI, así que en muchos casos las UCIs están saturadas; de la misma forma los fallecimientos crecen de forma inversa a los ingresos en UCI alrededor de 15 días más tarde, lo que indica que a 15 días se producirá también una rebaja.
 
 ## Reconocimientos
 
