@@ -3,10 +3,10 @@ title: "Estimating the infection fatality rate of COVID 19  in South Korea by us
 author: "J. J. Merelo"
 date: "April 4th, 2020"
 output:
-  pdf_document: default
+  bookdown::pdf_document2: default
   html_document: default
 bibliography: covid.bib
-abstract: In absence of individualized data of contagions with COVID-19, we have to
+abstract: In absence of individualized data of infections with COVID-19, we have to
   use indirect sources for estimating the individual fatality rate, that is, the rate
   of deceases for those that have been infected with the virus. In this report we
   will try to find out an estimate of the individualized death rate by looking at one the countries that
@@ -42,17 +42,17 @@ Transparency in the management of a critical situation such as the one we are li
 
 Knowing the real number of infected people and their evolution is one of those things, and countries have reacted differently to this challenge. From testing only those with symptoms and that self-select and call up health services, to testing massively, as it has been done in South Korea [@SHIM2020], Germany, or in Japan, at least with people repatriated from affected areas [@nishiura2020rate]. This might be the reason why these countries report a lower Case Fatality Ratio (CFR) than in other cases.
 
-Let's first check what's the reported case fatality ratio for different regions in the world, those that have at least 1000 cases 
-<!--(see table \@ref(tab:cfr)). Citing tables and figures doesn't work. Victor, 04.04.2020-->
-(see table 1). Max and min CFR are computed over the rows in which there were already 1000 cases.
+Let's first check what's the reported case fatality ratio for different regions in the world, those that have at least 10000 cases 
+(see table 1, below). Max and mininum CFR are computed over the rows in which there were already 1000 cases.
 
 ```{r cfr,echo=FALSE,message=FALSE}
 library(dplyr)
 library(knitr)
+library(kableExtra)
 world.data$CFR <- world.data$Deaths / world.data$Cases
 world.data.filtered.1k <- world.data[ world.data$Cases > 10000, ]
 cfr.table <- world.data.filtered.1k %>% group_by(Country.Region,Province.State) %>% summarize( max.CFR = max(CFR), min.CFR = min(CFR), last.CFR = last(CFR))  %>% arrange( - last.CFR)
-kable(cfr.table, caption="Reported Case Fatality Ratio for different regions that have at least 1000 cases.")
+kable(cfr.table, caption="Reported Case Fatality Ratio for different regions that have at least 10000 cases.", booktabs = T) %>% kable_styling(latex_options = c("striped"))
 ```
 
 The countries with the lowest CFR among these have peaks in the area of 2%, with some cases even below that; China and Germany have very low last reported CFRs; and Germany is the lowest among these countries with more than 10000 cases. The two mentioned countries, South Korea and Germany, have a current CFR in the 1-2% area. This contrasts with Italy, which has the highest CFR at 12.25%.
@@ -63,7 +63,7 @@ But in absence of individualized data, we need to deduce that from published dat
 
 ```{r cfrevol,echo=FALSE,message=FALSE,warning=FALSE, fig.cap="Case Fatality Rate for countries with different COVID19 test policies"}
 world.data.filtered <- world.data %>% filter( Country.Region == "Korea, South" | Country.Region == "Italy" | Country.Region == "Spain" | Country.Region == "Switzerland" | Country.Region == "Germany" )
-ggplot(world.data.filtered, aes(x=Date,y=CFR,color=Country.Region,group=Country.Region))+ggtitle("Evolution of CFR during February and March for selected countries")+geom_line()+theme_tufte()+theme(legend.position = "bottom")
+ggplot(world.data.filtered, aes(x=Date,y=CFR,color=Country.Region,group=Country.Region))+ggtitle("Evolution of CFR from February for selected countries")+geom_line()+theme_tufte()+theme(legend.position = "bottom")
 ```
 
 As shown in figure \@ref(fig:cfrevol), while the CFR remains low, and more or less constant, in South Korea, the one in Italy grows as just the cases that enter hospital are tested for coronavirus, yielding an ever-increasing CFR, which can't simply be true.
