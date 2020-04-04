@@ -65,7 +65,7 @@ While the CFR remains low, and more or less constant, in South Korea, the one in
 
 # Correlation between cases and deaths.
 
-What we need to know is, approximately, what's the expected time it elapses from infection to the final outcome. We'll zero in on Germany and South Korea for this. Let's plot correlation first for South Korea
+What we need to know is, approximately, what's the expected time it elapses from infection to the final outcome. We'll zero in on South Korea for this. Let's plot correlation first for South Korea
 
 ```{r ccf.ko,echo=FALSE,message=FALSE}
 KO.data <- world.data[world.data$Country.Region=="Korea, South",]
