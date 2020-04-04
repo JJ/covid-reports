@@ -1,5 +1,5 @@
 ---
-title: "Estimating the infection fatality rate of COVID 19 by using time series correlations in South Korea"
+title: "Estimating the infection fatality rate of COVID 19  in South Korea by using time series correlations"
 author: "J. J. Merelo"
 date: "April 4th, 2020"
 output:
@@ -9,8 +9,8 @@ bibliography: covid.bib
 abstract: In absence of individualized data of contagions with COVID-19, we have to
   use indirect sources for estimating the individual fatality rate, that is, the rate
   of deceases for those that have been infected with the virus. In this report we
-  will try to find out an estimate of the death rate by looking at the countries that
-  have made a more extensive testing, like Germany or South Korea. We will first try
+  will try to find out an estimate of the individualized death rate by looking at one the countries that
+  have made a more extensive testing, South Korea. We will first try
   to estimate the time from onset to outcome using time series correlation, and from
   that, we will try and find out inconsistencies in reporting or in these time series.
 urlcolor: blue
@@ -57,7 +57,7 @@ kable(cfr.table, caption="Reported Case Fatality Ratio for different regions tha
 
 The countries with the lowest CFR among these have peaks in the area of 2%, with some cases even below that; China and Germany have very low last reported CFRs; and Germany is the lowest among these countries with more than 10000 cases. The two mentioned countries, South Korea and Germany, have a current CFR in the 1-2% area. This contrasts with Italy, which has the highest CFR at 12.25%.
 
-But the (accumulated) case fatality ratio does not give the whole picture. Some might have been tested one day before, other even post-mortem. Another quantity, the infected fatality ratio, will give a more accurate scenario of what's happening. This has been computed in few cases, but recent papers [@princess] have estimated that the IFR is around 6.4% in the case of the Diamond Princess, with a high percertange of high-risk individuals. IFR is, in this case, higher than the naïve CFR which would be around 2.6%; for all ages, IFR is computed to be around 1.3%.
+But the (accumulated) case fatality ratio does not give the whole picture. Some might have been tested one day before, other even post-mortem. Another quantity, the infected fatality ratio, will give a more accurate scenario of what's happening. This has been computed in few cases, but recent papers [@princess] have estimated that the IFR is around 6.4% in the case of the Diamond Princess, with a high percentage of high-risk individuals. IFR is, in this case, higher than the naive CFR which would be around 2.6%; for all ages, IFR is computed to be around 1.3%.
 
 But in absence of individualized data, we need to deduce that from published data, by calculating correlations between cases and deaths. We'll do this next.
 
