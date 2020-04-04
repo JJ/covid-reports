@@ -1,0 +1,59 @@
+---
+title: "Drawing COVID-19 situation from European Centre for Disease Prevention and Control's data"
+author: "V. M. Rivas"
+date: "28 de marzo de 2020"
+output:
+  html_document: default
+  pdf_document: default
+bibliography: covid.bib
+abstract: @todo.
+urlcolor: blue
+---
+
+```{r setup, include=FALSE}
+library(tidyr)
+library(ggplot2)
+library(ggthemes)
+library(dplyr)
+library(utils)
+library(httr)
+
+#download the dataset from the ECDC website to a local temporary file
+GET("https://opendata.ecdc.europa.eu/covid19/casedistribution/csv", authenticate(":", ":", type="ntlm"), write_disk(tf <- tempfile(fileext = ".csv")))
+
+#read the Dataset sheet into “R”. The dataset will be called "data".
+ecdcdata <- read.csv(tf)
+
+# Columns: dateRep,day,month,year,cases,deaths,countriesAndTerritories,geoId,countryterritoryCode,popData2018
+
+#world.confirmed <- gather( world.confirmed, Date, Cases, X1.22.20:X3.26.20)
+#world.deaths <- read.csv(paste0(base,"deaths_global.csv"), sep=',',head=T)
+#world.deaths <- gather( world.deaths, Date, Deaths, X1.22.20:X3.26.20)
+#world.data <- merge(world.confirmed,world.deaths,by=c("Province.State","Country.Region","Lat", "Long", "Date"))
+#world.data <- world.data %>% group_by(Province.State,Country.Region,Date) %>% arrange(Province.State,Country.Region, as.Date(Date))
+#world.data$Date <- as.Date(world.data$Date,"X%m.%d.%y")
+#world.data <- world.data %>% group_by(Province.State,Country.Region) %>% mutate( New.Cases= Cases-lag(Cases, default=0), New.Deaths= Deaths -lag(Deaths, default=0))
+#save(world.data,file="covid19-world.Rda")
+#write.csv(world.data,'covid19-world.csv')
+```
+
+# Introduction
+
+
+#```{r cfr,echo=FALSE,message=FALSE}
+#library(dplyr)
+#world.data$CFR <- world.data$Deaths / world.data$Cases
+#world.data.filtered.1k <- world.data[ world.data$Cases > 1000, ]
+#world.data.filtered.1k %>% group_by(Country.Region,Province.State) %>% summarize( max.CFR = max(CFR), min.CFR = min(CFR), last.CFR = last(CFR))  %>% arrange( - last.CFR) %>% rmarkdown::paged_table()
+#```
+
+
+
+# Conclusions
+
+
+## Acknowledgements
+
+This file has been generated from data published by <a href="https://github.com/CSSEGISandData/COVID-19" target="_new">JHU CSSE</a>. It's data-driven and it can be re-generated from the script in  <a href="https://github.com/JJ/covid-reports" target="_new">this repository</a>. This report uses RMarkdown and it can be downloaded from <a href="https://github.com/JJ/covid-reports/blob/master/cfr-evolution.Rmd" target="_new">here</a>.
+
+## References
