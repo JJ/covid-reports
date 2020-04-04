@@ -16,6 +16,7 @@ abstract: In absence of individualized data of contagions with COVID-19, we have
 urlcolor: blue
 ---
 
+
 ```{r setup, include=FALSE}
 library(tidyr)
 library(ggplot2)
@@ -41,7 +42,9 @@ Transparency in the management of a critical situation such as the one we are li
 
 Knowing the real number of infected people and their evolution is one of those things, and countries have reacted differently to this challenge. From testing only those with symptoms and that self-select and call up health services, to testing massively, as it has been done in South Korea [@SHIM2020], Germany, or in Japan, at least with people repatriated from affected areas [@nishiura2020rate]. This might be the reason why these countries report a lower Case Fatality Ratio (CFR) than in other cases.
 
-Let's first check what's the reported case fatality ratio for different regions in the world, those that have at least 1000 cases. Max and min CFR are computed over the rows in which there were already 1000 cases.
+Let's first check what's the reported case fatality ratio for different regions in the world, those that have at least 1000 cases 
+<!--(see table \@ref(tab:cfr)). Citing tables and figures doesn't work. Victor, 04.04.2020-->
+(see table 1). Max and min CFR are computed over the rows in which there were already 1000 cases.
 
 ```{r cfr,echo=FALSE,message=FALSE}
 library(dplyr)
@@ -49,25 +52,25 @@ library(knitr)
 world.data$CFR <- world.data$Deaths / world.data$Cases
 world.data.filtered.1k <- world.data[ world.data$Cases > 10000, ]
 cfr.table <- world.data.filtered.1k %>% group_by(Country.Region,Province.State) %>% summarize( max.CFR = max(CFR), min.CFR = min(CFR), last.CFR = last(CFR))  %>% arrange( - last.CFR)
-kable(cfr.table)
+kable(cfr.table, caption="Reported Case Fatality Ratio for different regions that have at least 1000 cases.")
 ```
 
 The countries with the lowest CFR have peaks in the area of 0.3%, with some cases even below that; China and Germany have very low last reported Cf Rs. The two mentioned countries, South Korea and Germany, have a current CFR in the 0.2-0.8% area. This contrasts with the US, which has the highest current CFR at 5%, similar to Italy, the UK and Netherlands.
 
 But the case fatality ratio does not give the whole picture. Some might have been tested one day before, other even post-mortem. Another quantity, the infected fatality ratio, will give a more accurate scenario of what's happening. But in absence of individualized data, we need to deduce that from published data, by calculating correlations between cases and deaths. We'll do this next.
 
-```{r cfrevol,echo=FALSE,message=FALSE,warning=FALSE}
+```{r cfrevol,echo=FALSE,message=FALSE,warning=FALSE, fig.cap="Case Fatality Rate for countries with different COVID19 test policies"}
 world.data.filtered <- world.data %>% filter( Country.Region == "Korea, South" | Country.Region == "Italy" | Country.Region == "Spain" | Country.Region == "Switzerland" | Country.Region == "Germany" )
-ggplot(world.data.filtered, aes(x=Date,y=CFR,color=Country.Region,group=Country.Region))+geom_line()+theme_tufte()+theme(legend.position = "bottom")
+ggplot(world.data.filtered, aes(x=Date,y=CFR,color=Country.Region,group=Country.Region))+ggtitle("Evolution of CFR during February and March for selected countries")+geom_line()+theme_tufte()+theme(legend.position = "bottom")
 ```
 
-While the CFR remains low, and more or less constant, in South Korea, the one in Italy grows as just the cases that enter hospital are tested for coronavirus, yielding an ever-increasing CFR, which can't simply be true.
+As shown in figure \@ref(fig:cfrevol), while the CFR remains low, and more or less constant, in South Korea, the one in Italy grows as just the cases that enter hospital are tested for coronavirus, yielding an ever-increasing CFR, which can't simply be true.
 
 # Correlation between cases and deaths.
 
 What we need to know is, approximately, what's the expected time it elapses from infection to the final outcome. We'll zero in on South Korea for this. Let's plot correlation first for South Korea
 
-```{r ccf.ko,echo=FALSE,message=FALSE}
+```{r ccf.ko,echo=FALSE,message=FALSE, fig.cap="Caption"}
 KO.data <- world.data[world.data$Country.Region=="Korea, South",]
 ccf(KO.data$New.Cases, KO.data$New.Deaths,lag.max = 35, main=c("KO cross-correlation", "New cases vs. deceases"), xlab ='Lag', ylab='Cross-correlation')
 
