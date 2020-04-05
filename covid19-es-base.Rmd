@@ -69,7 +69,7 @@ Como se ve, la tasa actual estaría alrededor de 1, ligeramente por debajo, y se
 
 La tasa de resolución absoluta es la relación entre casos resueltos (positiva y negativamente) y casos totales. Dado que todos los datos en el mismo son inciertos, interesa más la dinámica que los valores absolutos:
 
-```{r TR,warning=FALSE}
+```{r TR,warning=FALSE,message=FALSE}
 ggplot(data,aes(x=Fecha,y=Tasa.Resolucion))+geom_point()+geom_line()+theme_economist()
 ```
 
@@ -91,7 +91,7 @@ En los últimos días, alcanza su nivel más bajo que es casi 8 veces inferior a
 
 Considerando que esta relación entre hospitalizaciones y casos reportados ha cambiado de la misma forma que la relación entre casos reportados y casos reales, vamos a multiplicar los casos totales por la última relación entre casos reportados y casos hospitalizados.
 
-```{r estimaciones}
+```{r estimaciones, warning=FALSE}
 data$Casos.reales <- data$total*data$Casos.Hospitalizados/0.1387703
 ggplot(data,aes(x=Fecha,y=Casos.reales))+geom_point()+geom_line()+theme_economist()
 ```
