@@ -1,7 +1,7 @@
 ---
 title: "Encontrando correlaciones en los datos diarios de COVID-19 en España"
 author: "J. J. Merelo"
-date: "5 de abril de 2020"
+date: "6 de abril de 2020"
 output:
   html_document: default
   pdf_document: default
@@ -24,29 +24,33 @@ Utilizaremos [autocorrelaciones y correlaciones cruzadas en R, usando las funcio
 
 ## Autocorrelación de nuevos casos
 
-Esta es la autocorrelación de nuevos casos, es decir como influyen los casos de los que se informa cada día en los siguientes. Esta serie temporal tiene mucha incertidumbre, ya que sólo refleja los hospitalizados y, a estas alturas, personal crítico (o políticos o personas que se lo hayan pagado de su bolsillo).
+Esta es la autocorrelación de nuevos casos, es decir como influyen los casos de los que se informa cada día en los siguientes. Esta serie temporal tiene mucha incertidumbre, ya que sólo refleja los hospitalizados y, a estas alturas, personal crítico, aunque en el mes de abril se están empezando a hacer tests de forma más extensiva.
 
 ```{r acfcasosnuevos}
-acf(data$Casos.nuevos,na.action = na.pass, lag=35)
+pacf(data$Casos.nuevos,na.action = na.pass, lag=35)
 ```
 
-Realmente este dato es poco fiable, porque no se sabe cuantas altas hay ni cuantos tests se están haciendo. El dato más fiable es el número de personas hospitalizadas y su cambio cada día. Veamos su autocorrelación.
+La autocorrelación parcial refleja sólo una relación entre los nuevos casos reportados cada día y el siguiente. Esto probablemente significa que es una situación dinámica, en evolución, y que no hay tiempo siquiera a que haya correlaciones negativas (que indicarían inmunidad de grupo).
+
+Realmente este dato es poco fiable, porque no se sabe cuantas altas hay ni cuantos tests se están haciendo, y además el número varía con el tiempo. El dato más fiable es el número de personas hospitalizadas y su cambio cada día. Veamos su autocorrelación.
 
 ```{r acfhnuevas}
 pacf(data$Hospitalizaciones.nuevas,na.action = na.pass, lag=28)
 ```
 
-A 5 de abril hemos cambiado para usar el ACF parcial, en vez de el completo, para evitar efectos de acumulación, y los resultados son una fuerte correlación negativa a 15 días vista, y positiva a 17. Pero esto puede deberse simplemente al número muy limitado de datos que tenemos.
+A 5 de abril hemos cambiado para usar el ACF parcial, en vez de el completo, para evitar efectos de acumulación, y los resultados una correlación negativa a 3 días vista, positiva el daí siguiente. Pero esto puede deberse simplemente al número muy limitado de datos que tenemos.
 
 ## Correlaciones de nuevos casos reportados.
 
 ¿Cuanto se tarda en llegar a una salida de la situación? Trazaremos los casos frente al las altas y fallecimientos. Observando la gráfica de altas en [@covides1] se observa cierta periodicidad, al menos inicialmente 
 
 ```{r acf.altas.nuevos}
-acf(data$Altas.nuevas,na.action = na.pass,lag.max = 28)
+pacf(data$Altas.nuevas,na.action = na.pass,lag.max = 28)
 ```
 
-Mientras que hasta el día 20 aparecía una cierta periodicidad de unos dos días, a partir del día 21 prácticamente ha desaparecido y sólo hay periodicidad de un sólo día. Esta periodicidad también aparece en los fallecimientos, como se puede ver en el siguiente gráfico de correlación
+Mientras que hasta el día 20 aparecía una cierta periodicidad de unos dos días, a partir del día 21 prácticamente ha desaparecido y sólo hay periodicidad de un sólo día. Usando autocorrelación parcial, aparece una correlación negativa a 9 días vista, que es imposible de interpretar también.
+
+Esta periodicidad también aparece en los fallecimientos, como se puede ver en el siguiente gráfico de correlación
 
 ```{r acf.fallecimientos.nuevos}
 pacf(data$Fallecimientos.nuevos,na.action = na.pass,lag.max = 28)

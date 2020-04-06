@@ -18,7 +18,7 @@ library(ggthemes)
 
 ## Análisis de salidas
 
-¿Cuanto se tarda en llegar a una salida de la situación de infección? Trazaremos los casos frente al las altas y fallecimientos.
+¿Cuál es la relación entre los casos reportados y la cantidad de personas que ya han fallecido o sido dadas de alta? Trazaremos los casos frente al las altas y fallecimientos.
 
 ```{r salidas, warning=FALSE}
 ggplot(data,aes(x=Fecha))+geom_line(aes(y=casos,color="Casos"))+geom_line(aes(y=salidas,color="Salidas"))+theme_tufte()
@@ -30,6 +30,8 @@ Cabe notar que las primeras salidas no se dieron hasta pasar más de dos semanas
 Representamos también de forma gráfica y animada la evolución de los casos totales (casos - altas - decesos). Cabe notar que muchas altas no se anotarán ni se publicarán, ya que los informes recogen sólo las altas hospitalarias.
 
 ![Animación con las salidas](gifs/totales-point.gif)
+
+Cabe indicar que, a pesar de haberse ralentizado considerablemente, a principio de abril todavía no desciende esa curva, aunque es de esperar que el número de altas esté muy subestimado.
 
 ## Análisis inicial
 
