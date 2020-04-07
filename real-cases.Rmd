@@ -1,6 +1,6 @@
 ---
 title: "Estimating the infection fatality rate of COVID 19  in South Korea by using time series correlations"
-author: "J. J. Merelo, Víctor Rivas-Santos"
+author: "J. J. Merelo, Víctor M. Rivas"
 date: "April 4th, 2020"
 output:
   bookdown::pdf_document2: default
@@ -71,7 +71,7 @@ But in absence of individualized data, we need to deduce that from published dat
 
 What we need to know is, approximately, what's the expected time it elapses from infection to the final outcome. We'll zero in on South Korea for this. Let's plot correlation first for South Korea, as seen in figure \@ref(fig:ccfko).
 
-```{r ccfko,echo=FALSE,message=FALSE, warning=FALSE, fig.cap="Raw cross-correlation between daily new cases and new deaths"}
+```{r ccfko,echo=FALSE,message=FALSE, warning=FALSE, fig.cap="Raw cross-correlation between daily new cases and new deaths at South Korea"}
 KO.data <- world.data[world.data$Country.Region=="Korea, South",]
 ccf(KO.data$New.Cases, KO.data$New.Deaths,lag.max = 35, main=c("KO cross-correlation", "New cases vs. deceases"), xlab ='Lag', ylab='Cross-correlation')
 
@@ -93,7 +93,7 @@ KO.data$Rolling.Sum.New.Deaths <- roll_sum(KO.data$New.Deaths,3,fill=NA,align='r
 
 Let's compute again correlations, using these rolling averages, which are shown in figure \@ref(fig:ccfrolling).
 
-```{r ccfrolling,echo=FALSE,message=FALSE,fig.cap="Cross-correlation for 3-days rolling sum"}
+```{r ccfrolling,echo=FALSE,message=FALSE,fig.cap="Cross-correlation between new cases and deceases at South Korea considering a 3-days rolling sum"}
 ko.ccf <- ccf(KO.data$Rolling.Sum.New.Cases, KO.data$Rolling.Sum.New.Deaths,lag.max = 31, na.action = na.pass, main=c("KO cross-correlation", "New cases vs. deceases", "3-day rolling window"), xlab ='Lag', ylab='Cross-correlation')
 ko.ccf
 
@@ -101,11 +101,11 @@ ko.ccf
 
 This "double bump" is difficult to explain, but anyway it shows a significant positive correlation starting at -29 days with maximum values at -22 (.546) and -3 (.433). Strongest correlation, however, occurs at -22 days, indicating the most probably time from detection-to-death; we can use this to estimate the infection fatality rate.
 
-We will try to estimate it by the slope of the linear model relating cases to deaths. 
+We will try to estimate it by the slope of the linear model relating cases to deaths (see fig. \@ref(fig:lagged)). 
 
-```{r lagged, echo=FALSE,warning=FALSE,message=FALSE}
+```{r lagged, echo=FALSE,warning=FALSE,message=FALSE, fig.cap='Linear model relating cases to deaths'}
 KO.data <- KO.data %>% ungroup() %>% mutate(Lagged.Rolling.New.Cases = lag(Rolling.Sum.New.Cases,22))
-ggplot(KO.data,aes(x=Lagged.Rolling.New.Cases,y=Rolling.Sum.New.Deaths))+ geom_point()+geom_smooth(method='lm', formula= y~x)+theme_tufte()
+ggplot(KO.data,aes(x=Lagged.Rolling.New.Cases,y=Rolling.Sum.New.Deaths))+ geom_point()+geom_smooth(method='lm', formula= y~x) + theme_tufte() + ggtitle("Estimating new deaths depending on new cases and by means of a linear model")
 ```
 
 Let's create a linear model for this
@@ -134,6 +134,6 @@ It should be emphasized also that these good fits are an indication of transpare
 
 ## Acknowledgements
 
-This file has been generated from data published by [JHU CSSE](https://github.com/CSSEGISandData/COVID-19). It's data-driven and it can be re-generated from the script in  [this repository](https://github.com/JJ/covid-reports).
+This file has been generated from data published by JHU CSSE at <a href='https://github.com/CSSEGISandData/COVID-19' target='_new'>https://github.com/CSSEGISandData/COVID-19</a>. It's data-driven and it can be re-generated from the script <a href="https://github.com/JJ/covid-reports/blob/master/real-cases.Rmd">real-cases.Rmd</a> in  this repository: <a href="https://github.com/JJ/covid-reports">https://github.com/JJ/covid-reports</a>.
 
 ## References
