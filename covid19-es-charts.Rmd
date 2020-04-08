@@ -63,14 +63,7 @@ ggplot(data,aes(x=Fecha))+geom_line(aes(y=Fallecimientos.nuevos, color='Dato'))+
 
 Hubo dos picos, uno el día 26, otro el día 2 de abril; los descensos ahora se comienzan a notar también en la media diaria a tres días, así que cabe hablar de una consolidación que llegaría, probablemente, el 3 de abril.
 
-Desde mediados de marzo se publican también las hospitalizaciones, inicialmente de forma bastante irregular. Primero vemos los números absolutos, y luego las nuevas por día
-
-```{r hospitalizaciones, warning=FALSE}
-ggplot(data,aes(x=Fecha,y=hospitalizados),na.rm = TRUE)+geom_point()+geom_line()+theme_tufte()
-ggplot(data,aes(x=Fecha,y=Hospitalizaciones.nuevas),na.rm = TRUE)+geom_point()+geom_line()+theme_tufte()
-```
-
-Las hospitalizaciones nuevas también parecen haber alcanzado un pico el día 25 (aparecido en el informe del día 26), y el acumulado de hospitalizaciones parece haberse decelerado; dado que este es el dato más fiable, cabe predecir que en unos días empiece a disminuir de forma sostenible el número de fallecimientos. Los últimos días está cayendo en picado, aunque la tasa entre casos y hospitalizaciones parece ser cada vez menor, probablemente debido a que se están haciendo cada vez más tests.
+A partir de hoy día 8 se elimina cualquier referencia al dato de hospitalizados e ingresos en la UCI. El proporcionado por el ministerio es un dato falso, resultante de sumar dos cantidades diferentes: personas que han sido hospitalizadas (en comunidades como Andalucía) desde el principio, o incidencia con personas que están hospitalizadas a día de hoy, o prevalencia, en comunidades como Madrid o Castilla y León.
 
 Las [correlaciones entre diferentes series de incrementos diarios, que dan una idea más clara de los datos futuros, se encuentran en otro informe](https://rpubs.com/jjmerelo/correlaciones-diarias-es-covid-19).
 
