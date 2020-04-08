@@ -1,13 +1,15 @@
 ---
 title: "Evolución casos COVID19 en España: datos básicos"
 author: "J. J. Merelo"
-date: "7 de abril de 2020"
+date: "8 de abril de 2020"
 output:
   html_document: default
   pdf_document: default
 ---
 
 Este artículo es una actualización diaria de la evolución de los casos de COVID-19 en España, con datos oficiales del Ministerio de Sanidad recogidos por [el Datadista](https://github.com/datadista/datasets). Incluye gráficas básicas de evolución del *case fatality rate*, es decir, la relación entre el número de casos totales acumulado y el número de decesos acumulado.
+
+**Nota**: estos son datos proporcionados por el ministerio y de fiabilidad dudosa. Se han eliminado todos los cálculos que usan como base el número de hospitalizados y de ingresos en la UCI, puesto que el Ministerio de Sanidad ha cometido un error sumando los datos de comunidades que comunican los que permanecen ingresados, con los datos de otras que comunican los ingresos totales desde el principio.
 
 
 ```{r setup, include=FALSE}
@@ -16,6 +18,8 @@ library(ggplot2)
 library(ggthemes)
 library(RcppRoll)
 data <- read.csv("https://raw.githubusercontent.com/datadista/datasets/master/COVID%2019/nacional_covid19.csv")
+data$hospitalizados <- NULL
+data$ingresos_uci <- NULL
 data$Fecha <- as.Date( data$fecha, "%Y-%m-%d")
 data$salidas <- data$altas + data$fallecimientos
 data$ds <- data$Fecha
@@ -23,21 +27,14 @@ data$y <- data$casos
 data$Casos.nuevos <- c( NA, diff(data$casos))
 data$Altas.nuevas <- c( NA, diff(data$altas))
 data$Fallecimientos.nuevos <- c( NA, diff(data$fallecimientos))
-data$Hospitalizaciones.nuevas <- c( NA, diff(data$hospitalizados))
-data$Uci.nuevos <- c( NA, diff(data$ingresos_uci))
 data$Altas.Avg.3 <- roll_mean(ifelse(is.na(data$Altas.nuevas),0,data$Altas.nuevas),3,fill=NA,align='right')
 data$Decesos.Avg.3 <- roll_mean(ifelse(is.na(data$Fallecimientos.nuevos),0,data$Fallecimientos.nuevos),3,fill=NA,align='right')
 data$CFR <- data$fallecimientos / data$casos
 data <- data %>% mutate( Casos.vivos= casos-lag(casos, 28, default=0))
-data <- data %>% mutate( Déficit= hospitalizados-lag(casos, 5, default=0))
 data$total <- data$casos - ifelse(is.na(data$salidas),0,data$salidas)
-data$h.total <- data$hospitalizados - ifelse(is.na(data$salidas),0,data$salidas)
 data$Tasa.Resolucion <- (data$altas + data$fallecimientos)/data$casos
 data$Tasa.Resolucion.R <- (data$Altas.nuevas+data$Fallecimientos.nuevos)/data$Casos.nuevos
 data <- data %>% mutate( R0= Casos.nuevos / lag(total, 1, default=1))
-data <- data %>% mutate( HR0= Hospitalizaciones.nuevas / lag(h.total, 1, default=1))
-data$Tasa.Hospitalizacion <- data$hospitalizados / data$total
-data$Casos.Hospitalizados <- data$Hospitalizaciones.nuevas / data$Casos.nuevos
 save(data,file="covid-19-es.Rda")
 write.csv(data,'covid-19-es.csv')
 ```
@@ -58,14 +55,6 @@ Se habla de `R0` como la relación de personas infectadas por cada una que tenga
 ggplot(data,aes(x=Fecha,y=R0))+geom_point()+geom_line()+theme_economist()
 ```
 
-Siendo la cantidad de hospitalizados la más fiable, conviene calcularlo usándola, aunque todavía hay pocos datos; una vez más, se compararía el nuevo número de hospitalizaciones con el número del día anterior de casos no fallecidos ni dados de alta.
-
-
-```{r HR0,warning=FALSE}
-ggplot(data,aes(x=Fecha,y=HR0))+geom_point()+geom_line()+theme_economist()
-```
-
-Como se ve, la tasa actual estaría alrededor de 1, ligeramente por debajo, y se alcanzó por primera vez hace dos días.
 
 La tasa de resolución absoluta es la relación entre casos resueltos (positiva y negativamente) y casos totales. Dado que todos los datos en el mismo son inciertos, interesa más la dinámica que los valores absolutos:
 
@@ -80,23 +69,6 @@ ggplot(data,aes(x=Fecha,y=Tasa.Resolucion.R))+geom_point()+geom_line()+theme_eco
 ```
 
 En cuanlquiera de los casos las tasas son muy bajas, y queda todavía mucho camino por recorrer a los 17 días del cierre.
-
-Pero también la relación entre casos y hospitalizados diarios varía a lo largo del tiempo. Veámosla a continuación:
-
-```{r CR,warning=FALSE}
-ggplot(data,aes(x=Fecha,y=Casos.Hospitalizados))+geom_point()+geom_line()+theme_economist()
-```
-
-En los últimos días, alcanza su nivel más bajo que es casi 8 veces inferior al nivel inicial, con casi un 100% de casos nuevos hospitalizados.
-
-Considerando que esta relación entre hospitalizaciones y casos reportados ha cambiado de la misma forma que la relación entre casos reportados y casos reales, vamos a multiplicar los casos totales por la última relación entre casos reportados y casos hospitalizados.
-
-```{r estimaciones, warning=FALSE}
-data$Casos.reales <- data$total*data$Casos.Hospitalizados/0.1387703
-ggplot(data,aes(x=Fecha,y=Casos.reales))+geom_point()+geom_line()+theme_economist()
-```
-
-Lo que daría a día de hoy cerca de medio millón de casos reales; en este caso estamos dividiendo el total en un día (casos totales - fallecidos -altas) multiplicado por la tasa de hospitalización calculada anteriormente por el porcentaje a día de hoy. Tiene que tratarse como una estimación, y con un interés puramente académico, pero puede ser interesante para ver la evolución del número de casos y la posible dinámica en el futuro. Como se ve, el pico se habría alcanzado con unos 200000 casos el día 28 de marzo. A día de hoy ha alcanzado su valor inferior, y la tendencia es a que baje más todavía. 
 
 ## Reconocimientos.
 
