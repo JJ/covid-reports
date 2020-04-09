@@ -36,8 +36,6 @@ Realmente este dato es poco fiable, porque no se sabe cuantas altas hay ni cuant
 
 **Nota** Se ha eliminado cualquier gráfica que use el número de hospitalizados o el de ingresos en UCI. Ambos datos de la serie nacional, proporcionada por el ministerio, están mal calculados y son, por tanto, falsos.
 
-## Correlaciones de nuevos casos reportados.
-
 ¿Cuanto se tarda en llegar a una salida de la situación? Trazaremos los casos frente al las altas y fallecimientos. Observando la gráfica de altas en [@covides1] se observa cierta periodicidad, al menos inicialmente 
 
 ```{r acf.altas.nuevos}
