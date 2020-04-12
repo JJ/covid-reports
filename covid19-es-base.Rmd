@@ -68,7 +68,7 @@ Quizás con la relativa (es decir, lo mismo calculado puntualmente para cada dí
 ggplot(data,aes(x=Fecha,y=Tasa.Resolucion.R))+geom_point()+geom_line()+theme_economist()
 ```
 
-En cualquiera de los casos las tasas son muy bajas, y queda todavía mucho camino por recorrer. El problema es que no se reportan suficientes altas, y es probable que ya se haya alcanzado ese número. Pero mientras en el ministerio no se preocupen por la calidad de los datos que proporcionan, es imposible confiar en el pronto cambio de la situación.
+En cualquiera de los casos las tasas están todavía por debajo de 1, y queda todavía camino por recorrer, pero el camino ascendente parece haberse estancado a mediados del mes de abril. El problema es que no se reportan suficientes altas, y es probable que ya se haya alcanzado ese número. Pero mientras en el ministerio no se preocupen por la calidad de los datos que proporcionan, es imposible confiar en el pronto cambio de la situación.
 
 ## Reconocimientos.
 
