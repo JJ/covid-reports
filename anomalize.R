@@ -8,3 +8,7 @@ fallecimientos.t %>% time_decompose(value) %>% anomalize(remainder) %>% time_rec
 data.minus.1 <- data[-1,]
 casos.t <- tibble(time=as.POSIXct(data.minus.1$fecha),value=data.minus.1$Casos.nuevos)
 casos.t %>% time_decompose(value,frequency='auto',trend='1 weeks') %>% anomalize(remainder) %>% time_recompose()%>% plot_anomaly_decomposition()
+# Altas
+data.minus.16 <- data[as.POSIXct(data$fecha) > "2020-03-09",]
+altas.t <- tibble(time=as.POSIXct(data.minus.16$fecha),value=data.minus.16$Altas.nuevas)
+altas.t %>% time_decompose(value,frequency='auto',trend='1 weeks') %>% anomalize(remainder) %>% time_recompose()%>% plot_anomaly_decomposition()
