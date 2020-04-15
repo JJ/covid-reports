@@ -1,7 +1,7 @@
 ---
 title: "Evolución casos COVID19 en España: datos básicos"
 author: "J. J. Merelo"
-date: "13 de abril de 2020"
+date: "15 de abril de 2020"
 output:
   html_document: default
   pdf_document: default
