@@ -1,0 +1,9 @@
+---
+title: "Bibliography"
+author: "J. J. Merelo"
+date: "21/4/2020"
+output: html_document
+bibliography: our-covid.bib
+---
+
+Two articles published in Figshare [@Merelo2020covida,@Merelo2020covidb]
