@@ -7,7 +7,7 @@ output:
   pdf_document: default
 ---
 
-Este artículo es una actualización diaria de la evolución de los casos de COVID-19 en España, con datos oficiales del Ministerio de Sanidad recogidos por [el Datadista](https://github.com/datadista/datasets). Incluye gráficas básicas de evolución del *case fatality rate*, es decir, la relación entre el número de casos totales acumulado y el número de decesos acumulado.
+Este artículo muestra la evolución de los casos de COVID-19 en España, con datos oficiales del Ministerio de Sanidad recogidos por [el Datadista](https://github.com/datadista/datasets). Incluye gráficas básicas de evolución del *case fatality rate*, es decir, la relación entre el número de casos totales acumulado y el número de decesos acumulado.
 
 **Nota**: estos son datos proporcionados por el ministerio y de fiabilidad dudosa. Se han eliminado todos los cálculos que usan como base el número de hospitalizados y de ingresos en la UCI, puesto que el Ministerio de Sanidad ha cometido un error sumando los datos de comunidades que comunican los que permanecen ingresados, con los datos de otras que comunican los ingresos totales desde el principio.
 
