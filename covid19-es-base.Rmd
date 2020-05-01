@@ -30,7 +30,11 @@ data$Fallecimientos.nuevos <- c( NA, diff(data$fallecimientos))
 data$Altas.Avg.3 <- roll_mean(ifelse(is.na(data$Altas.nuevas),0,data$Altas.nuevas),3,fill=NA,align='right')
 data$Decesos.Avg.3 <- roll_mean(ifelse(is.na(data$Fallecimientos.nuevos),0,data$Fallecimientos.nuevos),3,fill=NA,align='right')
 data$CFR <- data$fallecimientos / data$casos
-data <- data %>% mutate( Casos.vivos= casos-lag(casos, 28, default=0))
+data <- data %>% mutate( Casos.vivos= lag(casos, 14, default=0))
+data <- data %>% mutate( Casos.vivos.7= lag(casos, 7, default=0))
+
+data$Prevalencia <- data$Casos.vivos - data$fallecimientos - data$altas
+data$Prevalencia7 <- data$Casos.vivos.7 - data$fallecimientos - data$altas
 data$total <- data$casos - ifelse(is.na(data$salidas),0,data$salidas)
 data$Tasa.Resolucion <- (data$altas + data$fallecimientos)/data$casos
 data$Tasa.Resolucion.R <- (data$Altas.nuevas+data$Fallecimientos.nuevos)/data$Casos.nuevos
@@ -69,6 +73,14 @@ ggplot(data,aes(x=Fecha,y=Tasa.Resolucion.R))+geom_point()+geom_line()+theme_eco
 ```
 
 En cualquiera de los casos las tasas estaban todavía por debajo de 1 hasta el día 14, pero ha superado este número en ese día. El problema es que no se reportan suficientes altas, y es probable que ya se haya alcanzado ese número. Pero mientras en el ministerio no se preocupen por la calidad de los datos que proporcionan, es imposible confiar en el pronto cambio de la situación.
+
+Finalmente, la prevalencia teórica: el número de contagiados hace 14 días (la duración de la cuarentena) menos los fallecidos y curados hoy.
+
+```{r prevalencia,warning=FALSE}
+ggplot(data,aes(x=Fecha,y=Prevalencia))+geom_point()+geom_line()+theme_economist()
+ggplot(data,aes(x=Fecha,y=Prevalencia7))+geom_point()+geom_line()+theme_economist()
+```
+
 
 ## Reconocimientos.
 
