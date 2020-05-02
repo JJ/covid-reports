@@ -1,4 +1,4 @@
-
+library(plotly)
 library(dplyr)
 library(tidyr)
 library(ggplot2)
@@ -27,12 +27,12 @@ ggplot(merged.data, aes(x=fecha, y=diff.altas))+geom_point()+theme_tufte()+theme
 merged.data <- merged.data %>% mutate( nuevos.fallecimientos.ahora = fallecimientos.ahora - lag(fallecimientos.ahora,1,default=0))
 merged.data <- merged.data %>% mutate( nuevos.fallecimientos.antes = fallecimientos - lag(fallecimientos,1,default=0))
 
-diarios <- data.frame(fecha=merged.data$fecha,nuevos.fallecimientos.antes=merged.data$nuevos.fallecimientos.antes,nuevos.fallecimientos.ahora=merged.data$nuevos.fallecimientos.ahora)
-diarios <- diarios %>% gather(Serie,nuevos.fallecimientos,nuevos.fallecimientos.antes,nuevos.fallecimientos.ahora)
+diarios <- data.frame(fecha=merged.data$fecha,nuevos.fallecimientos.antes=merged.data$nuevos.fallecimientos.antes,nuevos.fallecimientos.ahora=merged.data$nuevos.fallecimientos.ahora,diferencia.acumulada=merged.data$diff.fallecimientos)
+diarios <- diarios %>% gather(Serie,nuevos.fallecimientos,nuevos.fallecimientos.antes,nuevos.fallecimientos.ahora,diferencia.acumulada)
 ggplot(diarios, aes(x=fecha,y=nuevos.fallecimientos,group=Serie,fill=Serie))+geom_bar(stat="identity", width=.6, position='dodge')+theme_tufte()+theme(axis.text.x = element_text(angle = 90))
 
-ggplot(diarios, aes(x=fecha,y=nuevos.fallecimientos,shape=Serie,group=Serie,color=Serie,linetype=Serie))+geom_line()+geom_point()+theme_tufte()+theme(axis.text.x = element_text(angle = 90))
-
+g <- ggplot(diarios, aes(x=fecha,y=nuevos.fallecimientos,shape=Serie,group=Serie,color=Serie,linetype=Serie))+geom_line()+geom_point()+theme_tufte()+theme(axis.text.x = element_text(angle = 90))
+ggplotly(g)
 
 fallecimientos <- data.frame(fecha=merged.data$fecha,antiguos=merged.data$fallecimientos,nuevos=merged.data$fallecimientos.ahora)
 fallecimientos <- fallecimientos %>% gather(Serie,fallecimientos,nuevos,antiguos)
