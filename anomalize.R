@@ -17,6 +17,7 @@ ggplot(fallecimientos.auto.d,aes(x=time))+geom_pointrange(aes(y=observed, ymin=o
 ggplot(fallecimientos.auto.d,aes(x=time))+geom_pointrange(aes(y=observed, ymin=observed-season, ymax=observed, color=season))+ geom_point(aes(y=trend, color="blue"))+geom_segment(aes(y=trend,yend=trend+remainder,xend=time,color=remainder))+scale_color_distiller(palette="Spectral")+ theme_light()
 ggplot(fallecimientos.auto.d,aes(x=time))+geom_point(aes(y=observed))+geom_point(aes(y=trend),shape=23,color="darkblue")+geom_linerange(aes(ymin=observed-season,ymax=observed, color=season),size=2)+ geom_linerange(aes(ymin=trend,ymax=trend+remainder,color=remainder),size=3,alpha=0.75)+scale_color_distiller(palette="Spectral")+ theme_light()
 g <- ggplot(fallecimientos.auto.d,aes(x=time))+geom_point(aes(y=observed))+geom_line(aes(y=trend+season))+geom_linerange(aes(ymin=observed-remainder,ymax=observed, color=remainder),size=2)+ geom_linerange(aes(ymin=trend,ymax=trend+season,color=season),size=3,alpha=0.75)+scale_color_distiller(palette="Spectral")+ theme_light()
+g
 casos.t <- tibble(time=as.POSIXct(data.minus.1$fecha),value=data.minus.1$Casos.nuevos)
 casos.t %>% time_decompose(value) %>% anomalize(remainder) %>% time_recompose()%>% plot_anomaly_decomposition()
 casos.t %>% time_decompose(value,frequency='auto',trend='1 weeks') %>% anomalize(remainder) %>% time_recompose()%>% plot_anomaly_decomposition()
