@@ -1,7 +1,7 @@
 ---
 title: "Evolución casos COVID19 en España: datos básicos"
 author: "J. J. Merelo"
-date: "26 de mayo de 2020"
+date: "14 de septiembre de 2020"
 output:
   html_document: default
   pdf_document: default
@@ -18,7 +18,7 @@ library(ggplot2)
 library(ggthemes)
 library(RcppRoll)
 data <- read.csv("https://raw.githubusercontent.com/datadista/datasets/master/COVID%2019/nacional_covid19.csv")
-data$casos <- data$casos_total
+data$casos <- data$casos_pcr
 data$hospitalizados <- NULL
 data$ingresos_uci <- NULL
 data$Fecha <- as.Date( data$fecha, "%Y-%m-%d")
@@ -67,7 +67,7 @@ La tasa de resolución absoluta es la relación entre casos resueltos (positiva 
 ggplot(data,aes(x=Fecha,y=Tasa.Resolucion))+geom_point()+geom_line()+theme_economist()
 ```
 
-Quizás con la relativa (es decir, lo mismo calculado puntualmente para cada día con deltas desde el día anterior) el panorama sea un poco más claro:
+Como el día 19 de mayo dejaron de dar oficialmente las altas, se quebró la serie temporal en ese momento. Quizás con la relativa (es decir, lo mismo calculado puntualmente para cada día con deltas desde el día anterior) el panorama sea un poco más claro:
 
 ```{r TRR,warning=FALSE}
 ggplot(data,aes(x=Fecha,y=Tasa.Resolucion.R))+geom_point()+geom_line()+theme_economist()
