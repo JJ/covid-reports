@@ -9,3 +9,5 @@ rsconnect
 covid19-es_files/
 real-cases-es_files/
 *.log
+*-figure/
+encuentRo2020.md
