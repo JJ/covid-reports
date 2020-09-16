@@ -1,24 +1,22 @@
 encuentRo2020
+Con ustedes, el dato: el bueno, el feo y el malo
 ========================================================
 author: JJ Merelo, @jjmerelo
 date: 
 autosize: true
 
-First Slide
+JJ Merelo
 ========================================================
 
-For more details on authoring R presentations please visit <https://support.rstudio.com/hc/en-us/articles/200486468>.
+* Profe en la UGR
+* ❤ knitr, RMarkdown
+* Open science
 
-- Bullet 1
-- Bullet 2
-- Bullet 3
-
-Slide With Code
+Buscando la luz
 ========================================================
 
-```{r}
-summary(cars)
-```
+![Buscando la luz](buscando-la-luz.jpg)
+
 
 Slide With Plot
 ========================================================
