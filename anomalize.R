@@ -29,3 +29,12 @@ data.minus.16 <- data[as.POSIXct(data$fecha) > "2020-03-09",]
 altas.t <- tibble(time=as.POSIXct(data.minus.16$fecha),value=data.minus.16$Altas.nuevas)
 altas.t %>% time_decompose(value,frequency='auto',trend='1 weeks') %>% anomalize(remainder) %>% time_recompose()%>% plot_anomaly_decomposition()
 
+# Rebrotes
+data.with.f2 <- data[as.POSIXct(data$fecha) >= "2020-06-22",]
+fallecimientos.t2 <- tibble(date=as.POSIXct(data.with.f2$fecha),value=data.with.f2$Fallecimientos.nuevos)
+fallecimientos.t2$date <- as.Date(fallecimientos.t2$date)
+fallecimientos.t2 <- fallecimientos.t2 %>% tibbletime::as_tbl_time(index = date)
+fallecimientos.t2 %>% time_decompose(value) %>% anomalize(remainder) %>% time_recompose()%>% plot_anomaly_decomposition()
+fallecimientos.t2 %>% time_decompose(value, frequency="2 weeks", trend = "2 weeks") %>% anomalize(remainder) %>% time_recompose()%>% plot_anomaly_decomposition()
+fallecimientos.auto.d2 <- fallecimientos.t2 %>% time_decompose(value) %>% anomalize(remainder) %>% time_recompose()
+ggplot(fallecimientos.auto.d2,aes(x=date))+geom_point(aes(y=observed))+geom_point(aes(y=trend),shape=23,color="darkblue")+geom_linerange(aes(ymin=observed-season,ymax=observed, color=season),size=2)+ geom_linerange(aes(ymin=trend,ymax=trend+remainder,color=remainder),size=3,alpha=0.75)+scale_color_distiller(palette="Spectral")+ theme_light()
