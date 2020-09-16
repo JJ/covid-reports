@@ -2,8 +2,10 @@ library(tibble)
 library(dplyr)
 library(anomalize)
 load("covid-19-es.Rda")
-data.with.f <- data[as.POSIXct(data$fecha) >= "2020-03-05",]
-fallecimientos.t <- tibble(time=as.POSIXct(data.with.f$fecha),value=data.with.f$Fallecimientos.nuevos)
+data.with.f1 <- data[as.POSIXct(data$fecha) >= "2020-03-05" & as.POSIXct(data$fecha) <= "2020-06-21",]
+fallecimientos.t <- tibble(date=as.POSIXct(data.with.f1$fecha),value=data.with.f1$Fallecimientos.nuevos)
+fallecimientos.t$date <- as.Date(fallecimientos.t$date)
+fallecimientos.t <- fallecimientos.t %>% tibbletime::as_tbl_time(index = date)
 fallecimientos.t %>% time_decompose(value) %>% anomalize(remainder) %>% time_recompose()%>% plot_anomaly_decomposition()
 fallecimientos.t %>% time_decompose(value, frequency="2 weeks", trend = "2 weeks") %>% anomalize(remainder) %>% time_recompose()%>% plot_anomaly_decomposition()
 data.minus.1 <- data[-1,]
