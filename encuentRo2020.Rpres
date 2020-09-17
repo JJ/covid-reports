@@ -73,7 +73,7 @@ world.data.filtered$CFR <- world.data.filtered$Deaths / world.data.filtered$Case
 ggplot(world.data.filtered, aes(x=Date,y=CFR,color=Country.Region,group=Country.Region))+ ggtitle("Evolution of CFR from February for selected countries")+ geom_line()+theme_tufte()+theme(legend.position = "bottom")
 ```
 
-Nos interesa individual mortality rate: IFR
+Nos interesa la *individual mortality rate*: IFR
 ======================================================
 
 ## Correlación no es causalidad
@@ -93,7 +93,7 @@ KO.data <- world.data[world.data$Country.Region=="Korea, South",]
 ccf(KO.data$New.Cases, KO.data$New.Deaths,lag.max = 35, main=c("KO cross-correlation", "New cases vs. deceases"), xlab ='Lag', ylab='Cross-correlation')
 ```
 
-***
+<!-- usando los picos de mínimos locales unos 25 días antes, primero podemos conocer cual es la duración media de infección a fallecimiento, pero también cuál es la tasa de fallecimiento que andamos buscando -->
 
 ## TL;DR: entre 0.5 y 0.7%
 
@@ -101,6 +101,20 @@ Hay datos buenos
 =======================================================
 
 ## Pero no están aquí
+
+***
+
+# Pero tenemos una nueva estimación de los casos -- con tres semanas de retraso
+
+Calculemos dónde se doblará la curva
+====================================
+<!-- correlación y ggplot son bastante simples; durante el covid estuve usando Rmarkdown para calcular informes diarios, que fui publicando en Twitter, con algunos comentarios. Con RMarkdown era fácil procesar los datos bajados directametne del repo, y genera otro .Rdata que contenga datos procesados con diferencias diarias, cosas así -->
+
+```{r profeta, include=FALSE}
+library(prophet)
+load("covid-19-es.Rda")
+```
+![Se vería así](https://live.staticflickr.com/1876/43460854885_be501517b2_k_d.jpg)
 
 El feo
 =======================================================
