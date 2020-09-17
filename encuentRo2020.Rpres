@@ -116,11 +116,69 @@ load("covid-19-es.Rda")
 ```
 ![Se vería así](https://live.staticflickr.com/1876/43460854885_be501517b2_k_d.jpg)
 
+Usando el profeta
+=================
+<!-- una biblioteca basada en Stan y que liberó Facebook. ¿Por qué necesitará FAcebook predecir cosas? -->
+
+```{r tabla, message=FALSE}
+data$cap <- 155000
+data$floor <- 1
+model.logistic <- prophet(data, growth='logistic')
+future.logistic <- make_future_dataframe(model.logistic, periods=30)
+future.logistic$cap <- 155000
+future.logistic$floor <- 1
+forecast.logistic <- predict(model.logistic,future.logistic)
+forecast.logistic$ds <- as.Date(forecast.logistic$ds, "%Y-%m-%d")
+```
+
+***
+
+```{r plotprofeta,echo=FALSE,message= FALSE}
+library(ggthemes)
+ggplot(forecast.logistic,aes(x=ds)) + geom_point(data=forecast.logistic,aes(y=trend,color="Trend"))+  geom_point(data=data,aes(y=y,color="Actual")) + theme_economist()
+```
+
+La curva alcanzaría el pico el 15 de abril
+=========================================
+# Pero eso fue lo único que acerté.
+## E incluso eso lo pongo en duda ahora
+
+<!-- Por esto no funcionan los modelos logísticos. Porque también hay datos feos, pero sobre todo modelos feos.  -->
+
 El feo
 =======================================================
 ![El feo, Elli Wallach](https://upload.wikimedia.org/wikipedia/commons/3/35/Eli_Wallach_and_Antonio_Casale.jpg)
 
 [Dominio público](https://commons.wikimedia.org/w/index.php?curid=77037017)
+
+Recogida y publicación de datos: confusa
+========================================
+# Pero nada más confuso que el cambio de la serie a mediados de mayo.
+
+![Luz confusa y borrosa](https://live.staticflickr.com/1901/31261969508_b368f54ccd_k_d.jpg)
+
+Fallecimientos: nueva serie - serie antigua
+===========================================
+
+```{r diferencia, echo=FALSE }
+load("covid-19-es.Rda")
+data$casos.ahora <- data$casos_total
+data$casos <- NULL
+data$fallecimientos.ahora <- data$fallecimientos
+data$fallecimientos <- NULL
+data$altas.ahora <- data$altas
+data$altas <- NULL
+old.data <- read.csv("https://raw.githubusercontent.com/datadista/datasets/master/COVID%2019/old_series/nacional_covid19_old.csv")
+merged.data <- data %>% inner_join(old.data,by="fecha")
+merged.data$diff.casos <- merged.data$casos.ahora - merged.data$casos
+merged.data$fecha <- as.Date(merged.data$fecha,"%Y-%m-%d")
+```
+
+```{r plotdiferencia,width=1200}
+merged.data$diff.fallecimientos <- merged.data$fallecimientos.ahora - merged.data$fallecimientos
+ggplot(merged.data, aes(x=fecha, y=diff.fallecimientos))+geom_point()+theme_tufte()+theme(axis.text.x = element_text(angle = 90))
+```
+<!-- En el pico (cerca del pico), los fallecimientos totales eran unos 600 más que los que se habían producido en ese momento. Pero eso llevó a una anomalía en la serie de fallecimientos, que me hizo pensar en el malo -->
 
 El malo
 ======================================================
@@ -128,3 +186,32 @@ El malo
 ![El malo (de Pinterest)](https://i.pinimg.com/originals/c7/20/60/c720602b5348fbe1ae715303c0f48d76.jpg)
 
 Imagen de Pinterest
+
+Una gráfica debe mostrar toda la información posible
+=====================================================
+# Tendencia + estacionalidad + anomalías.
+
+***
+
+# Buscando, una vez más, la luz.
+
+Gráfica "ADN" con `anomalize`
+===================================
+
+```{r adn, include=FALSE, echo=FALSE,message=FALSE,warning=FALSE}
+library(RColorBrewer)
+library(tibble)
+library(anomalize)
+data.with.f1 <- data[as.POSIXct(data$fecha) >= "2020-03-05" & as.POSIXct(data$fecha) <= "2020-06-21",]
+fallecimientos.t <- tibble(date=as.POSIXct(data.with.f1$fecha),value=data.with.f1$Fallecimientos.nuevos)
+fallecimientos.t$date <- as.Date(fallecimientos.t$date)
+fallecimientos.t <- fallecimientos.t %>% tibbletime::as_tbl_time(index = date)
+fallecimientos.t %>% time_decompose(value) %>% anomalize(remainder) %>% time_recompose()%>% plot_anomaly_decomposition()
+fallecimientos.t %>% time_decompose(value, frequency="2 weeks", trend = "2 weeks") %>% anomalize(remainder) %>% time_recompose()%>% plot_anomaly_decomposition()
+data.minus.1 <- data[-1,]
+fallecimientos.auto.d <- fallecimientos.t %>% time_decompose(value) %>% anomalize(remainder) %>% time_recompose()
+ggplot(fallecimientos.auto.d,aes(x=time))+geom_point(aes(y=observed, size=season))+geom_line(aes(y=trend,color=remainder,size=20,alpha=0.2))+ scale_color_distiller(palette="Spectral")+ theme_light()
+ggplot(fallecimientos.auto.d,aes(x=time))+geom_pointrange(aes(y=observed, ymin=observed-season, ymax=observed ))+geom_line(aes(y=trend,color=remainder,size=20,alpha=0.2))+ scale_color_distiller(palette="Spectral")+ theme_light()
+ggplot(fallecimientos.auto.d,aes(x=time))+geom_pointrange(aes(y=observed, ymin=observed-season, ymax=observed, color=season))+ geom_point(aes(y=trend, color="blue"))+geom_segment(aes(y=trend,yend=trend+remainder,xend=time,color=remainder))+scale_color_distiller(palette="Spectral")+ theme_light()
+ggplot(fallecimientos.auto.d,aes(x=time))+geom_point(aes(y=observed))+geom_point(aes(y=trend),shape=23,color="darkblue")+geom_linerange(aes(ymin=observed-season,ymax=observed, color=season),size=2)+ geom_linerange(aes(ymin=trend,ymax=trend+remainder,color=remainder),size=3,alpha=0.75)+scale_color_distiller(palette="Spectral")+ theme_light()
+```

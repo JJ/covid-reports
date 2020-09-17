@@ -6,7 +6,7 @@
 *.html
 rsconnect
 *.pdf
-covid19-es_files/
+*_files/
 real-cases-es_files/
 *.log
 *-figure/
