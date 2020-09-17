@@ -195,10 +195,10 @@ Una gráfica debe mostrar toda la información posible
 
 # Buscando, una vez más, la luz.
 
-Gráfica "ADN" con `anomalize`
+Gráfica "ADN" con `anomalize` - hasta 21 de junio
 ===================================
 
-```{r adn, include=FALSE, echo=FALSE,message=FALSE,warning=FALSE}
+```{r adn, echo=FALSE,message=FALSE,warning=FALSE}
 library(RColorBrewer)
 library(tibble)
 library(anomalize)
@@ -206,12 +206,32 @@ data.with.f1 <- data[as.POSIXct(data$fecha) >= "2020-03-05" & as.POSIXct(data$fe
 fallecimientos.t <- tibble(date=as.POSIXct(data.with.f1$fecha),value=data.with.f1$Fallecimientos.nuevos)
 fallecimientos.t$date <- as.Date(fallecimientos.t$date)
 fallecimientos.t <- fallecimientos.t %>% tibbletime::as_tbl_time(index = date)
-fallecimientos.t %>% time_decompose(value) %>% anomalize(remainder) %>% time_recompose()%>% plot_anomaly_decomposition()
-fallecimientos.t %>% time_decompose(value, frequency="2 weeks", trend = "2 weeks") %>% anomalize(remainder) %>% time_recompose()%>% plot_anomaly_decomposition()
-data.minus.1 <- data[-1,]
 fallecimientos.auto.d <- fallecimientos.t %>% time_decompose(value) %>% anomalize(remainder) %>% time_recompose()
-ggplot(fallecimientos.auto.d,aes(x=time))+geom_point(aes(y=observed, size=season))+geom_line(aes(y=trend,color=remainder,size=20,alpha=0.2))+ scale_color_distiller(palette="Spectral")+ theme_light()
-ggplot(fallecimientos.auto.d,aes(x=time))+geom_pointrange(aes(y=observed, ymin=observed-season, ymax=observed ))+geom_line(aes(y=trend,color=remainder,size=20,alpha=0.2))+ scale_color_distiller(palette="Spectral")+ theme_light()
-ggplot(fallecimientos.auto.d,aes(x=time))+geom_pointrange(aes(y=observed, ymin=observed-season, ymax=observed, color=season))+ geom_point(aes(y=trend, color="blue"))+geom_segment(aes(y=trend,yend=trend+remainder,xend=time,color=remainder))+scale_color_distiller(palette="Spectral")+ theme_light()
-ggplot(fallecimientos.auto.d,aes(x=time))+geom_point(aes(y=observed))+geom_point(aes(y=trend),shape=23,color="darkblue")+geom_linerange(aes(ymin=observed-season,ymax=observed, color=season),size=2)+ geom_linerange(aes(ymin=trend,ymax=trend+remainder,color=remainder),size=3,alpha=0.75)+scale_color_distiller(palette="Spectral")+ theme_light()
+ggplot(fallecimientos.auto.d,aes(x=date))+geom_point(aes(y=observed))+geom_point(aes(y=trend),shape=23,color="darkblue")+geom_linerange(aes(ymin=observed-season,ymax=observed, color=observed - season- trend),size=2)+ geom_linerange(aes(ymin=trend,ymax=trend+remainder,color=remainder),size=3,alpha=0.75)+scale_color_distiller(palette="Spectral")+ theme_light()
 ```
+
+¿Es útil después del 21 de junio?
+=================================
+```{r tras21, echo=FALSE, message=FALSE, warning=FALSE}
+data.with.f2 <- data[as.POSIXct(data$fecha) >= "2020-06-22",]
+fallecimientos.t2 <- tibble(date=as.POSIXct(data.with.f2$fecha),value=data.with.f2$Fallecimientos.nuevos)
+fallecimientos.t2$date <- as.Date(fallecimientos.t2$date)
+fallecimientos.t2 <- fallecimientos.t2 %>% tibbletime::as_tbl_time(index = date)
+fallecimientos.auto.d2 <- fallecimientos.t2 %>% time_decompose(value) %>% anomalize(remainder) %>% time_recompose()
+ggplot(fallecimientos.auto.d2,aes(x=date))+geom_point(aes(y=observed))+geom_point(aes(y=trend),shape=23,color="darkblue")+geom_linerange(aes(ymin=observed-season,ymax=observed, color=observed - season - trend),size=2)+ geom_linerange(aes(ymin=trend,ymax=trend+remainder,color=remainder),size=3,alpha=0.75)+scale_color_distiller(palette="Spectral")+ theme_light()
+```
+
+Buscando el centro
+==================
+# Y no encontrándolo
+
+![Camino borroso](https://live.staticflickr.com/5571/15275044221_3542ff2419_3k_d.jpg)
+
+Pero encontrando un conjunto maravilloso de herramientas
+========================================================
+# Y un grupo maravilloso de gente
+
+***
+
+## Muchas gracias.
+<!-- entre esas herramientas no se encuentra RPres, que, como veis, todavía me queda algo de damino por recorrer -->
