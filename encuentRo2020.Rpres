@@ -19,131 +19,19 @@ Ennio MoRRicone, 1928-2020
 
 [Georges Biard, CC BY-SA 3.0](https://commons.wikimedia.org/w/index.php?curid=21288724)
 
-<!-- Compositor de la música, fallecido el pasado mes de julio -->
 
 Buscando la luz
 ========================================================
 
 ![Buscando la luz](buscando-la-luz.jpg)
 
-<!-- se trata de buscar un poco de calma y tener un poco de control con lo que va a pasar en el inmediato futuro. ¿Saldremos del confinamiento? ¿Estamos en peligro cuando salimos a la calle? -->
 
 El bueno
 ========================================================
 
-![El bueno](https://upload.wikimedia.org/wikipedia/commons/9/9c/Clint_Eastwood1.png) 
-
-***
+![El bueno](https://upload.wikimedia.org/wikipedia/commons/9/9c/Clint_Eastwood1.png)
 
 [Dominio público](https://commons.wikimedia.org/w/index.php?curid=31376692)
-
-¿Cuantas personas se han contagiado?
-====================================
-
-## Datos del [Datadista](https://github.com/datadista/datasets)
-
-<!-- Los datos se extraían, a mano, de PDFs publicados de lunes a viernes, al principio, diariamente, al final; ahora también de lunes a viernes. Los datos están reportados por las comunidades autónomas. En cualquier lugar, el número de personas que se han informado como contagiadas es una muestra de las que se han contagiado. Pero mientras que la tasa de mortalidad será algo más o menos constante (porque el tratamiento en países con un sistema de salud adecuado será similar, y los médicos comparten información rápidamente), esa muestra es lo que va a variar mucho de un lugar a otro. Si conocemos esa tasa de mortalidad, podemos tener una estimación de cuál es el número de infecciones. Lo que es algo puramente académico, pero nos puede dar una idea de cuantas personas pueden ser ya inmunes. -->
-
-Datos de Corea del Sur
-=======================================================
-![Paper de Corea](paper-corea.png)
-
-```{r setup, include=FALSE}
-library(tidyr)
-library(ggplot2)
-library(ggthemes)
-library(dplyr)
-
-base <- "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_"
-world.confirmed <- read.csv(paste0(base,"confirmed_global.csv"), sep=',',head=T)
-world.confirmed <- gather( world.confirmed, Date, Cases, X1.22.20:X9.16.20)
-world.deaths <- read.csv(paste0(base,"deaths_global.csv"), sep=',',head=T)
-world.deaths <- gather( world.deaths, Date, Deaths, X1.22.20:X9.16.20)
-world.data <- merge(world.confirmed,world.deaths,by=c("Province.State","Country.Region","Lat", "Long", "Date"))
-world.data$Date <- as.Date(world.data$Date,"X%m.%d.%y")
-world.data <- world.data %>% group_by(Province.State,Country.Region,Date) %>% arrange(Province.State,Country.Region, as.Date(Date))
-world.data <- world.data %>% group_by(Province.State,Country.Region) %>% mutate( New.Cases= Cases-lag(Cases, default=0), New.Deaths= Deaths -lag(Deaths, default=0))
-world.data.filtered <- world.data %>% filter( Country.Region == "Korea, South" | Country.Region == "Italy" | Country.Region == "Spain" | Country.Region == "Switzerland" | Country.Region == "Germany" | Country.Region == "United Kingdom" & Province.State == "" )
-```
-
-CFR: Case fatality rate
-=======================================================
-```{r cfrevol,message=FALSE,warning=FALSE,fig.cap="Case Fatality Rate para países con políticas COVID diferentes"}
-world.data.filtered$CFR <- world.data.filtered$Deaths / world.data.filtered$Cases # Igual a los fallecimientos divididos por el número de casos.
-ggplot(world.data.filtered, aes(x=Date,y=CFR,color=Country.Region,group=Country.Region))+ ggtitle("Evolution of CFR from February for selected countries")+ geom_line()+theme_tufte()+theme(legend.position = "bottom")
-```
-
-Nos interesa la *individual mortality rate*: IFR
-======================================================
-
-## Correlación no es causalidad
-
-***
-
-# Pero si conocemos la causa, la correlación nos puede ayudar a calcularla.
-
-<!-- Una cosa es la cantidad total de personas detectadas y fallecidas, y otra diferente una persona, una vez diagnosticada, qué probabilidades tiene de fallecer -->
-
-Correlación entre nuevos casos y fallecimientos
-===============================================
-
-```{r ccfko,message=FALSE, warning=FALSE, fig.cap="Raw cross-correlation between daily new cases and new deaths at South Korea"}
-KO.data <- world.data[world.data$Country.Region=="Korea, South",]
-
-ccf(KO.data$New.Cases, KO.data$New.Deaths,lag.max = 35, main=c("KO cross-correlation", "New cases vs. deceases"), xlab ='Lag', ylab='Cross-correlation')
-```
-
-<!-- usando los picos de mínimos locales unos 25 días antes, primero podemos conocer cual es la duración media de infección a fallecimiento, pero también cuál es la tasa de fallecimiento que andamos buscando -->
-
-## TL;DR: entre 0.5 y 0.7%
-
-Hay datos buenos
-=======================================================
-
-## Pero no están aquí
-
-***
-
-# Pero tenemos una nueva estimación de los casos -- con tres semanas de retraso
-
-Calculemos dónde se doblará la curva
-====================================
-<!-- correlación y ggplot son bastante simples; durante el covid estuve usando Rmarkdown para calcular informes diarios, que fui publicando en Twitter, con algunos comentarios. Con RMarkdown era fácil procesar los datos bajados directametne del repo, y genera otro .Rdata que contenga datos procesados con diferencias diarias, cosas así -->
-
-```{r profeta, include=FALSE}
-library(prophet)
-load("covid-19-es.Rda")
-```
-![Se vería así](https://live.staticflickr.com/1876/43460854885_be501517b2_k_d.jpg)
-
-Usando el profeta
-=================
-<!-- una biblioteca basada en Stan y que liberó Facebook. ¿Por qué necesitará FAcebook predecir cosas? -->
-
-```{r tabla, message=FALSE}
-data$cap <- 155000
-data$floor <- 1
-model.logistic <- prophet(data, growth='logistic')
-future.logistic <- make_future_dataframe(model.logistic, periods=30)
-future.logistic$cap <- 155000
-future.logistic$floor <- 1
-forecast.logistic <- predict(model.logistic,future.logistic)
-forecast.logistic$ds <- as.Date(forecast.logistic$ds, "%Y-%m-%d")
-```
-
-***
-
-```{r plotprofeta,echo=FALSE,message= FALSE}
-library(ggthemes)
-ggplot(forecast.logistic,aes(x=ds)) + geom_point(data=forecast.logistic,aes(y=trend,color="Trend"))+  geom_point(data=data,aes(y=y,color="Actual")) + theme_economist()
-```
-
-La curva alcanzaría el pico el 15 de abril
-=========================================
-# Pero eso fue lo único que acerté.
-## E incluso eso lo pongo en duda ahora
-
-<!-- Por esto no funcionan los modelos logísticos. Porque también hay datos feos, pero sobre todo modelos feos.  -->
 
 El feo
 =======================================================
@@ -151,87 +39,9 @@ El feo
 
 [Dominio público](https://commons.wikimedia.org/w/index.php?curid=77037017)
 
-Recogida y publicación de datos: confusa
-========================================
-# Pero nada más confuso que el cambio de la serie a mediados de mayo.
-
-![Luz confusa y borrosa](https://live.staticflickr.com/1901/31261969508_b368f54ccd_k_d.jpg)
-
-Fallecimientos: nueva serie - serie antigua
-===========================================
-
-```{r diferencia, echo=FALSE }
-load("covid-19-es.Rda")
-data$casos.ahora <- data$casos_total
-data$casos <- NULL
-data$fallecimientos.ahora <- data$fallecimientos
-data$fallecimientos <- NULL
-data$altas.ahora <- data$altas
-data$altas <- NULL
-old.data <- read.csv("https://raw.githubusercontent.com/datadista/datasets/master/COVID%2019/old_series/nacional_covid19_old.csv")
-merged.data <- data %>% inner_join(old.data,by="fecha")
-merged.data$diff.casos <- merged.data$casos.ahora - merged.data$casos
-merged.data$fecha <- as.Date(merged.data$fecha,"%Y-%m-%d")
-```
-
-```{r plotdiferencia,width=1200}
-merged.data$diff.fallecimientos <- merged.data$fallecimientos.ahora - merged.data$fallecimientos
-ggplot(merged.data, aes(x=fecha, y=diff.fallecimientos))+geom_point()+theme_tufte()+theme(axis.text.x = element_text(angle = 90))
-```
-<!-- En el pico (cerca del pico), los fallecimientos totales eran unos 600 más que los que se habían producido en ese momento. Pero eso llevó a una anomalía en la serie de fallecimientos, que me hizo pensar en el malo -->
-
 El malo
 ======================================================
 
 ![El malo (de Pinterest)](https://i.pinimg.com/originals/c7/20/60/c720602b5348fbe1ae715303c0f48d76.jpg)
 
 Imagen de Pinterest
-
-Una gráfica debe mostrar toda la información posible
-=====================================================
-# Tendencia + estacionalidad + anomalías.
-
-***
-
-# Buscando, una vez más, la luz.
-
-Gráfica "ADN" con `anomalize` - hasta 21 de junio
-===================================
-
-```{r adn, echo=FALSE,message=FALSE,warning=FALSE}
-library(RColorBrewer)
-library(tibble)
-library(anomalize)
-data.with.f1 <- data[as.POSIXct(data$fecha) >= "2020-03-05" & as.POSIXct(data$fecha) <= "2020-06-21",]
-fallecimientos.t <- tibble(date=as.POSIXct(data.with.f1$fecha),value=data.with.f1$Fallecimientos.nuevos)
-fallecimientos.t$date <- as.Date(fallecimientos.t$date)
-fallecimientos.t <- fallecimientos.t %>% tibbletime::as_tbl_time(index = date)
-fallecimientos.auto.d <- fallecimientos.t %>% time_decompose(value) %>% anomalize(remainder) %>% time_recompose()
-ggplot(fallecimientos.auto.d,aes(x=date))+geom_point(aes(y=observed))+geom_point(aes(y=trend),shape=23,color="darkblue")+geom_linerange(aes(ymin=observed-season,ymax=observed, color=observed - season- trend),size=2)+ geom_linerange(aes(ymin=trend,ymax=trend+remainder,color=remainder),size=3,alpha=0.75)+scale_color_distiller(palette="Spectral")+ theme_light()
-```
-
-¿Es útil después del 21 de junio?
-=================================
-```{r tras21, echo=FALSE, message=FALSE, warning=FALSE}
-data.with.f2 <- data[as.POSIXct(data$fecha) >= "2020-06-22",]
-fallecimientos.t2 <- tibble(date=as.POSIXct(data.with.f2$fecha),value=data.with.f2$Fallecimientos.nuevos)
-fallecimientos.t2$date <- as.Date(fallecimientos.t2$date)
-fallecimientos.t2 <- fallecimientos.t2 %>% tibbletime::as_tbl_time(index = date)
-fallecimientos.auto.d2 <- fallecimientos.t2 %>% time_decompose(value) %>% anomalize(remainder) %>% time_recompose()
-ggplot(fallecimientos.auto.d2,aes(x=date))+geom_point(aes(y=observed))+geom_point(aes(y=trend),shape=23,color="darkblue")+geom_linerange(aes(ymin=observed-season,ymax=observed, color=observed - season - trend),size=2)+ geom_linerange(aes(ymin=trend,ymax=trend+remainder,color=remainder),size=3,alpha=0.75)+scale_color_distiller(palette="Spectral")+ theme_light()
-```
-
-Buscando el centro
-==================
-# Y no encontrándolo
-
-![Camino borroso](https://live.staticflickr.com/5571/15275044221_3542ff2419_3k_d.jpg)
-
-Pero encontrando un conjunto maravilloso de herramientas
-========================================================
-# Y un grupo maravilloso de gente
-
-***
-
-## Muchas gracias.
-<!-- entre esas herramientas no se encuentra RPres, que, como veis, todavía me queda algo de damino por recorrer -->
