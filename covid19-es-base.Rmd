@@ -19,8 +19,6 @@ library(ggthemes)
 library(RcppRoll)
 data <- read.csv("https://raw.githubusercontent.com/datadista/datasets/master/COVID%2019/nacional_covid19.csv")
 data$casos <- data$casos_pcr
-data$hospitalizados <- NULL
-data$ingresos_uci <- NULL
 data$Fecha <- as.Date( data$fecha, "%Y-%m-%d")
 data$salidas <- data$altas + data$fallecimientos
 data$ds <- data$Fecha
